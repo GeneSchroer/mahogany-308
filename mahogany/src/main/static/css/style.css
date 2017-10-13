@@ -1,0 +1,21 @@
+html, body{
+	width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+}
+
+.pageOverlay{
+        		top:0;
+        		left:0;
+        		position: absolute;
+        		height: 100%;
+        		width: 100%;
+        		z-index: 1001;
+        		display: block;
+        }
+.loadingMessage{
+	padding: 25px 40px;
+    color: #999;
+}
