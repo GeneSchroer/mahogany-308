@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<!-- Project by Lifeng Lin, Sung Jae Min, Xianwen Peng, and Gene Schroer -->
+    <!-- Web GUI by Sung Jae Min and Gene Schroer -->
+	<title>Gerrymandering Analysis Home Page</title>
+
+	<!-- Dojo style sheets and scripts-->
+	<link rel="stylesheet" href="./dijit/themes/nihilo/nihilo.css"/>
+	<script src="dojo/dojo.js" data-dojo-config="async:true" ></script>
+
+		<!-- Local style sheets for page -->
+	<link rel="stylesheet" href="./css/nihilo_override.css"/>
+	<link rel="stylesheet" type="text/css" href="./css/style.css"/>
+	
+	<style>
+		.button {
+			background-color: #4CAF50;	
+			border: none;
+			color: white;
+			padding: 15px 30px;
+			display: inline-block;
+			font-size: 15px;
+			margin: 4px 2px;
+			text-align: center;
+			text-decoration: none;
+			-webkit-transition-duration: 0.5s;
+		
+			transition-duration: 0.5s;
+			cursor: pointer;
+		}
+		
+		.button_login {
+			background-color: white;
+			color: black;
+			border: 2px solid #4CAF50;
+		}
+		
+		.button_login:hover {
+			background-color: #4CAF50;
+			color: white
+		}
+		
+		.button_analysis {
+			background-color: white;
+			color: black;
+			border: 2px solid blue;
+		}
+		
+		.button_analysis:hover {
+			background-color: blue;
+			color: white;
+		}
+		
+		.button_redistricting {
+			background-color: white;
+			color: black;
+			border: 2px solid red;
+		}
+		
+		.button_redistricting:hover {
+			background-color: red;
+			color: white;
+		}
+		
+		.button_about {
+			background-color: white;
+			color: black;
+			border: 2px solid yellow;
+		}
+		
+		.button_about:hover {
+			background-color: yellow;
+			color: white;
+		}
+		
+		.button_logout {
+			background-color: white;
+			color: black;
+			border: 2px solid gray;
+		}
+		
+		.button_logout:hover {
+			background-color: black;
+			color: white;
+		}
+
+	</style>
+</head>
+<body class="nihilo">
+	<div data-dojo-type="dijit/layout/BorderContainer">
+		<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'" style="height:10%;">
+			<button class="button button_login">Login</button>
+			<button class="button button_analysis">Analysis</button>
+			<button class="button button_redistricting">Redistricting</button>
+			<button class="button button_about">About</button>
+			<button class="button button_logout">Log Out</button>
+		</div>
+		<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center"></div>
+	</div>
+</body>
+</html>
