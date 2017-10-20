@@ -68,7 +68,7 @@
 	<div id="loadingOverlay" class="loadingMessage pageOverlay">Loading</div>
 	<div data-dojo-type="dijit/layout/BorderContainer" style="height:100%; width:100%;">
 		<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'" style="height:5%;">
-			<div th:insert="~{links :: copy}"></div>
+			<div th:replace="headerLinks :: links"></div>
 		</div>
 	
 		<div data-dojo-type="dijit/layout/TabContainer" data-dojo-props="region: 'center'" > 
