@@ -12,22 +12,10 @@ var GerrymanderMapController = L.Class.extend({
 		this._stateBorders = builder._stateBorders;
 		this._districtBorders = builder._districtBorders;
 		this._measures = builder._measures;
-		this._stateLayer = stateBorderFactory(this);
+		this._stateLayer = builder._stateLayer; //stateBorderFactory(this);
 		this._addStateDisplay(this._theMap);
 		this._zoomOutBtn = builder._zoomOutBtn;
-		/*L.control();
-		this._zoomOutBtn.onAdd = function(map){
-			this._div = L.DomUtil.create('div', 'info');
-			this.update();
-			return this._div;
-		};
-		this._zoomOutBtn.update = function(props){
-			this._div.innerHTML = '<h4>US Population Density</h4>' + (props ? 
-					"<b>" + props.name + "</b><br />" + props.density + " people / mi<sup>2</sup>"
-					: "Hover over a state");
-		};
-		this._zoomOutBtn.addTo(this._theMap);
-		*/
+		
 	},
 	
 	_addStateDisplay: function(map){
@@ -37,16 +25,6 @@ var GerrymanderMapController = L.Class.extend({
 
 });
 
-function _setStateColor(d){
-    return d > 1000 ? '#33241C' :
-           d > 500  ? '#814B19' :
-           d > 200  ? '#AD6418' :
-           d > 100  ? '#DB7C00' :
-           d > 50   ? '#FE8500' :
-           d > 20   ? '#FCAF6D' :
-           d > 10   ? '#FDCFAD' :
-                      '#F5E8DE';
-}
 
 GerrymanderMapController.GerrymanderBuilder = {
 	_stateBorders: null,
@@ -101,8 +79,8 @@ GerrymanderMapController.GerrymanderBuilder = {
 		zoomBtn.addTo(map);
 		return zoomBtn;
 	},
-	_createStateLayer: function(data){
-		var geoJson =  L.geoJson(data._stateBorders,{
+	_createStateLayer: function(map, borders, button){
+		var geoJson =  L.geoJson(borders,{
 			style: function(feature){
 				return{
 					fillColor: setColor(feature.properties.density),
@@ -127,23 +105,28 @@ GerrymanderMapController.GerrymanderBuilder = {
 						geoJson.resetStyle(e.target);
 					},
 					click: function(e){
-						data._stateMap.fitBounds(e.target.getBounds());
+						map.fitBounds(e.target.getBounds());
+						button.enabled();
 					}
 				});
 				
 			}
-		}).addTo(data._stateMap);
+		}).addTo(map);
 		return geoJson;
+	},
+	_createMap: function(map){
+		return L.map(map, {
+				zoomControl: false,
+				dragging: false,
+				scrollWheelZoom: false
+				}).setView([32, -80], 4);
 	},
 	build: function(){
 		
 		
-		this._stateMap = L.map(this._stateMap, { 
-				zoomControl:false, 
-				dragging:false, scrollWheelZoom:false
-				}).setView([38, -88], 4);
-		//this._stateLayer = stateBorderFactory( this);
+		this._stateMap = this._createMap(this._stateMap);
 		this._zoomOutBtn = this._createZoomOutBtn(this._stateMap);
+		this._stateLayer = this._createStateLayer(this._stateMap, this._stateBorders, this._zoomOutBtn);
 
 		return new GerrymanderMapController(this);
 	}

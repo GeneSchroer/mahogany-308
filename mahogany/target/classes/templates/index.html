@@ -113,12 +113,7 @@
 	</body>
 	<script>
 	
-	//var map_g = L.map('map_g', {zoomControl:false, dragging:false, scrollWheelZoom:false}).setView([38, -88], 4);
-	
-	//L.esri.basemapLayer('Topographic').addTo(map_g);
-	//var map_r = L.map('map_r').setView([38, -88], 4);
-	//L.esri.basemapLayer('Topographic').addTo(map_r);
-	require([ "dojo/request","./leaflet/Gerrymander.js"], function(request){
+	require([ "dojo/request", "dojo/dom", "./leaflet/Gerrymander.js"], function( request, dom){
 		var map_g;
 		var map_r;
 		var statesData;
@@ -131,17 +126,17 @@
 		
 		map_g = GerrymanderMapController
 		.GerrymanderBuilder
-		.addMap('map_g')
+		.addMap(dom.byId('map_g'))
 		.addStateBorders(statesData)
 		.build();
 	
 		map_r =  GerrymanderMapController
 		.GerrymanderBuilder
-		.addMap('map_r')
+		.addMap(dom.byId('map_r'))
 		.addStateBorders(statesData)
 		.build();
 		console.log(map_r);
-	//	L.esri.basemapLayer('Topographic').addTo(map_r);
+		L.esri.basemapLayer('Topographic').addTo(map_g._stateMap);
 		//var map_r = L.map('map_r').setView([38, -88], 4);
 		L.esri.basemapLayer('Topographic').addTo(map_r._stateMap);
 //
