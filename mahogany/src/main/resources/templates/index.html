@@ -113,14 +113,14 @@
 	</body>
 	<script>
 	
-	var map_g = L.map('map_g').setView([38, -88], 4);
+	//var map_g = L.map('map_g', {zoomControl:false, dragging:false, scrollWheelZoom:false}).setView([38, -88], 4);
 	
-	L.esri.basemapLayer('Topographic').addTo(map_g);
-	var map_r = L.map('map_r').setView([38, -88], 4);
-	L.esri.basemapLayer('Topographic').addTo(map_r);
+	//L.esri.basemapLayer('Topographic').addTo(map_g);
+	//var map_r = L.map('map_r').setView([38, -88], 4);
+	//L.esri.basemapLayer('Topographic').addTo(map_r);
 	require([ "dojo/request","./leaflet/Gerrymander.js"], function(request){
-		var g;
-		var r;
+		var map_g;
+		var map_r;
 		var statesData;
 		request("stateData.json", {
 			method: "GET",
@@ -129,19 +129,23 @@
 			statesData = data.data;
 		
 		
-		g = GerrymanderController
-		.GerrymanderControllerBuilder
-		.addMap(map_g)
+		map_g = GerrymanderMapController
+		.GerrymanderBuilder
+		.addMap('map_g')
 		.addStateBorders(statesData)
 		.build();
 	
-		r = GerrymanderController
-		.GerrymanderControllerBuilder
-		.addMap(map_r)
+		map_r =  GerrymanderMapController
+		.GerrymanderBuilder
+		.addMap('map_r')
 		.addStateBorders(statesData)
 		.build();
-		});
-		var y = null;
+		console.log(map_r);
+	//	L.esri.basemapLayer('Topographic').addTo(map_r);
+		//var map_r = L.map('map_r').setView([38, -88], 4);
+		L.esri.basemapLayer('Topographic').addTo(map_r._stateMap);
+//
+	});
 	});
 	</script>
 

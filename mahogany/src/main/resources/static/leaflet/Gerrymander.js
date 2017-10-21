@@ -1,98 +1,38 @@
-var GerrymanderController = L.Class.extend({
-	_theMap: null,
+var GerrymanderMapController = L.Class.extend({
+	_stateMap: null,
 	_stateBorders: null,
 	_districtBorders: null,
 	_measures: null,
-	_stateLayerGroup: null,
+	_stateLayer: null,
 	_stateControl: null,
 	_instance: null,
+	_zoomOutBtn: null,
 	initialize: function(builder){
-		this._theMap = builder._theMap;
+		this._stateMap = builder._stateMap;
 		this._stateBorders = builder._stateBorders;
 		this._districtBorders = builder._districtBorders;
 		this._measures = builder._measures;
-		this._stateLayerGroup = nationalFactory(this);
-			
-			/*L.geoJson(this._stateBorders,{
-			style: this.stateStyle,
-			onEachFeature: this._stateFeatures
-		}).addTo(this._theMap);*/
+		this._stateLayer = stateBorderFactory(this);
 		this._addStateDisplay(this._theMap);
-		this._instance = this;
-		console.log(this._stateLayerGroup);
-		console.log(this);
-		console.log(this._instance);
+		this._zoomOutBtn = builder._zoomOutBtn;
+		/*L.control();
+		this._zoomOutBtn.onAdd = function(map){
+			this._div = L.DomUtil.create('div', 'info');
+			this.update();
+			return this._div;
+		};
+		this._zoomOutBtn.update = function(props){
+			this._div.innerHTML = '<h4>US Population Density</h4>' + (props ? 
+					"<b>" + props.name + "</b><br />" + props.density + " people / mi<sup>2</sup>"
+					: "Hover over a state");
+		};
+		this._zoomOutBtn.addTo(this._theMap);
+		*/
 	},
 	
 	_addStateDisplay: function(map){
 		
-	},
-	_setStateColor: function(d) {
-	    return d > 1000 ? '#33241C' :
-	           d > 500  ? '#814B19' :
-	           d > 200  ? '#AD6418' :
-	           d > 100  ? '#DB7C00' :
-	           d > 50   ? '#FE8500' :
-	           d > 20   ? '#FCAF6D' :
-	           d > 10   ? '#FDCFAD' :
-	                      '#F5E8DE';
-	},
-	_stateFeatures: function(feature, layer){
-		console.log(this);
-		layer.on({
-			mouseover: function(e){
-				//GerrymanderController.prototype.highlightFeature.call(this, e.target);
-				layer=e.target;
-				layer.setStyle({
-					weight: 5,
-					color: 'brown',
-					dashArray: '3',
-					fillOpacity: 0.7
-					
-				});
-			},
-			mouseout: function(e){ 
-				console.log(this);
-				console.log(this._stateLayerGroup);
-				this._instance._stateLayerGroup.resetStyle(e.target);
-
-				
-				//.resetHighlight(this, e.target);
-				//GerrymanderController.prototype.resetHighlight.call(this, e.target);
-			},
-			click: function(e){
-				console.log(this);
-				_instance._theMap.fitBounds(e.target.getBounds());
-				//_instance.zoomInFeature(e.target);
-			}
-		});
-	},
-	highlightFeature: function(layer){
-		layer.setStyle({
-			weight: 5,
-			color: 'brown',
-			dashArray: '3',
-			fillOpacity: 0.7
-			
-		});
-	},
-	resetHighlight: function(stl, layer){
-		//console.log(_instance);
-		stl.resetStyle(layer);
-	},
-	zoomInFeature: function(layer){
-		_theMap.fitBounds(layer.getBounds());
-	},
-	stateStyle: function(feature){
-		return{
-			fillColor: this._setStateColor(feature.properties.density),
-			weight: 2,
-			opacity: 1,
-			color: 'white',
-			fillOpacity: 0.7
-		};
 	}
-
 	
 
 });
@@ -108,14 +48,15 @@ function _setStateColor(d){
                       '#F5E8DE';
 }
 
-GerrymanderController.GerrymanderControllerBuilder = {
-	_theMap: null,
+GerrymanderMapController.GerrymanderBuilder = {
 	_stateBorders: null,
 	_districtBorders: null,
 	_measures: null,
-	
+	_stateMap: null,
+	_stateLayer: null,
+	_zoomOutBtn: null,
 	addMap: function(map){
-		this._theMap = map;
+		this._stateMap = map;
 		return this;
 	},
 	addStateBorders: function(borders){
@@ -130,10 +71,101 @@ GerrymanderController.GerrymanderControllerBuilder = {
 		this._measures = measures;
 		return this;
 	},
+	_createZoomOutBtn: function(map){
+		var zoomBtn = L.control();
+		zoomBtn.onAdd = function(map){
+			this._div=L.DomUtil.create('button', "info");
+			this.update();
+			return this._div;
+		};
+		zoomBtn.update=function(props){
+			this._div.innerHTML = '<h4>US Population Density</h4>' + (props ? 
+					"<b>" + props.name + "</b><br />" + props.density + " people / mi<sup>2</sup>"
+					: "Hover over a state");
+		}
+		zoomBtn.addTo(map);
+		return zoomBtn;
+	},
+	_createStateLayer: function(data){
+		var geoJson =  L.geoJson(data._stateBorders,{
+			style: function(feature){
+				return{
+					fillColor: setColor(feature.properties.density),
+					weight: 2,
+					opacity: 1,
+					color: 'white',
+					fillOpacity: 0.7
+				};
+			},
+			onEachFeature: function(feature, layer){
+				layer.on({
+					mouseover:function(e){
+						layer = e.target;
+						layer.setStyle({
+							weight: 5,
+							color: 'brown',
+							dataArray:'',
+							fillOpacity: 0.7
+						});
+					},
+					mouseout:function(e){
+						geoJson.resetStyle(e.target);
+					},
+					click: function(e){
+						data._stateMap.fitBounds(e.target.getBounds());
+					}
+				});
+				
+			}
+		}).addTo(data._stateMap);
+		return geoJson;
+	},
 	build: function(){
-		return new GerrymanderController(this);
+		this._stateMap = L.map(this._stateMap, { 
+				zoomControl:false, 
+				dragging:false, scrollWheelZoom:false
+				}).setView([38, -88], 4);
+		//this._stateLayer = stateBorderFactory( this);
+		this._zoomOutBtn = this._createZoomOutBtn(this._stateMap);
+		return new GerrymanderMapController(this);
 	}
 };
+
+function stateBorderFactory(data){
+	var geoJson = L.geoJson(data._stateBorders,{
+			style: function(feature){
+				return{
+					fillColor: setColor(feature.properties.density),
+					weight: 2,
+					opacity: 1,
+					color: 'white',
+					fillOpacity: 0.7
+				};
+			},
+			onEachFeature: function(feature, layer){
+				layer.on({
+					mouseover:function(e){
+						layer = e.target;
+						layer.setStyle({
+							weight: 5,
+							color: 'brown',
+							dataArray:'',
+							fillOpacity: 0.7
+						});
+					},
+					mouseout:function(e){
+						geoJson.resetStyle(e.target);
+					},
+					click: function(e){
+						data._stateMap.fitBounds(e.target.getBounds());
+					}
+				});
+				
+			}
+		}).addTo(data._stateMap);
+		
+	return geoJson;
+}
 function setColor(d){
 	return d > 1000 ? '#33241C' :
            d > 500  ? '#814B19' :
@@ -143,37 +175,4 @@ function setColor(d){
            d > 20   ? '#FCAF6D' :
            d > 10   ? '#FDCFAD' :
                       '#F5E8DE';
-}
-
-function nationalFactory(controlData){
-	return L.geoJson(controlData._stateBorders,{
-		style: function(feature){
-			return{
-				fillColor: setColor(feature.properties.density),
-				weight: 2,
-				opacity: 1,
-				color: 'white',
-				fillOpacity: 0.7
-			};
-		},
-		onEachFeature: function(feature, layer){
-			layer.on({
-				mouseover: function(e){
-					layer = e.target;
-					layer.setStyle({
-						weight: 5,
-						color: 'brown',
-						dataArray:'',
-						fillOpacity: 0.7
-					});
-				},
-				mouseout: function(e){
-					controlData._stateLayerGroup.resetStyle(e.target);
-				},
-				click: function(e){
-					controlData._theMap.fitBounds(e.target.getBounds());
-				}
-			});
-		}
-	}).addTo(controlData._theMap);
 }
