@@ -75,9 +75,24 @@ GerrymanderMapController.GerrymanderBuilder = {
 		var zoomBtn = L.control();
 		zoomBtn.onAdd = function(map){
 			this._div=L.DomUtil.create('button', "info");
-			this.update();
+			
+			
+			this.disabled();
+			this._div.innerHTML= "Zoom Out";
 			return this._div;
 		};
+		zoomBtn.disabled = function(){
+			this._div.style.display="none";
+			map.setView([38, -88], 4, true);
+			L.DomEvent.off(zoomBtn);
+		}
+		zoomBtn.enabled= function(){
+			this._div.style.display="block";
+			L.DomEvent.on(this._div, 'click', function(e){
+				zoomBtn.disabled();
+				
+			});
+		}
 		zoomBtn.update=function(props){
 			this._div.innerHTML = '<h4>US Population Density</h4>' + (props ? 
 					"<b>" + props.name + "</b><br />" + props.density + " people / mi<sup>2</sup>"
@@ -121,12 +136,15 @@ GerrymanderMapController.GerrymanderBuilder = {
 		return geoJson;
 	},
 	build: function(){
+		
+		
 		this._stateMap = L.map(this._stateMap, { 
 				zoomControl:false, 
 				dragging:false, scrollWheelZoom:false
 				}).setView([38, -88], 4);
 		//this._stateLayer = stateBorderFactory( this);
 		this._zoomOutBtn = this._createZoomOutBtn(this._stateMap);
+
 		return new GerrymanderMapController(this);
 	}
 };
@@ -158,6 +176,7 @@ function stateBorderFactory(data){
 					},
 					click: function(e){
 						data._stateMap.fitBounds(e.target.getBounds());
+						data._zoomOutBtn.enabled();
 					}
 				});
 				
