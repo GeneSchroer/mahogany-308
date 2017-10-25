@@ -22,4 +22,9 @@ public class GerrymanderController {
 		return "gerrymander";
 	}
 	
+	@RequestMapping("/home")
+	public String login() {
+		return "home";
+	}
+	
 }
