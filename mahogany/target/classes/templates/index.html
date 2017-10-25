@@ -9,11 +9,20 @@
 		<!-- Load Esri map from source-->
 		<script src="http://cdn-geoweb.s3.amazonaws.com/esri-leaflet/1.0.0-rc.3/esri-leaflet.js"></script>
 		
-		<script src="/leaflet/Gerrymander.js"></script>
 		
 		<!-- Dojo style sheets and scripts-->
 		<link rel="stylesheet" href="/dijit/themes/nihilo/nihilo.css"/>
-		<script src="/dojo/dojo.js" data-dojo-config="async:true" ></script>
+		<script>
+			var dojoConfig = {
+				async: true,
+				packages: [{
+					name: "leaflet",
+					location: "../leaflet"
+				}]
+			};
+		
+		</script>
+		<script src="/dojo/dojo.js"></script>
 	
 	<!-- Local style sheets for page -->
 	<link rel="stylesheet" href="/css/nihilo_override.css"/>
@@ -45,9 +54,7 @@
         		width: 100%;
         }
         
-        #loadingOverlay{
-        	background: #fff url('./dijit/themes/claro/images/progressBarAnim.gif') no-repeat 10px 23px ;
-        }
+        
         
         
         
@@ -65,7 +72,7 @@
 	</head>
 
 	<body class="nihilo">
-	<div id="loadingOverlay" class="loadingMessage pageOverlay">Loading</div>
+	<div id="loadingOverlay" class="loadingMessage pageOverlay loadingOverlay">Loading</div>
 	<div data-dojo-type="dijit/layout/BorderContainer" style="height:100%; width:100%;">
 		<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'" style="height:5%;">
 			<div th:replace="headerLinks :: links"></div>
@@ -113,7 +120,7 @@
 	</body>
 	<script>
 	
-	require([ "dojo/request", "dojo/dom", "./leaflet/Gerrymander.js"], function( request, dom){
+	require([ "dojo/_base/declare","dojo/request", "dojo/dom", "leaflet/Test","leaflet/Gerrymander"], function(declare, request, dom, Test, Gerrymander){
 		var map_g;
 		var map_r;
 		var statesData;
@@ -124,23 +131,32 @@
 			statesData = data.data;
 		
 		
-		map_g = GerrymanderMapController
+		map_g = Gerrymander
+		.GerrymanderMapController()
 		.GerrymanderBuilder
 		.addMap(dom.byId('map_g'))
 		.addStateBorders(statesData)
 		.build();
-	
-		map_r =  GerrymanderMapController
+		console.log(map_g);
+		map_r = Gerrymander 
+		.GerrymanderMapController()
 		.GerrymanderBuilder
 		.addMap(dom.byId('map_r'))
 		.addStateBorders(statesData)
 		.build();
 		console.log(map_r);
-		L.esri.basemapLayer('Topographic').addTo(map_g._stateMap);
+		
+		//map_g = Test.makeTest(dom.byId('map_g'), 1);
+		//map_r = Test.makeTest(dom.byId('map_r'), 2);
+		//map_g.testConsole();
+		//map_r.testConsole();
+		L.esri.basemapLayer('Topographic').addTo(map_g._mapData._stateMap);
 		//var map_r = L.map('map_r').setView([38, -88], 4);
-		L.esri.basemapLayer('Topographic').addTo(map_r._stateMap);
+		L.esri.basemapLayer('Topographic').addTo(map_r._mapData._stateMap);
 //
-	});
+		});
+		var x = new Test(1);
+		var y = new Test(2);
 	});
 	</script>
 

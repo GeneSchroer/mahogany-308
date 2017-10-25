@@ -19,3 +19,7 @@ html, body{
 	padding: 25px 40px;
     color: #999;
 }
+
+.loadingOverlay{
+        	background: #fff url('../dijit/themes/claro/images/progressBarAnim.gif') no-repeat 10px 23px ;
+        }
