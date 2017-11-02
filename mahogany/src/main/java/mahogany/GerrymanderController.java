@@ -4,7 +4,6 @@ import org.springframework.stereotype.Controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 
-
 @Controller
 public class GerrymanderController {
 
@@ -17,10 +16,12 @@ public class GerrymanderController {
 	}
 	
 	@RequestMapping("/gerrymander")
-	public String indexLoader() {
+	public String accessGerrymanderPage() {
 		
 		return "gerrymander";
 	}
+	
+	
 	
 	@RequestMapping("/home")
 	public String login() {
