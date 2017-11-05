@@ -23,3 +23,7 @@ html, body{
 .loadingOverlay{
         	background: #fff url('../dijit/themes/claro/images/progressBarAnim.gif') no-repeat 10px 23px ;
         }
+        
+.repTable{
+	height: 200px;
+}
