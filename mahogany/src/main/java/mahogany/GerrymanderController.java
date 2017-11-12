@@ -29,6 +29,9 @@ public class GerrymanderController {
 	@Autowired
 	private StateNamesRepository stateNamesRepository;
 	
+	@Autowired
+	private DistrictsRepository districtsRepository;
+	
 	@RequestMapping("/")
 	public String loader(){
 		
@@ -80,6 +83,13 @@ public class GerrymanderController {
 		
 		for(StateNames state: x) {
 			System.out.println(state.getName());
+		}
+		
+		Districts d = districtsRepository.findByStateAndCongress("Alabama", 112);
+		//System.out.println(d.getId());
+
+		if(d != null) {
+			System.out.println(d.getStateName().getName() + " " + d.getCongress());
 		}
 		//System.out.println(stateNamesRepository.findFirstByName("Alaska").getName());
 		//System.out.println(x.getName() + " " + x.getStateId());
