@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.fileupload.FileItem;  
@@ -66,8 +67,11 @@ public class GerrymanderController {
 			
 				String jsonstring = new String(file.getBytes());
 				ObjectNode json = (ObjectNode) reader.readTree(jsonstring);
-				System.out.println(json.toString());
-				new GeoJsonUtils().convertJsonToDistricts(json);
+				//System.out.println(json.toString());
+				
+				GeoJsonUtils geo = new GeoJsonUtils();
+				ArrayList<Districts> districts = geo.convertJsonToDistricts(json);
+				districtsRepository.save(districts);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
