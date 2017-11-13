@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.fileupload.FileItem;  
@@ -20,9 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import utils.GeoJsonUtils;
 
 @Controller
 public class GerrymanderController {
@@ -32,6 +32,9 @@ public class GerrymanderController {
 	
 	@Autowired
 	private DistrictsRepository districtsRepository;
+	
+	@Autowired 
+	DistrictDetailsRepository districtDetailsRepository;
 	
 	@RequestMapping("/")
 	public String loader(){
@@ -70,8 +73,8 @@ public class GerrymanderController {
 				//System.out.println(json.toString());
 				
 				GeoJsonUtils geo = new GeoJsonUtils();
-				ArrayList<Districts> districts = geo.convertJsonToDistricts(json);
-				districtsRepository.save(districts);
+				ArrayList<Districts> districts = convertJsonToDistricts(json);
+			//	districtsRepository.save(districts);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -83,24 +86,79 @@ public class GerrymanderController {
 	
 	@RequestMapping("/test")
 	public String test() {
-		Iterable<StateNames> x = stateNamesRepository.findAll();//findFirstByName("Alaska");
+		//Iterable<StateNames> x = stateNamesRepository.findAll();//findFirstByName("Alaska");
 		
-		for(StateNames state: x) {
-			System.out.println(state.getName());
-		}
+	//	for(StateNames state: x) {
+	///		System.out.println(state.getName());
+	//	}
 		
-		Districts d = districtsRepository.findByStateAndCongress("Alabama", 112);
+		//Districts d = districtsRepository.findByStateAndCongress("Alabama", 112);
 		//System.out.println(d.getId());
 
-		if(d != null) {
-			System.out.println(d.getStateName().getName() + " " + d.getCongress());
-		}
+		
 		//System.out.println(stateNamesRepository.findFirstByName("Alaska").getName());
 		//System.out.println(x.getName() + " " + x.getStateId());
 		
 		return "gerrymander";
 	}
 	
-	
+	public ArrayList<Districts> convertJsonToDistricts(ObjectNode json){
+		int count=0;
+		ArrayList<Districts> districtList = new ArrayList<Districts>();
+		ArrayNode featuresArray = (ArrayNode)json.get("features");
+		Iterator<JsonNode> features = featuresArray.iterator();
+		while(features.hasNext()) {
+			ObjectNode properties = (ObjectNode)features.next().get("properties");
+			//Districts district = new Districts();
+			System.out.println(properties.get("startcong").asInt());
+			//district.setCongress(properties.get("startcong").asInt());
+			//district.setNumber(properties.get("district").asInt());
+			//System.out.println(properties.get("statename").asText());
+			//System.out.println(count++);
+			String stateName = properties.get("statename").asText();
+			int startCong = properties.get("startcong").asInt();
+			int endCong = properties.get("endcong").asInt();
+			int number = properties.get("district").asInt();
+			StateNames stateNames = stateNamesRepository.findFirstByName(stateName);
+			if(stateNames == null) {
+			
+				System.out.println("creating new state");
+				stateNames = new StateNames();
+				stateNames.setName(stateName);
+				stateNamesRepository.save(stateNames);
+				
+			}
+			
+			for(int congress = startCong; congress<=endCong; congress = congress +1) {
+				DistrictDetails districtDetails = districtDetailsRepository.findByStateNameAndNumberAndCongress(stateName, number, congress);
+				if(districtDetails == null) {
+					districtDetails = new DistrictDetails();
+					districtDetails.setStateId(stateNames.getId());
+					districtDetails.setNumber(number);
+					districtDetails.setCongress(congress);
+					districtDetailsRepository.save(districtDetails);
+					//districtDetails.setStateName(stateNames);
+				}
+				
+				//System.out.println("State Name: " + districtDetails.getStateName().getName());
+				Districts districts = districtsRepository.findByStateNameAndNumberAndCongress(stateName, number, congress);
+				if (districts == null) {
+					districts = new Districts();
+					districts.setDetailsId(districtDetails.getId());
+					districtsRepository.save(districts);
+				}
+				ObjectNode memberObject = (ObjectNode)properties.get("member");
+				ObjectNode electionObject = (ObjectNode)properties.get("election");
+				
+				ObjectNode memberAndCongressObject = (ObjectNode)memberObject.get(String.valueOf(congress));
+				ObjectNode electionAndCongressObject = (ObjectNode)electionObject.get(String.valueOf(congress));
+			}
+			
+			
+			//districts.add(district);
+			
+		}
+		return districtList;
+	}
 	
 }
