@@ -36,6 +36,8 @@ public class GerrymanderController {
 	@Autowired 
 	DistrictDetailsRepository districtDetailsRepository;
 	
+	GerrymanderHelper helper = new GerrymanderHelper();
+	
 	@RequestMapping("/")
 	public String loader(){
 		
@@ -59,27 +61,10 @@ public class GerrymanderController {
 	
 	@RequestMapping("/admin/upload")
 	public String uploadFile(@RequestParam("file")MultipartFile[] files) {
-		ObjectMapper mapper = new ObjectMapper();
-		ObjectReader reader = mapper.reader();
+		helper.setDistrictsRepository(districtsRepository);
+
+		helper.uploadFiles(files);
 		
-		for(MultipartFile file: files) {
-			System.out.println(file.getOriginalFilename());
-			
-			
-			try {
-			
-				String jsonstring = new String(file.getBytes());
-				ObjectNode json = (ObjectNode) reader.readTree(jsonstring);
-				//System.out.println(json.toString());
-				
-				GeoJsonUtils geo = new GeoJsonUtils();
-				ArrayList<Districts> districts = convertJsonToDistricts(json);
-			//	districtsRepository.save(districts);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 		
 		return "gerrymander";
 	}
