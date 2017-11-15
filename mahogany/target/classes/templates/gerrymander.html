@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>Gerrymandering Analysis Main Page </title>
+	    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		 <!-- Leaflet style sheets and scripts -->	
+	    <link rel="stylesheet" href="/leaflet/leaflet.css" />
+		<script src="/leaflet/leaflet.js"></script>
+		<!-- Load Esri map from source-->
+		<script src="http://cdn-geoweb.s3.amazonaws.com/esri-leaflet/1.0.0-rc.3/esri-leaflet.js"></script>
+		<!-- Dojo style sheets and scripts-->
+		<link rel="stylesheet" href="/dijit/themes/claro/claro.css"/>
+		<script>
+			var dojoConfig = {
+				async: true,
+				packages: [{
+					name: "leaflet",
+					location: "../leaflet"
+				}]
+			};
+		
+		</script>
+		<script src="/dojo/dojo.js"></script>	
+		
+		<!-- Local style sheets for page -->
+		<link rel="stylesheet" href="/css/nihilo_override.css"/>
+		<link rel="stylesheet" type="text/css" href="/css/style.css"/>
+	
+    
+
+    	<style>
+    	
+    		.info{
+    			padding: 6px 8px;
+    			font: 15px Arial, Helvetica, sans-serif;
+    			background: white;
+    			box-shadow: 0 0 15px black;
+    			margin: 0 0 5px;
+    			color: #777;
+    			border-radius: 5px;
+        }
+      
+  
+ 
+		</style>
+		<script>
+		
+    		require(["javascript/LoadingScreen","dojo/parser", "dojo/dom", "leaflet/GerrymanderPageManager", "dijit/registry", "dijit/layout/ContentPane", "dijit/layout/BorderContainer", "dijit/layout/TabContainer", 
+    		"dijit/layout/AccordionContainer", "dijit/form/Button", "dijit/form/Select"], 
+    		function(LoadingScreen, parser, dom, GerrymanderPageManager, registry){
+    		
+    			var loadingScreen = new LoadingScreen("gerrymanderLoadingScreen");	
+    			parser.parse();
+    			loadingScreen.endLoading();
+    	
+				var map_g = GerrymanderPageManager
+							.addMap(dom.byId("gerrymanderMap"))
+							.addCongressSelector(registry.byId("gerrymanderCongressSelect"))
+							.addRepTable(dom.byId("gerrymanderRepTable"))
+							.build();
+				L.esri.basemapLayer('Topographic').addTo(map_g._pageElements.mapManager._mapData.map);
+				
+				});
+		</script>
+	</head>
+	<body class="claro"></body>
+		<div id="gerrymanderLoadingScreen" class="loadingMessage pageOverlay loadingOverlay">Loading</div>
+		<div data-dojo-type="dijit/layout/BorderContainer" style="height:100%; width:100%;">
+			<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'" style="height:5%">
+				<div th:replace="headerLinks :: links"></div>
+			</div>
+			<div data-dojo-type="dijit/layout/AccordionContainer" data-dojo-props="region:'left', splitter:true" style="width: 30%;">
+				<div data-dojo-type="dijit/layout/ContentPane" title="Data">
+					<label for="gerrymanderCongressSelect">Congress: </label>
+					<div id="gerrymanderCongressSelect" data-dojo-type="dijit/form/Select">
+						<span value="112">112</span>
+						<span value="107">107</span>
+					</div>
+					<table class="repTable" id="gerrymanderRepTable"></table>
+				</div>
+				<div data-dojo-type="dijit/layout/ContentPane" title="Information">
+					<div></div>
+				</div>
+			</div>		
+			<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'">
+				<div id="gerrymanderMap"></div>
+			</div>
+			<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'bottom'">
+				<form action="/admin/upload" enctype="multipart/form-data" method="POST">
+					<input name="file" type="file" multiple="true"/>
+					<input type="submit"/>
+				</form>
+				<form action="/test">
+					<input type="submit" value="Test"/>
+				</form>
+			</div>
+		</div>
+		
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>Gerrymandering Analysis Main Page </title>
+	    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		 <!-- Leaflet style sheets and scripts -->	
+	    <link rel="stylesheet" href="/leaflet/leaflet.css" />
+		<script src="/leaflet/leaflet.js"></script>
+		<!-- Load Esri map from source-->
+		<script src="http://cdn-geoweb.s3.amazonaws.com/esri-leaflet/1.0.0-rc.3/esri-leaflet.js"></script>
+		<!-- Dojo style sheets and scripts-->
+		<link rel="stylesheet" href="/dijit/themes/claro/claro.css"/>
+		<script>
+			var dojoConfig = {
+				async: true,
+				packages: [{
+					name: "leaflet",
+					location: "../leaflet"
+				}]
+			};
+		
+		</script>
+		<script src="/dojo/dojo.js"></script>	
+		
+		<!-- Local style sheets for page -->
+		<link rel="stylesheet" href="/css/nihilo_override.css"/>
+		<link rel="stylesheet" type="text/css" href="/css/style.css"/>
+	
+    
+
+    	<style>
+    	
+    		.info{
+    			padding: 6px 8px;
+    			font: 15px Arial, Helvetica, sans-serif;
+    			background: white;
+    			box-shadow: 0 0 15px black;
+    			margin: 0 0 5px;
+    			color: #777;
+    			border-radius: 5px;
+        }
+      
+        
+        #loadingOverlay{
+        	background: #fff url('./dijit/themes/claro/images/progressBarAnim.gif') no-repeat 10px 23px ;
+        }
+	
+		</style>
+		<script>
+		
+    		require(["javascript/LoadingScreen","dojo/parser", "dojo/dom", "leaflet/RedistrictPageManager", "dijit/registry", "dijit/layout/ContentPane", "dijit/layout/BorderContainer", "dijit/layout/TabContainer", 
+    		"dijit/layout/AccordionContainer", "dijit/form/Button", "dijit/form/Select"], 
+    		function(LoadingScreen, parser, dom, RedistrictPageManager, registry){
+    			var loadingScreen = new LoadingScreen("redistrictLoadingScreen");	
+    			parser.parse();
+    			loadingScreen.endLoading();
+    			
+    			var map_r = RedistrictPageManager
+    						.addMap(dom.byId("redistrictMap"))
+    						.addYearSelector(registry.byId("redistrictYearSelect"))
+    						.build();
+    			L.esri.basemapLayer('Topographic').addTo(map_r.getMap());
+    		});
+    	
+		</script>
+	</head>
+	<body class="claro"></body>
+		<div id="redistrictLoadingScreen"></div>
+		<div data-dojo-type="dijit/layout/BorderContainer" style="height:100%; width:100%">
+			<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'" style="height:5%">
+				<div th:replace="headerLinks :: links"></div>
+			</div>
+			<div data-dojo-type="dijit/layout/AccordionContainer" data-dojo-props="region:'left', splitter:true">
+				<div data-dojo-type="dijit/layout/ContentPane" title="Creation Pane">
+					<div id="redistrictYearSelect" data-dojo-type="dijit/form/Select">
+						<span value="112">112</span>
+						<span value="107">107</span>
+					</div>
+					<button data-dojo-type="dijit/form/Button" id="superdistrictCreateButton">Create</button>
+				</div>
+				<div data-dojo-type="dijit/layout/ContentPane" title="Information"></div>
+			</div>		
+			<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'">
+				<div id="redistrictMap"></div>
+			</div>
+		</div>
+</html>
