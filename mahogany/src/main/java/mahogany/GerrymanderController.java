@@ -52,7 +52,9 @@ public class GerrymanderController {
 	}
 	
 	@RequestMapping("/test")
-	public String test() {
+	public String test(@RequestParam("file")MultipartFile file) {
+		
+		helper.uploadElectionFile(file);
 		//Iterable<StateNames> x = stateNamesRepository.findAll();//findFirstByName("Alaska");
 		
 	//	for(StateNames state: x) {

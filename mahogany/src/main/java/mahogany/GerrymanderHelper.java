@@ -3,6 +3,7 @@ package mahogany;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,8 +46,14 @@ public class GerrymanderHelper {
 		
 	}
 	
-	public void uploadElectionFile(MultipartFile[] files) {
-		
+	public void uploadElectionFile(MultipartFile file) {
+		try {
+			Workbook electionWorkbook = princetonElectionUploader.convertFileToExcel(file);
+			princetonElectionUploader.uploadElectionDataToDatabase(electionWorkbook);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }

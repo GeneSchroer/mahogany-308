@@ -6,6 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -16,12 +17,13 @@ public class Elections {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
-	private Long districtId;
-	private Long winnerId;
-	
-	@ManyToOne
-	@JoinColumn(name="districtId", updatable=false, insertable=false)
+	@OneToOne
+	@JoinColumn(name="districtId")
 	private Districts district;
+
+	@OneToOne
+	@JoinColumn(name="winnerId")
+	private Members winner;
 	
 	protected Elections() {
 		
@@ -31,20 +33,19 @@ public class Elections {
 		return id;
 	}
 	
-	public Long getDetailsId() {
-		return districtId;
+	public Districts getDistrict() {
+		return district;
 	}
 	
-	public void setDetailsId(Long detailsId) {
-		this.districtId = detailsId;
+	public void setDistrict(Districts district) {
+		this.district = district;
 	}
 	
-	public Long getWinnerId() {
-		return winnerId;
+	public Members getWinner() {
+		return winner;
 	}
 	
-	public void setWinnerId(Long winnerId) {
-		this.winnerId = winnerId;
+	public void setWinner(Members winner) {
+		this.winner = winner;
 	}
-	
 }

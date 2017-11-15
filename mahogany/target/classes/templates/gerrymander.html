@@ -89,9 +89,11 @@
 				<form action="/admin/upload" enctype="multipart/form-data" method="POST">
 					<input name="file" type="file" multiple="true"/>
 					<input type="submit"/>
+					<br/>
 				</form>
-				<form action="/test">
-					<input type="submit" value="Test"/>
+				<form action="/test" enctype="multipart/form-data" method="POST">
+					<input name="file" type="file"/>
+					<input type="submit" value="Submit Election Data"/>
 				</form>
 			</div>
 		</div>

@@ -20,9 +20,4 @@ public interface DistrictsRepository extends CrudRepository<Districts, Long> {
 	@Query("select d from Districts d where d.stateName.name = ?1 and d.congress=?2")
 	List<Districts> findAllByStateAndCongress(String name, Integer congress);
 	
-	//@Query("select d from Districts d, StateNames s where d.stateId = s.id and s.name=?1 and d.congress=?2")
-	//Districts findByStateAndCongress(String name, Integer congress);
-	
-	//@Query("select d from Districts d, StateNames s where d.stateId = s.id and s.name = ?1 and d.number = ?2 and d.congress = ?3")
-	//Districts findByStateAndNumberAndCongress(String stateName, Integer number, Integer congress);
 }

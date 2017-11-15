@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -35,32 +36,56 @@ public class PrincetonElectionDataUploaderImpl {
 		for(Row row: firstSheet) {
 			
 			//skip the first row
-			if(row.getRowNum() == 1) {
+			if(row.getRowNum() == 0) {
 				continue;
 			}
+			Cell stateCell = row.getCell(0);
+			Cell raceYearCell = row.getCell(1);
+			Cell districtNumberCell = row.getCell(2);
+			Cell republicanVotesCell = row.getCell(3);
+			Cell democratVotesCell = row.getCell(5);
+			Cell democratPercentageCell = row.getCell(7);
 			
-			String state = row.getCell(0).getStringCellValue();
 			
-			Integer raceYear = Integer.parseInt(row.getCell(1).getStringCellValue());
-			Integer congress = (1972 - 1786) / 2;
+			String state = stateCell.getStringCellValue();
 			
+			Integer raceYear = (int) (raceYearCell.getNumericCellValue());
+			Integer congress = (raceYear- 1786) / 2;
 			
-			Integer districtNumber = Integer.parseInt(row.getCell(2).getStringCellValue());
-			Integer republicanVotes = Integer.parseInt(row.getCell(4).getStringCellValue());
-			Integer democratVotes = Integer.parseInt(row.getCell(6).getStringCellValue());
-			Float democratVotePercentage = Float.parseFloat(row.getCell(7).getStringCellValue());
-			Float republicanVotePercentage = 1 - democratVotePercentage;
-			String winner = row.getCell(8).getStringCellValue();
-			if(winner.equals("R")) {
-				winner = "Republican";
+			Integer districtNumber = (int)(districtNumberCell.getNumericCellValue());
+			
+			Integer republicanVotes;
+			Integer democratVotes; 
+			
+			if(republicanVotesCell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+				republicanVotes = (int)(republicanVotesCell.getNumericCellValue());
 			}
 			else {
-				
-				winner = "Democrat";
+				republicanVotes = 0;
 			}
+			
+			if(democratVotesCell.getCellType() == Cell.CELL_TYPE_NUMERIC){
+				democratVotes = (int)(democratVotesCell.getNumericCellValue());
+			}
+			else {
+				democratVotes = 0;
+			}
+				
+			Float democratVotePercentage = (float)(democratPercentageCell.getNumericCellValue());
+			Float republicanVotePercentage = 1 - democratVotePercentage;
+			
+			
+			String electionWinner = "";
+			if(democratVotePercentage < 0.5) {
+				electionWinner = "Republican";
+			}
+			else {
+				electionWinner = "Democrat";
+			}
+
 			System.out.println("State: " + state + " Congress: " + congress
 					+ " District: " + districtNumber + " D Votes: " + democratVotes 
-					+ " R Votes: " + republicanVotes + " Winner: " + winner);
+					+ " R Votes: " + republicanVotes + " Winner: " + electionWinner);
 			
 			
 		}
