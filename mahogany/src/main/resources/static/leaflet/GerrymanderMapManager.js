@@ -1,6 +1,6 @@
 define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/request", "dojo/when"], 
 		function(declare, on, topic, domStyle, request, when){
-	var countryLayerStyle = function(x){
+	function stateLayerStyle(mapData){
 		return {
 			weight: 1,
 			color: "green",
@@ -132,12 +132,14 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 			
 		});
 	}
-	function getCountryMapRequest(mapData){
+	function setStateLayersRequest(mapData){
+		console.log("Requesting states");
 		request("stateData.json",{
 			method: "GET",
 			handleAs: "json"
 		}).response.then(function(success){
 			var stateData = success.data;
+			console.log("Add states to the layer");
 			mapData.stateLayer.addData(stateData);
 			
 		});
@@ -163,18 +165,21 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 			
 			this._mapData.map = this._createMap(map);
 			
+			console.log("Create district layer")
 			this._mapData.districtLayer = this._createDistrictLayer(this._mapData);
 			this._mapData.districtLayer.addTo(this._mapData.map);
 			
+			console.log("Create state layer")
 			this._mapData.stateLayer = this._createStateLayer(this._mapData);
 			this._mapData.stateLayer.addTo(this._mapData.map);
 			
 			this._mapData.mode = "State";
 			
+			console.log("Create zoom out button")
 			this._mapData.zoomOutBtn = this._createZoomOutBtn(this._mapData);
 			this._mapData.zoomOutBtn.addTo(this._mapData.map);
 			
-			getCountryMapRequest(this._mapData);
+			setStateLayersRequest(this._mapData);
 		},	
 		_createMap: function(map){
 			domStyle.set(map, "width", "100%");
@@ -190,15 +195,15 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 			var districtLayer = L.geoJson(null, {
 				style: setDistrictLayerStyle(mapData),
 				onEachFeature: setDistrictLayerEvents(mapData) 
-				}).bindPopup(setDistrictPopup(mapData));
+				});
 
 			return districtLayer;
 		},
 		_createStateLayer: function(mapData){
-			var stateLayer = L.geoJson.call(null, {
-					style: countryLayerStyle(),
+			var stateLayer = L.geoJson(null, {
+					style: stateLayerStyle(),
 					onEachFeature: setStateLayerEvents(mapData) 
-				}).bindPopup();
+				});
 			return stateLayer;
 		},
 		_createZoomOutBtn:function(mapData){

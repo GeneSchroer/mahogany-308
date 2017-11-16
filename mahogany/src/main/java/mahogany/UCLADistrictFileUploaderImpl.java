@@ -25,6 +25,7 @@ public class UCLADistrictFileUploaderImpl {
 	@Autowired MembersRepository membersRepo;
 	@Autowired MemberNamesRepository memberNamesRepo;
 	@Autowired PartiesRepository partiesRepo;
+	@Autowired BoundariesRepository boundariesRepo;
 	
 	public JsonNode convertFileToJsonNode(MultipartFile file) throws IOException {
 		
@@ -49,9 +50,20 @@ public class UCLADistrictFileUploaderImpl {
 		
 		
 		for(int index=0; index<districts.size(); ++index) {
-			ObjectNode districtObject = (ObjectNode) districts.get(index).get("properties");
+			ObjectNode districtPropertiesObject = (ObjectNode) districts.get(index).get("properties");
+			ObjectNode districtGeometryObject = (ObjectNode) districts.get(index).get("geometry");
+			
+			ArrayNode coordinatesArray = (ArrayNode) districtGeometryObject.get("coordinates");
+			String coordinatesString = coordinatesArray.toString();
+			
+			Boundaries boundariesEntity = boundariesRepo.findByCoordinatesString(coordinatesString);
+			if(boundariesEntity == null) {
+				boundariesEntity = new Boundaries();
+				boundariesEntity.setCoordinatesString(coordinatesString);
+				boundariesRepo.save(boundariesEntity);
+			}
 			//System.out.println(districtObject.toString());
-			String stateName = districtObject.get("statename").asText();
+			String stateName = districtPropertiesObject.get("statename").asText();
 			
 			StateNames stateNamesEntity = stateNamesRepo.findByName(stateName);
 			if (stateNamesEntity == null) {
@@ -60,16 +72,16 @@ public class UCLADistrictFileUploaderImpl {
 				stateNamesRepo.save(stateNamesEntity);
 			}
 			
-			int startCongress = districtObject.get("startcong").asInt();
-			int endCongress = districtObject.get("endcong").asInt();
-			int districtNumber = districtObject.get("district").asInt();
+			int startCongress = districtPropertiesObject.get("startcong").asInt();
+			int endCongress = districtPropertiesObject.get("endcong").asInt();
+			int districtNumber = districtPropertiesObject.get("district").asInt();
 			
 			System.out.println("Reading district " + districtNumber 
 								+ " for state " + stateName
 								+ " from " + startCongress + " to " + endCongress + ".");
 			
 			// Data for all members of congress during this time period
-			ObjectNode sessionListObject= (ObjectNode)districtObject.get("member");
+			ObjectNode sessionListObject= (ObjectNode)districtPropertiesObject.get("member");
 			
 			for(int currentCongress = startCongress; currentCongress <= endCongress; ++currentCongress) {
 				System.out.println("Creating Districts Entity for session " + currentCongress);
@@ -81,7 +93,7 @@ public class UCLADistrictFileUploaderImpl {
 					districtsEntity.setCongress(currentCongress);
 					districtsEntity.setNumber(districtNumber);
 					districtsEntity.setStateName(stateNamesEntity);
-					//districtsEntity.setStateId(stateNamesEntity.getId());
+					districtsEntity.setBoundaries(boundariesEntity);
 					districtsRepo.save(districtsEntity);
 				}
 				System.out.println("Getting congressional members for district " + districtNumber + ", session " + currentCongress);
