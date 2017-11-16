@@ -1,5 +1,6 @@
 package mahogany;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -10,29 +11,48 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Component
 public class GeoJsonUtils {
 	
-	@Autowired
-	private StateNamesRepository stateNamesRepository;
 	
 	
-	public JsonNode createDistrictBoundariesJson(List<Districts> districtList) {
-		ObjectNode districtsJson = new ObjectMapper().createObjectNode();
+	public JsonNode createDistrictBoundariesJson(List<Districts> districtList) throws JsonProcessingException, IOException {
+		ObjectNode districtsJsonNode = new ObjectMapper().createObjectNode();
 		
-		districtsJson.put("type", "FeaturesCollection");
-		ArrayNode featuresArray = districtsJson.putArray("features");
+		districtsJsonNode.put("type", "FeatureCollection");
+		ArrayNode featuresArray = districtsJsonNode.putArray("features");
 		
 		for(Districts district: districtList) {
+			ObjectNode featureNode= featuresArray.objectNode();
+			featureNode.put("type", "Feature");
+			ObjectNode propertiesNode = featureNode.putObject("properties");
+			propertiesNode.put("id", district.getId());
+			
+			
+			ObjectNode geometryNode = featureNode.putObject("geometry");
+			geometryNode.put("type", "MultiPolygon");
+			
+			String coordinatesString = district.getBoundaries().getCoordinatesString();
+			
+			ObjectMapper jsonNodeMapper = new ObjectMapper();
+			ObjectReader jsonNodeReader = jsonNodeMapper.reader();
+			geometryNode.putArray("coordinates");
+			ArrayNode coordinatesNode = (ArrayNode)jsonNodeReader.readTree(coordinatesString);
+			geometryNode.replace("coordinates", coordinatesNode);
 			
 		}
 		
-		return (JsonNode) districtsJson;
+		System.out.println(districtsJsonNode.toString());
+		
+		return (JsonNode) districtsJsonNode;
 	}
 	
 	

@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 @Controller
 public class GerrymanderController {
 
@@ -34,7 +36,13 @@ public class GerrymanderController {
 		return "gerrymander";
 	}
 	
-	
+	@RequestMapping("/districtBoundariesRequest")
+	public JsonNode getDistrictBoundariesRequest(@RequestParam(name="state")String state, 
+											@RequestParam(name="congress") int congress) {
+		JsonNode districtJsonNode = helper.getDistrictBoundaries(state, congress);
+		
+		return districtJsonNode;
+	}
 	
 	@RequestMapping("/home")
 	public String login() {

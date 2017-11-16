@@ -120,9 +120,14 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 	
 	function getDistrictsRequest(mapData){
 		
-		var jsonStatefile = mapData.state + mapData.congress + ".json"; 
 		
-		request(jsonStatefile, {
+		
+		request("/districtBoundariesRequest", {
+			method: "POST",
+			data: {
+				state: mapData.state
+				congress: mapData.congress
+			},
 			handleAs: 'json'
 		}).response.then(function(success){
 			topic.publish("gerrymander/getDistricts/success", success);
