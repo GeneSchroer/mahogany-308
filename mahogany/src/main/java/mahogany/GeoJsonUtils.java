@@ -31,7 +31,7 @@ public class GeoJsonUtils {
 		ArrayNode featuresArray = districtsJsonNode.putArray("features");
 		
 		for(Districts district: districtList) {
-			ObjectNode featureNode= featuresArray.objectNode();
+			ObjectNode featureNode= featuresArray.addObject();
 			featureNode.put("type", "Feature");
 			ObjectNode propertiesNode = featureNode.putObject("properties");
 			propertiesNode.put("id", district.getId());
@@ -47,10 +47,8 @@ public class GeoJsonUtils {
 			geometryNode.putArray("coordinates");
 			ArrayNode coordinatesNode = (ArrayNode)jsonNodeReader.readTree(coordinatesString);
 			geometryNode.replace("coordinates", coordinatesNode);
-			
 		}
-		
-		System.out.println(districtsJsonNode.toString());
+		//System.out.println(districtsJsonNode.toString());
 		
 		return (JsonNode) districtsJsonNode;
 	}

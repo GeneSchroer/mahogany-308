@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -37,7 +37,7 @@ public class GerrymanderController {
 	}
 	
 	@RequestMapping("/districtBoundariesRequest")
-	public JsonNode getDistrictBoundariesRequest(@RequestParam(name="state")String state, 
+	public @ResponseBody JsonNode getDistrictBoundariesRequest(@RequestParam(name="state")String state, 
 											@RequestParam(name="congress") int congress) {
 		JsonNode districtJsonNode = helper.getDistrictBoundaries(state, congress);
 		

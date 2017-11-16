@@ -16,6 +16,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 	}
 	
 	function setHighlightColor(feature, mapData){
+		return "lime";
 		var party;
 		//console.log(mapData.year);
 		var congress = feature.properties.member[mapData.congress];
@@ -34,6 +35,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 	}
 	
 	function setColor(feature, mapData){
+		return "green";
 		var party;
 		//console.log(mapData.year);
 		var congress = feature.properties.member[mapData.congress];
@@ -122,15 +124,16 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 		
 		
 		
-		request("/districtBoundariesRequest", {
+		request("districtBoundariesRequest", {
 			method: "POST",
 			data: {
-				state: mapData.state
+				state: mapData.state,
 				congress: mapData.congress
 			},
 			handleAs: 'json'
 		}).response.then(function(success){
-			topic.publish("gerrymander/getDistricts/success", success);
+			console.log(success.data);
+			//topic.publish("gerrymander/getDistricts/success", success);
 			var districtData = success.data;
 			mapData.districtLayer.clearLayers();
 			mapData.districtLayer.addData(districtData);

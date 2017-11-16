@@ -1,11 +1,14 @@
 package mahogany;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -31,6 +34,9 @@ public class Districts {
 	
 	@OneToOne(mappedBy="district")
 	private Elections election;
+	
+	@OneToMany(mappedBy="district")
+	private List<Members> members;
 	
 	protected Districts() {
 		
@@ -78,5 +84,13 @@ public class Districts {
 	
 	public void setElection(Elections election) {
 		this.election = election;
+	}
+	
+	public List<Members> getMembers(){
+		return members;
+	}
+	
+	public void setMembers(List<Members> members) {
+		this.members = members;
 	}
 }
