@@ -47,7 +47,13 @@ public class GerrymanderHelper {
 	}
 	
 	
-	
+	public JsonNode buildDistrictMetrics(String metric, String state, Integer congress) {
+		ArrayList<Districts> districtList = (ArrayList<Districts>)districtsRepo.findAllByStateAndCongress(state, congress);
+		
+		JsonNode metricsJson = null;
+		
+		return metricsJson;
+	}
 	
 	public void uploadFiles(MultipartFile[] files){
 		

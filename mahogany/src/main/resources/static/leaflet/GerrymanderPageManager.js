@@ -14,13 +14,15 @@ define(["dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/dom-style",
 			this._pageElements.congressSelector = builder.congressSelector;
 			this._pageElements.repTable = builder.repTable;
 			this._pageElements.partyCheckbox = builder.partyCheckbox;
-			
+			this._pageElements.metricSelectForm = builder.metricSelectForm;
 			
 			//console.log(builder.yearSelector);
 			this._initializeCongressSelector(this._pageElements);
 			this._initializeRepTable(this._pageElements);
 			this._initializePartyCheckbox(this._pageElements);
+			this._initializeMetricSelectForm(this._pageElements);
 		},
+		
 		_initializeCongressSelector: function(pageElements){
 			pageElements.mapManager.setCongress(pageElements.congressSelector.value);
 			on(registry.byId(pageElements.congressSelector), "change", function(){
@@ -61,6 +63,13 @@ define(["dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/dom-style",
 		},
 		_initializePartyCheckbox: function(){
 			
+		},
+		_initializeMetricSelectForm: function(pageElements){
+			var metricRadioButtons = pageElements.metricSelectForm;
+			on(metricRadioButtons, "click", function(e){
+				pageElements.mapManager.setMetric(metricRadioButtons.metric.value);
+			});
+			
 		}
 		
 		
@@ -73,6 +82,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/dom-style",
 		congressSelector: null,
 		repTable: null,
 		partyCheckbox: null,
+		metricSelectForm: null,
 		addMap: function(map){
 			this.map = map;
 			return this;
@@ -87,6 +97,10 @@ define(["dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/dom-style",
 		},
 		addPartyCheckbox: function(checkbox){
 			this.partyCheckbox = checkbox;
+			return this;
+		},
+		addMetricSelectForm: function(form){
+			this.metricSelectForm = form;
 			return this;
 		},
 		build: function(){

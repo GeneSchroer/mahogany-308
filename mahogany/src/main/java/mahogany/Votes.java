@@ -16,33 +16,25 @@ public class Votes {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
-	private Long electionId;
-	private Long partyId;
 	private Integer count;
 	private Float percentage;
 	
 	@ManyToOne
-	@JoinColumn(name="partyId", updatable=false, insertable=false)
+	@JoinColumn(name="partyId")
 	private Parties party;
 	
 	@ManyToOne
-	@JoinColumn(name="electionId", insertable=false, updatable=false)
+	@JoinColumn(name="electionId")
 	private Elections election;
 	
 	public Long getId() {
 		return id;
 	}
-	public Long getElectionId() {
-		return electionId;
+	public Parties getParty() {
+		return party;
 	}
-	public void setElectionId(Long electionId) {
-		this.electionId = electionId;
-	}
-	public Long getPartyId() {
-		return partyId;
-	}
-	public void setPartyId(Long partyId) {
-		this.partyId = partyId;
+	public void setParty(Parties party) {
+		this.party= party;
 	}
 	public Integer getCount() {
 		return count;
@@ -55,5 +47,13 @@ public class Votes {
 	}
 	public void setPercentage(Float percentage) {
 		this.percentage = percentage;
+	}
+	
+	public Elections getElection() {
+		return election;
+	}
+	
+	public void setElection(Elections election) {
+		this.election = election;
 	}
 }

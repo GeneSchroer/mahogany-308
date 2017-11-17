@@ -247,6 +247,10 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 			else{
 				getDistrictsRequest(this._mapData);
 			}
+		},
+		setMetric: function(metric){
+			this._mapData.metric = metric; 
+			metricDataRequest(this._mapData);
 		}
 	
 		
@@ -255,7 +259,23 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 		
 	});
 	
-
+	function metricDataRequest(mapData){
+		
+		request("/metricDataRequest",{
+			method: "GET",
+			query: {
+				state: mapData.state,
+				congress: mapData.congress,
+				metric: mapData.metric
+			},
+			handleAs: "json"
+		}).response.then(function(success){
+			
+		});
+		
+		
+		
+	}
 	
 	
 	return {

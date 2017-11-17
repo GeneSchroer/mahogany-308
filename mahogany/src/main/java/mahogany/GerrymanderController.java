@@ -38,10 +38,21 @@ public class GerrymanderController {
 	
 	@RequestMapping("/districtBoundariesRequest")
 	public @ResponseBody JsonNode getDistrictBoundariesRequest(@RequestParam(name="state")String state, 
-											@RequestParam(name="congress") int congress) {
+																	@RequestParam(name="congress") int congress) {
 		JsonNode districtJsonNode = helper.getDistrictBoundaries(state, congress);
 		
 		return districtJsonNode;
+	}
+	
+	@RequestMapping("/metricDataRequest")
+	public @ResponseBody JsonNode getDistrictMetricsRequest(@RequestParam(name="metric")String metric,
+																@RequestParam(name="state") String state,
+																	@RequestParam(name="congress")Integer congress) {
+		
+		JsonNode metricsJsonNode = helper.buildDistrictMetrics(metric, state, congress);
+		
+		return metricsJsonNode;
+		
 	}
 	
 	@RequestMapping("/home")
