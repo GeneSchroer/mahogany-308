@@ -5,8 +5,8 @@ import java.util.Map;
 
 import mahogany.Districts;
 
-public interface AlgorithmTest<T> {
+public interface AlgorithmTest<T extends TestResult> {
 
-	Map<String, TestResult<T>> generateTestResults(List<Districts> districts);
+	T generateTestResults(List<Districts> districts);
 	
 }

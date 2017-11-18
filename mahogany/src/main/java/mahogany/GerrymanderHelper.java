@@ -26,6 +26,7 @@ public class GerrymanderHelper {
 	@Autowired GeoJsonUtils geoJsonUtils;
 	
 	
+	
 	public JsonNode getDistrictBoundaries(String state, int congress) {
 		ArrayList<Districts> districtList = (ArrayList<Districts>)districtsRepo.findAllByStateAndCongress(state, congress);
 		
@@ -49,6 +50,8 @@ public class GerrymanderHelper {
 	
 	public JsonNode buildDistrictMetrics(String metric, String state, Integer congress) {
 		ArrayList<Districts> districtList = (ArrayList<Districts>)districtsRepo.findAllByStateAndCongress(state, congress);
+		
+		
 		
 		JsonNode metricsJson = null;
 		
