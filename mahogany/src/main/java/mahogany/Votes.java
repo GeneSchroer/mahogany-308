@@ -16,7 +16,7 @@ public class Votes {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
-	private Integer count;
+	private Integer votes;
 	private Float percentage;
 	
 	@ManyToOne
@@ -36,11 +36,11 @@ public class Votes {
 	public void setParty(Parties party) {
 		this.party= party;
 	}
-	public Integer getCount() {
-		return count;
+	public Integer getVotes() {
+		return votes;
 	}
-	public void setCount(Integer count) {
-		this.count = count;
+	public void setVotes(Integer count) {
+		this.votes = count;
 	}
 	public Float getPercentage() {
 		return percentage;

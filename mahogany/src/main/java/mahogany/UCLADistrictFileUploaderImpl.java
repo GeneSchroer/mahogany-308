@@ -26,7 +26,7 @@ public class UCLADistrictFileUploaderImpl {
 	@Autowired MemberNamesRepository memberNamesRepo;
 	@Autowired PartiesRepository partiesRepo;
 	@Autowired BoundariesRepository boundariesRepo;
-	
+	@Autowired ElectionsRepository electionsRepo;
 	public JsonNode convertFileToJsonNode(MultipartFile file) throws IOException {
 		
 		/* used to convert the file from a jsonStrig to a JsonNode object*/
@@ -93,9 +93,10 @@ public class UCLADistrictFileUploaderImpl {
 					districtsEntity.setCongress(currentCongress);
 					districtsEntity.setNumber(districtNumber);
 					districtsEntity.setStateName(stateNamesEntity);
-					districtsEntity.setBoundaries(boundariesEntity);
-					districtsRepo.save(districtsEntity);
+					
 				}
+				districtsEntity.setBoundaries(boundariesEntity);
+				districtsRepo.save(districtsEntity);
 				System.out.println("Getting congressional members for district " + districtNumber + ", session " + currentCongress);
 				// list of all congressmen from this district during this session of congress
 				Iterator<JsonNode> memberList = sessionListObject.get(String.valueOf(currentCongress)).iterator();
@@ -130,7 +131,13 @@ public class UCLADistrictFileUploaderImpl {
 						membersEntity.setDistrictId(districtsEntity.getId());
 						membersRepo.save(membersEntity);
 					}
+					Elections electionsEntity = electionsRepo.findByDistrict(districtsEntity);
+					if(electionsEntity != null) {
+						electionsEntity.setWinner(membersEntity);
+						electionsRepo.save(electionsEntity);
+					}
 				}
+				
 				districtList.add(districtsEntity);
 			}
 			

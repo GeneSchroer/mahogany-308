@@ -28,10 +28,16 @@ public class Elections {
 	@JoinColumn(name="winnerId")
 	private Members winner;
 	
+
 	@OneToMany(mappedBy="election")
 	private List<Votes> votes;
 	
+	@ManyToOne
+	@JoinColumn(name="partyId")
+	private Parties party;
 	
+	
+
 	protected Elections() {
 		
 	}
@@ -61,4 +67,13 @@ public class Elections {
 	public void setVotes(List<Votes> votes) {
 		this.votes = votes;
 	}
+	
+	public Parties getParty() {
+		return party;
+	}
+
+	public void setParty(Parties party) {
+		this.party = party;
+	}
+	
 }

@@ -58,27 +58,30 @@ public class GerrymanderHelper {
 		return metricsJson;
 	}
 	
-	public void uploadFiles(MultipartFile[] files){
+	public void uploadDistrictFiles(MultipartFile[] files, Source source){
 		
-		for(MultipartFile file: files) {
+		if(source == Source.UCLA) {
+			for(MultipartFile file: files) {
+				try {
+					ObjectNode fileJsonObject = (ObjectNode)uclaDistrictConverter.convertFileToJsonNode(file);
+					uclaDistrictConverter.uploadJsonToDatabase(fileJsonObject);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	public void uploadElectionFile(MultipartFile file, Source source) {
+		if(source == Source.PRINCETON) {
 			try {
-				ObjectNode fileJsonObject = (ObjectNode)uclaDistrictConverter.convertFileToJsonNode(file);
-				uclaDistrictConverter.uploadJsonToDatabase(fileJsonObject);
+				Workbook electionWorkbook = princetonElectionUploader.convertFileToExcel(file);
+				princetonElectionUploader.uploadElectionDataToDatabase(electionWorkbook);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
-		
-	}
-	
-	public void uploadElectionFile(MultipartFile file) {
-		try {
-			Workbook electionWorkbook = princetonElectionUploader.convertFileToExcel(file);
-			princetonElectionUploader.uploadElectionDataToDatabase(electionWorkbook);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 	

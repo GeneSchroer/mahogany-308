@@ -60,32 +60,22 @@ public class GerrymanderController {
 		return "home";
 	}
 	
-	@RequestMapping("/admin/upload")
-	public String uploadFile(@RequestParam("file")MultipartFile[] files) {
+	@RequestMapping("/upload")
+	public String uclaDistrictUploadRequest(@RequestParam("file")MultipartFile[] files) {
 		//helper.setDistrictsRepository(districtsRepository);
 
-		helper.uploadFiles(files);
+		helper.uploadDistrictFiles(files, Source.UCLA);
 		
 		
 		return "gerrymander";
 	}
 	
 	@RequestMapping("/test")
-	public String test(@RequestParam("file")MultipartFile file) {
+	public String princetonElectionDataUploadRequest(@RequestParam("file")MultipartFile file) {
 		
-		helper.uploadElectionFile(file);
-		//Iterable<StateNames> x = stateNamesRepository.findAll();//findFirstByName("Alaska");
 		
-	//	for(StateNames state: x) {
-	///		System.out.println(state.getName());
-	//	}
 		
-		//Districts d = districtsRepository.findByStateAndCongress("Alabama", 112);
-		//System.out.println(d.getId());
-
-		
-		//System.out.println(stateNamesRepository.findFirstByName("Alaska").getName());
-		//System.out.println(x.getName() + " " + x.getStateId());
+		helper.uploadElectionFile(file, Source.PRINCETON);
 		
 		return "gerrymander";
 	}

@@ -2,6 +2,8 @@ package mahogany;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -21,6 +23,8 @@ public class PrincetonElectionDataUploaderImpl {
 	@Autowired MemberNamesRepository memberNamesRepo;
 	@Autowired PartiesRepository partiesRepo;
 	@Autowired ElectionsRepository electionsRepo;
+	@Autowired VotesRepository votesRepo;
+	
 	
 	public Workbook convertFileToExcel(MultipartFile file) throws IOException {
 		FileInputStream input = (FileInputStream)file.getInputStream();
@@ -47,7 +51,7 @@ public class PrincetonElectionDataUploaderImpl {
 			Cell democratPercentageCell = row.getCell(7);
 			
 			
-			String state = stateCell.getStringCellValue();
+			String stateName = stateCell.getStringCellValue();
 			
 			Integer raceYear = (int) (raceYearCell.getNumericCellValue());
 			Integer congress = (raceYear- 1786) / 2;
@@ -75,18 +79,95 @@ public class PrincetonElectionDataUploaderImpl {
 			Float republicanVotePercentage = 1 - democratVotePercentage;
 			
 			
-			String electionWinner = "";
+			String winningParty = "";
 			if(democratVotePercentage < 0.5) {
-				electionWinner = "Republican";
+				winningParty = "Republican";
 			}
 			else {
-				electionWinner = "Democrat";
+				winningParty = "Democrat";
 			}
 
-			System.out.println("State: " + state + " Congress: " + congress
-					+ " District: " + districtNumber + " D Votes: " + democratVotes 
-					+ " R Votes: " + republicanVotes + " Winner: " + electionWinner);
+			//System.out.println("State: " + state + " Congress: " + congress
+				//	+ " District: " + districtNumber + " D Votes: " + democratVotes 
+					//+ " R Votes: " + republicanVotes + " Winner: " + electionWinner);
+			StateNames stateNamesEntity = stateNamesRepo.findByName(stateName);
+			if(stateNamesEntity == null) {
+				stateNamesEntity = new StateNames();
+				stateNamesEntity.setName(stateName);
+				stateNamesRepo.save(stateNamesEntity);
+			}
 			
+			Districts districtsEntity = districtsRepo.findByStateNameAndNumberAndCongress(stateName, districtNumber, congress);
+			if(districtsEntity == null) {
+				districtsEntity = new Districts();
+				districtsEntity.setStateName(stateNamesEntity);
+				districtsEntity.setCongress(congress);
+				districtsEntity.setNumber(districtNumber);
+				districtsRepo.save(districtsEntity);
+			}
+			Parties republicanPartyEntity = partiesRepo.findByName("Republican");
+			if(republicanPartyEntity == null) {
+				republicanPartyEntity = new Parties();
+				republicanPartyEntity.setName("Republican");
+				partiesRepo.save(republicanPartyEntity);
+			}
+			Parties democratPartyEntity = partiesRepo.findByName("Democrat");
+			if(democratPartyEntity == null) {
+				democratPartyEntity = new Parties();
+				democratPartyEntity.setName("Democrat");
+				partiesRepo.save(democratPartyEntity);
+			}
+			
+			Elections electionsEntity = electionsRepo.findByDistrict(districtsEntity);
+			if(electionsEntity == null) {
+				electionsEntity = new Elections();
+				electionsEntity.setDistrict(districtsEntity);
+			}
+			
+			if(winningParty.equals("Republican")) {
+				electionsEntity.setParty(republicanPartyEntity);
+			}
+			else {
+				electionsEntity.setParty(democratPartyEntity);
+			}
+			
+			Members membersEntity = membersRepo.findFirstByDistrict(districtsEntity);
+			if(membersEntity != null) {
+				electionsEntity.setWinner(membersEntity);
+			
+			}
+			
+			electionsEntity.setDistrict(districtsEntity);
+			
+			electionsRepo.save(electionsEntity);
+			
+			Votes democratVotesEntity = votesRepo.findByDistrictAndParty(districtsEntity, democratPartyEntity);
+			if(democratVotesEntity == null) {
+				democratVotesEntity = new Votes();
+				democratVotesEntity.setParty(democratPartyEntity);
+				democratVotesEntity.setElection(electionsEntity);
+			}
+			democratVotesEntity.setVotes(democratVotes);
+			democratVotesEntity.setPercentage(democratVotePercentage);
+			
+			Votes republicanVotesEntity = votesRepo.findByDistrictAndParty(districtsEntity, republicanPartyEntity);
+			if(republicanVotesEntity == null) {
+				republicanVotesEntity = new Votes();
+				republicanVotesEntity.setParty(republicanPartyEntity);
+				republicanVotesEntity.setElection(electionsEntity);
+			}
+			republicanVotesEntity.setVotes(republicanVotes);
+			republicanVotesEntity.setPercentage(republicanVotePercentage);
+			
+			List<Votes> electionVoteList = new ArrayList<Votes>();
+			
+			electionVoteList.add(republicanVotesEntity);
+			electionVoteList.add(democratVotesEntity);
+			votesRepo.save(electionVoteList);
+			
+			
+			
+			electionsEntity.setVotes(electionVoteList);
 			
 		}
 	

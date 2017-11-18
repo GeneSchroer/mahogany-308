@@ -46,7 +46,7 @@ public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapResults>{
 				String party = electionVote.getParty().getName();
 				
 				if(party.equals("Democrat")) {
-					democratVotes = electionVote.getCount();
+					democratVotes = electionVote.getVotes();
 					democratPercent = electionVote.getPercentage();
 					democratWastedVotes = getWastedVotes(democratVotes, democratPercent);
 					
@@ -57,7 +57,7 @@ public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapResults>{
 					wastedVoteMap.put("Democrat", voteData);
 				}
 				else if(party.equals("Republican")) {
-					republicanVotes = electionVote.getCount();
+					republicanVotes = electionVote.getVotes();
 					republicanPercent = electionVote.getPercentage();
 					republicanWastedVotes += getWastedVotes(republicanVotes, republicanPercent); 
 					
