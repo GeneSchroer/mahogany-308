@@ -44,11 +44,14 @@ public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapResults>{
 			Elections districtElection = district.getElection();
 			if(districtElection.getParty().getName().equals("Democrat")) {
 				++totalDemocratSeats;
+				districtData.setWinningParty("Democrat");
 			}
 			else if (districtElection.getParty().getName().equals("Republican")) {
 				++totalRepublicanSeats;
+				districtData.setWinningParty("Republican");
 			}
 		
+			
 			for(Votes electionVote: districtElection.getVotes()) {
 				WastedVoteData voteData = new WastedVoteData();
 				String party = electionVote.getParty().getName();

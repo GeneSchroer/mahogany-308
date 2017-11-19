@@ -15,62 +15,66 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 		};
 	}
 	
-	function setHighlightColor(feature, mapData){
-		return "lime";
-		var party;
-		//console.log(mapData.year);
-		var congress = feature.properties.member[mapData.congress];
-		for (member in congress){
-			//console.log(member);
-			party = congress[member].party;
-			break;
-		}                
-		//console.log(party);
-		if (party == "Republican")
-			return "darkred";
-		else if (party == "Democrat")
-			return "navy";
-		else
-			return "lime";
+	function setDefaultHighlightColor(feature, mapData){
+		var winningParty = feature.properties.winningParty;
+		
+		if(winningParty){
+			if(winningParty == "Democrat"){
+				return "navy";
+			}
+			else if(winningParty == "Republican"){
+				return "darkred";
+			}
+			else{
+				return "lime";
+			}
+		}
+		else{
+			return "lightgray";
+		}
 	}
 	
-	function setColor(feature, mapData){
-		return "green";
-		var party;
-		//console.log(mapData.year);
-		var congress = feature.properties.member[mapData.congress];
-		for (member in congress){
-			//console.log(member);
-			party = congress[member].party;
-			break;
-		}                
-		//console.log(party);
-		if (party == "Republican")
-			return "red";
-		else if (party == "Democrat")
-			return "blue";
-		else
-			return "green";
+	function setDefaultColor(feature, mapData){
+		
+		var winningParty = feature.properties.winningParty;
+		
+		if(winningParty){
+			if(winningParty == "Democrat"){
+				return "blue";
+			}
+			else if(winningParty == "Republican"){
+				return "red";
+			}
+			else{
+				return "green";
+			}
+		}
+		else{
+			return "gray";
+		}
 	}
 	
-	function setDistrictLayerEvents(mapData){
+	function setDefaultDistrictLayerEvents(mapData){
 		return function (feature, layer){
 			layer.on({
 				mouseover: function(e){
 					layer = e.target;
 					layer.setStyle({
 						weight: 0.5,
-						//color: 'green',
-						fillColor: setHighlightColor(layer.feature, mapData),
+						fillColor: setDefaultHighlightColor(layer.feature, mapData),
 						dataArray:' ',
-						fillOpacity: 0.8
+						fillOpacity: 1
 					});
+					
 				},
 				mouseout:function(e){
 					mapData.districtLayer.resetStyle(e.target);
 				},
 				click: function(e){
-					
+					var popup = L.popup()
+					.setLatLng(e.latlng)
+					.setContent('popup')
+					.openOn(mapData.map);
 				}
 			});
 		};
@@ -81,7 +85,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 			return{
 				weight: 0.5,
 				color: "yellow",
-				fillColor: setColor(feature, mapData),
+				fillColor: setDefaultColor(feature, mapData),
 				
 				dataArray: ' ',
 				fillOpacity: 0.8
@@ -202,7 +206,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 		_createDistrictLayer: function(mapData){
 			var districtLayer = L.geoJson(null, {
 				style: setDistrictLayerStyle(mapData),
-				onEachFeature: setDistrictLayerEvents(mapData) 
+				onEachFeature: setDefaultDistrictLayerEvents(mapData) 
 				});
 
 			return districtLayer;
@@ -273,8 +277,41 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 			},
 			handleAs: "json"
 		}).response.then(function(success){
-			
+			mapData.metricData = success.data;
+			setEfficiencyGapLayer(mapData);
 		});
+
+	}
+	
+
+	function efficiencyGapStyle(mapData){
+		return function(feature){
+			return{
+				fillOpacity: 0.8,
+				weight: 1,
+				color: "yellow",
+				fillColor: x(mapData, feature.properties.id)
+
+			};
+		};
+	}
+	function x(mapData, id){
+		var districtId = id;
+		var metricData = mapData.metricData;
+		var districtData = metricData.districtData[districtId];
+		if(districtData.winningParty == "Democrat"){
+			return "blue";
+		}
+		else{
+			return "red";
+		}
+	}
+	function setEfficiencyGapLayer(mapData){
+		
+			mapData.districtLayer.setStyle(efficiencyGapStyle(mapData));
+		
+		
+			L.Util.setOptions(mapData.districtLayer, { style: efficiencyGapStyle(mapData)	});
 	}
 	
 	function metricDataRequest(mapData){

@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import mahogany.entities.Districts;
+import mahogany.entities.Elections;
 import mahogany.metrics.TestResult;
 
 @Component
@@ -38,7 +39,11 @@ public class GeoJsonUtils {
 			featureNode.put("type", "Feature");
 			ObjectNode propertiesNode = featureNode.putObject("properties");
 			propertiesNode.put("id", district.getId());
-			
+			Elections election = district.getElection();
+			if(election != null) {
+				String winningParty = election.getParty().getName();
+				propertiesNode.put("winningParty", winningParty);
+			}
 			
 			ObjectNode geometryNode = featureNode.putObject("geometry");
 			geometryNode.put("type", "MultiPolygon");
