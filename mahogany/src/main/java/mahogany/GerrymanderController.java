@@ -10,6 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import mahogany.metrics.MetricOption;
+
 @Controller
 public class GerrymanderController {
 
@@ -44,12 +46,11 @@ public class GerrymanderController {
 		return districtJsonNode;
 	}
 	
-	@RequestMapping("/metricDataRequest")
-	public @ResponseBody JsonNode getDistrictMetricsRequest(@RequestParam(name="metric")String metric,
-																@RequestParam(name="state") String state,
-																	@RequestParam(name="congress")Integer congress) {
+	@RequestMapping("/efficiencyGapRequest")
+	public @ResponseBody JsonNode getDistrictMetricsRequest(@RequestParam(name="state") String state,
+																@RequestParam(name="congress")Integer congress) {
 		
-		JsonNode metricsJsonNode = helper.buildDistrictMetrics(metric, state, congress);
+		JsonNode metricsJsonNode = helper.buildDistrictMetrics(MetricOption.EFFICIENCY_GAP, state, congress);
 		
 		return metricsJsonNode;
 		

@@ -24,7 +24,10 @@ public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapResults>{
 		
 		
 		Integer totalDemocratVotes = 0;
+		Integer totalDemocratSeats = 0;
 		Integer totalRepublicanVotes = 0;
+		Integer totalRepublicanSeats = 0;
+		Float efficiencyGap = 0.0f;
 		
 		
 		for(Districts district: districtList) {
@@ -39,7 +42,12 @@ public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapResults>{
 			Integer republicanWastedVotes = 0;
 
 			Elections districtElection = district.getElection();
-			
+			if(districtElection.getParty().getName().equals("Democrat")) {
+				++totalDemocratSeats;
+			}
+			else if (districtElection.getParty().getName().equals("Republican")) {
+				++totalRepublicanSeats;
+			}
 		
 			for(Votes electionVote: districtElection.getVotes()) {
 				WastedVoteData voteData = new WastedVoteData();
@@ -49,6 +57,7 @@ public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapResults>{
 					democratVotes = electionVote.getVotes();
 					democratPercent = electionVote.getPercentage();
 					democratWastedVotes = getWastedVotes(democratVotes, democratPercent);
+					totalDemocratVotes += democratVotes;
 					
 					voteData.setVotes(democratVotes);
 					voteData.setPercentage(democratPercent);
@@ -60,6 +69,8 @@ public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapResults>{
 					republicanVotes = electionVote.getVotes();
 					republicanPercent = electionVote.getPercentage();
 					republicanWastedVotes += getWastedVotes(republicanVotes, republicanPercent); 
+					totalRepublicanVotes += republicanVotes;
+
 					
 					voteData.setVotes(republicanVotes);
 					voteData.setPercentage(republicanPercent);
@@ -68,15 +79,27 @@ public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapResults>{
 					wastedVoteMap.put("Republican", voteData);
 				}
 			}
-		
+			districtData.setVoteData(wastedVoteMap);
 			districtDataMap.put(district.getId().toString(), districtData);
-			totalDemocratVotes += democratVotes;
-			totalRepublicanVotes += republicanVotes;
-
+			
+			
 		}
+		
+		efficiencyResult.setDistrictData(districtDataMap);
+		efficiencyResult.setTotalDemocratVotes(totalDemocratVotes);
+		efficiencyResult.setTotalRepublicanVotes(totalRepublicanVotes);
+		efficiencyResult.setTotalDemocratSeats(totalDemocratSeats);
+		efficiencyResult.setTotalRepublicanSeats(totalRepublicanSeats);
+		
+		Integer totalVotes = totalDemocratVotes + totalRepublicanVotes;
+		Integer totalSeats = totalDemocratSeats + totalRepublicanSeats;
+		
+		efficiencyGap = (float)(((double)totalRepublicanVotes/totalVotes) - 0.5) - 2 * (float)(((double)totalRepublicanSeats/totalSeats) - 0.5);
+		
+		efficiencyResult.setEfficiencyGap(efficiencyGap);
 		ObjectMapper x = new ObjectMapper();
-		System.out.println(x.valueToTree(districtDataMap));
-		return null;
+		System.out.println(x.valueToTree(efficiencyResult));
+		return efficiencyResult;
 	}
 
 	public Integer getWastedVotes(Integer votes, Float percentage) {

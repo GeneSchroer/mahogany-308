@@ -19,6 +19,8 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import mahogany.metrics.TestResult;
+
 @Component
 public class GeoJsonUtils {
 	
@@ -53,7 +55,13 @@ public class GeoJsonUtils {
 		return (JsonNode) districtsJsonNode;
 	}
 	
-	
+	public JsonNode generateMetricResultsJson(TestResult result) throws IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectReader reader = mapper.reader();
+		String metricResultsJsonString = mapper.writeValueAsString(result);
+		JsonNode metricResultJson = reader.readTree(metricResultsJsonString);
+		return metricResultJson;
+	}
 	
 	
 	public Integer getStateCode(String stateName) {

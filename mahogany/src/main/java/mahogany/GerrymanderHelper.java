@@ -10,7 +10,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import mahogany.metrics.DistrictData;
+import mahogany.metrics.EfficiencyGapResults;
+import mahogany.metrics.EfficiencyGapTest;
+import mahogany.metrics.MetricOption;
+import mahogany.metrics.TestResult;
 
 @Component
 public class GerrymanderHelper {
@@ -48,14 +55,28 @@ public class GerrymanderHelper {
 	}
 	
 	
-	public JsonNode buildDistrictMetrics(String metric, String state, Integer congress) {
+	public JsonNode buildDistrictMetrics(MetricOption metric, String state, Integer congress) {
 		ArrayList<Districts> districtList = (ArrayList<Districts>)districtsRepo.findAllByStateAndCongress(state, congress);
 		
+		if(metric == MetricOption.EFFICIENCY_GAP) {
+			EfficiencyGapTest x = new EfficiencyGapTest();
+			EfficiencyGapResults metricResults = x.generateTestResults(districtList);
 		
+			
+			
+			try {
+				JsonNode metricsJson = geoJsonUtils.generateMetricResultsJson(metricResults);
+				return metricsJson;
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
-		JsonNode metricsJson = null;
-		
-		return metricsJson;
+		return null;
 	}
 	
 	public void uploadDistrictFiles(MultipartFile[] files, Source source){

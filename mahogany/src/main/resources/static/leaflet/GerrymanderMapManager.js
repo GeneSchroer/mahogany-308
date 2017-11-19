@@ -249,8 +249,12 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 			}
 		},
 		setMetric: function(metric){
-			this._mapData.metric = metric; 
-			metricDataRequest(this._mapData);
+			this._mapData.metric = metric;
+			
+		//	metricDataRequest(this._mapData);
+			if(metric == "efficiencyGap"){
+				efficiencyGapRequest(this._mapData);
+			}
 		}
 	
 		
@@ -258,6 +262,20 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 		
 		
 	});
+	
+	function efficiencyGapRequest(mapData){
+
+		request("/efficiencyGapRequest",{
+			method: "GET",
+			query: {
+				state: mapData.state,
+				congress: mapData.congress
+			},
+			handleAs: "json"
+		}).response.then(function(success){
+			
+		});
+	}
 	
 	function metricDataRequest(mapData){
 		
