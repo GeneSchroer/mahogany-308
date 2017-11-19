@@ -7,9 +7,9 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import mahogany.Districts;
-import mahogany.Elections;
-import mahogany.Votes;
+import mahogany.entities.Districts;
+import mahogany.entities.Elections;
+import mahogany.entities.Votes;
 
 public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapResults>{
 
@@ -97,6 +97,9 @@ public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapResults>{
 		efficiencyGap = (float)(((double)totalRepublicanVotes/totalVotes) - 0.5) - 2 * (float)(((double)totalRepublicanSeats/totalSeats) - 0.5);
 		
 		efficiencyResult.setEfficiencyGap(efficiencyGap);
+		
+		efficiencyResult.setTestName(TestNames.EFFICIENCY_GAP);
+		
 		ObjectMapper x = new ObjectMapper();
 		System.out.println(x.valueToTree(efficiencyResult));
 		return efficiencyResult;

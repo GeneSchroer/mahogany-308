@@ -2,7 +2,7 @@ package mahogany.metrics;
 
 import java.util.List;
 
-import mahogany.Districts;
+import mahogany.entities.Districts;
 
 public class MetricTestService {
 
