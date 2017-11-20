@@ -36,9 +36,14 @@ public class GeoJsonUtils {
 		
 		for(Districts district: districtList) {
 			ObjectNode featureNode= featuresArray.addObject();
+			
 			featureNode.put("type", "Feature");
+			
 			ObjectNode propertiesNode = featureNode.putObject("properties");
+			
 			propertiesNode.put("id", district.getId());
+			propertiesNode.put("districtNumber", district.getNumber());
+			
 			Elections election = district.getElection();
 			if(election != null) {
 				String winningParty = election.getParty().getName();

@@ -1,10 +1,10 @@
 define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/request", "dojo/when"], 
 		function(declare, on, topic, domStyle, request, when){
-	var METRIC_DEFAULT_MODE = 0;
-	var METRIC_EFFICIENCY_GAP = 1;
+	var METRIC_DEFAULT_MODE = "defaultMode";
+	var METRIC_EFFICIENCY_GAP = "efficiency gap";
 	
-	var MAP_MODE_STATE = 101;
-	var MAP_MODE_DISTRICT = 102;
+	var MAP_MODE_STATE = "state";
+	var MAP_MODE_DISTRICT = "district";
 	
 	
 	function stateLayerStyle(mapData){
@@ -78,14 +78,27 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 					mapData.districtLayer.resetStyle(e.target);
 				},
 				click: function(e){
-					var popup = L.popup()
-					.setLatLng(e.latlng)
-					.setContent('popup')
-					.openOn(mapData.map);
+					electionLayerPopup(mapData, e);
 				}
 			});
 		};
 	}
+	
+	function electionLayerPopup(mapData, layer){
+		var districtNumber = layer.target.feature.properties.districtNumber;
+		var winningParty = layer.target.feature.properties.winningParty;
+		if(districtNumber < 10){
+			districtNumber = "0" + districtNumber;
+		}
+		var electionData = "District: " + districtNumber + "<br/>"
+							+ "Party: " + winningParty + "<br/>";
+							
+		var popup = L.popup()
+		.setLatLng(layer.latlng)
+		.setContent(electionData)
+		.openOn(mapData.map);
+	}
+	
 	function setDistrictLayerStyle(mapData){
 		return function(feature){
 			//console.log(mapData);
@@ -269,6 +282,9 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 				domStyle.set(this._div, "display", "");
 				L.DomEvent.on(this._div, 'click', function(evt){
 					mapData.districtLayer.clearLayers();
+					L.Util.setOptions(mapData.districtLayer, {style:null});
+					mapData.metricData = {};
+					
 					zoomOutBtn.disable();
 				});
 			};
@@ -377,24 +393,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 		L.Util.setOptions(mapData.districtLayer, {style: setDistrictLayerStyle(mapData)});
 	}
 	
-	function metricDataRequest(mapData){
 		
-		request("/metricDataRequest",{
-			method: "GET",
-			query: {
-				state: mapData.state,
-				congress: mapData.congress,
-				metric: mapData.metric
-			},
-			handleAs: "json"
-		}).response.then(function(success){
-			
-		});
-		
-		
-		
-	}
-	
 	
 	return {
 		create: function(map){
