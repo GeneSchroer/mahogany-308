@@ -15,7 +15,6 @@ define(["dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/dom-style",
 			this._initializeCongressSelector(this._pageElements);
 			this._initializeRepTable(this._pageElements);
 			this._initializePartyCheckbox(this._pageElements);
-			//this._initializeMetricSelectForm(this._pageElements);
 			this._initializeDefaultModeButton(this._pageElements);
 			this._initializeEfficiencyGapButton(this._pageElements);
 		},
@@ -59,13 +58,6 @@ define(["dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/dom-style",
 			});
 		},
 		_initializePartyCheckbox: function(){
-			
-		},
-		_initializeMetricSelectForm: function(pageElements){
-			var metricRadioButtons = pageElements.metricSelectForm;
-			on(metricRadioButtons, "click", function(e){
-				pageElements.mapManager.setMetric(metricRadioButtons.metric.value);
-			});
 			
 		},
 		_initializeDefaultModeButton: function(pageElements){
