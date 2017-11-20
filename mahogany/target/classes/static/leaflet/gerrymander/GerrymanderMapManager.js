@@ -202,12 +202,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 	
 	
 	var GerrymanderMapManager = L.Class.extend({
-		_map: null,
-		_stateLayer: null,
-		_districtLayer: null,
-		_zoomOutBtn: null,
-		_congress: null,
-		_state: null, 
+		
 		_mapData: null,
 		initialize: function(map){
 			this._constructGerrymanderMap(map);
