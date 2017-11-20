@@ -1,4 +1,4 @@
-define(["dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/dom-style", "dojo/request", "dojo/topic", "leaflet/GerrymanderMapManager", "dijit/registry"], 
+define(["dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/dom-style", "dojo/request", "dojo/topic", "leaflet/gerrymander/GerrymanderMapManager", "dijit/registry"], 
 		function(declare, on, domConstruct, domStyle, request, topic, GerrymanderMapManager, registry){
 	
 	
@@ -8,18 +8,10 @@ define(["dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/dom-style",
 		_yearSelector: null,
 		
 		constructor: function(builder){
-			//this.yearSelector = builder.yearSelector;
-			//console.log(JSON.parse(JSON.stringify(builder)))
-			this._pageElements = {};
-			this._pageElements.mapManager = GerrymanderMapManager.create(builder.map);
-			this._pageElements.congressSelector = builder.congressSelector;
-			this._pageElements.repTable = builder.repTable;
-			this._pageElements.partyCheckbox = builder.partyCheckbox;
-			this._pageElements.metricSelectForm = builder.metricSelectForm;
-			this._pageElements.defaultModeRadioBtn = builder.defaultModeRadioBtn;
-			this._pageElements.efficiencyGapRadioBtn = builder.efficiencyGapRadioBtn;
+			this._pageElements = builder;
 			
-			//console.log(builder.yearSelector);
+			
+			this._pageElements.mapManager = GerrymanderMapManager.create(this._pageElements.map);
 			this._initializeCongressSelector(this._pageElements);
 			this._initializeRepTable(this._pageElements);
 			this._initializePartyCheckbox(this._pageElements);
@@ -95,6 +87,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/dom-style",
 	
 	
 	return {
+		builder: {},
 		map: null,
 		congressSelector: null,
 		repTable: null,
@@ -103,35 +96,37 @@ define(["dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/dom-style",
 		defaultModeRadioBtn: null,
 		efficiencyGapRadioBtn: null,
 		addMap: function(map){
-			this.map = map;
+			this.builder.map = map;
 			return this;
 		},
 		addCongressSelector:function(select){
-			this.congressSelector = select;
+			this.builder.congressSelector = select;
 			return this;
 		},
 		addRepTable: function(table){
-			this.repTable = table;
+			this.builder.repTable = table;
 			return this;
 		},
 		addPartyCheckbox: function(checkbox){
-			this.partyCheckbox = checkbox;
+			this.buidler.partyCheckbox = checkbox;
 			return this;
 		},
 		addMetricSelectForm: function(form){
-			this.metricSelectForm = form;
+			this.builder.metricSelectForm = form;
 			return this;
 		},
 		addDefaultModeRadioButton: function(button){
-			this.defaultModeRadioBtn = button;
+			this.builder.defaultModeRadioBtn = button;
 			return this;
 		},
 		addEfficiencyGapRadioButton: function(button){
-			this.efficiencyGapRadioBtn = button;
+			this.builder.efficiencyGapRadioBtn = button;
 			return this;
 		},
 		build: function(){
-			return new GerrymanderPageManager(this);
+			//create copy of builder
+			var builderCopy = this.builder;
+			return new GerrymanderPageManager(builderCopy);
 		}
 	} 
 });
