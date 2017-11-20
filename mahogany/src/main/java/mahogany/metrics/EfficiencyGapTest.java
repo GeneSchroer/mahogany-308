@@ -1,25 +1,22 @@
 package mahogany.metrics;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import mahogany.entities.Districts;
 import mahogany.entities.Elections;
 import mahogany.entities.Votes;
 
 public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapResults>{
 
 	@Override
-	public EfficiencyGapResults  generateTestResults(List<Districts> districtList) {
+	public EfficiencyGapResults  generateTestResults(List<Elections> electionList) {
 
 		EfficiencyGapResults efficiencyResult = new EfficiencyGapResults();
 		
 		Map<String, DistrictData<WastedVoteData>> districtDataMap = new HashMap<String, DistrictData<WastedVoteData>>();
-		//efficiencyResult.setDistrictData(districtDataList);
 		
 		
 		
@@ -30,7 +27,7 @@ public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapResults>{
 		Float efficiencyGap = 0.0f;
 		
 		
-		for(Districts district: districtList) {
+		for(Elections election: electionList) {
 			DistrictData<WastedVoteData> districtData = new DistrictData<WastedVoteData>();
 			Map<String, WastedVoteData> wastedVoteMap = new HashMap<String, WastedVoteData>();
 			
@@ -41,18 +38,17 @@ public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapResults>{
 			Float republicanPercent = 0.0f;
 			Integer republicanWastedVotes = 0;
 
-			Elections districtElection = district.getElection();
-			if(districtElection.getParty().getName().equals("Democrat")) {
+			if(election.getParty().getName().equals("Democrat")) {
 				++totalDemocratSeats;
 				districtData.setWinningParty("Democrat");
 			}
-			else if (districtElection.getParty().getName().equals("Republican")) {
+			else if (election.getParty().getName().equals("Republican")) {
 				++totalRepublicanSeats;
 				districtData.setWinningParty("Republican");
 			}
 		
 			
-			for(Votes electionVote: districtElection.getVotes()) {
+			for(Votes electionVote: election.getVotes()) {
 				WastedVoteData voteData = new WastedVoteData();
 				String party = electionVote.getParty().getName();
 				
@@ -83,7 +79,7 @@ public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapResults>{
 				}
 			}
 			districtData.setVoteData(wastedVoteMap);
-			districtDataMap.put(district.getId().toString(), districtData);
+			districtDataMap.put(election.getId().toString(), districtData);
 			
 			
 		}

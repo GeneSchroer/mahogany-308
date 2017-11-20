@@ -17,20 +17,11 @@ import mahogany.utils.Source;
 @Controller
 public class GerrymanderController {
 
-	//@Autowired
-	//private StateNamesRepository stateNamesRepository;
-	
-	//@Autowired
-	//private DistrictsRepository districtsRepository;
 	
 	@Autowired
-	GerrymanderHelper helper; //= new GerrymanderHelper();
-	
+	GerrymanderHelper helper; 	
 	@RequestMapping("/")
 	public String loader(){
-		
-		//System.out.println("test1");
-		
 		return "index";
 	}
 	
@@ -48,11 +39,18 @@ public class GerrymanderController {
 		return districtJsonNode;
 	}
 	
+	@RequestMapping("/electionDataRequest")
+	public @ResponseBody JsonNode getElectionDataRequest(@RequestParam("state")String stateName,
+															@RequestParam("congress")Integer congress) {
+		JsonNode electionDataJsonNode = helper.buildDistrictMetrics(MetricOption.ELECTION_DATA, stateName, congress);
+		
+		return electionDataJsonNode;
+	}
 	@RequestMapping("/efficiencyGapRequest")
-	public @ResponseBody JsonNode getDistrictMetricsRequest(@RequestParam(name="state") String state,
+	public @ResponseBody JsonNode getDistrictMetricsRequest(@RequestParam(name="state") String stateName,
 																@RequestParam(name="congress")Integer congress) {
 		
-		JsonNode metricsJsonNode = helper.buildDistrictMetrics(MetricOption.EFFICIENCY_GAP, state, congress);
+		JsonNode metricsJsonNode = helper.buildDistrictMetrics(MetricOption.EFFICIENCY_GAP, stateName, congress);
 		
 		return metricsJsonNode;
 		
@@ -75,8 +73,6 @@ public class GerrymanderController {
 	
 	@RequestMapping("/test")
 	public String princetonElectionDataUploadRequest(@RequestParam("file")MultipartFile file) {
-		
-		
 		
 		helper.uploadElectionFile(file, Source.PRINCETON);
 		

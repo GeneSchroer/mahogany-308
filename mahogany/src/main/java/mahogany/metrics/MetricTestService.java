@@ -8,7 +8,7 @@ public class MetricTestService {
 
 	
 	
-	public TestResult<?> getTestResults(List<Districts> districtList, String option){
+	/*public TestResult<?> getTestResults(List<Districts> districtList, String option){
 		if(option.equals("Efficiency Gap")) {
 			TestResult<?> results = new EfficiencyGapTest().generateTestResults(districtList);
 			return results;
@@ -18,5 +18,5 @@ public class MetricTestService {
 		}
 		
 		
-	}
+	}*/
 }

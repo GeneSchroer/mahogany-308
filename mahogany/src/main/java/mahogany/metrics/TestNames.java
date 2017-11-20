@@ -5,6 +5,8 @@ public enum TestNames {
 		public String toString() {
 			return "Efficiency Gap";
 		}
-	};
+	},
+	NONE;
+	
 	
 }

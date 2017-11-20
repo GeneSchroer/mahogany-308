@@ -147,6 +147,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 			}, 
 			handleAs: "json"
 		}).response.then(function(success){
+			console.log(success.data);
 			mapData.metricData.defaultMode = success.data;
 		});
 	}
@@ -335,11 +336,25 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 		var districtId = id;
 		var metricData = mapData.metricData;
 		var districtData = metricData.districtData[districtId];
+		var wastedVotePercent;
+		var voteData;
 		if(districtData.winningParty == "Democrat"){
-			return "blue";
+			voteData=districtData.voteData.Democrat;
+			wastedVotePercent = voteData.wastedVotes / voteData.votes;
+			//console.long(wastedVotePercent);
+			return wastedVotePercent < 0.05 ? "#a8c0f3" : // blue 20
+				 	wastedVotePercent < 0.10 ? "#5392ff": // blue 40
+				 		wastedVotePercent < 0.20 ? "#1f57a4" // blue 60
+				 				: "#1d3458"; // blue 80
 		}
 		else{
-			return "red";
+			voteData=districtData.voteData.Republican;
+			wastedVotePercent = voteData.wastedVotes / voteData.votes;
+			//console.long(wastedVotePercent);
+			return wastedVotePercent < 0.05 ? "#ffaa9d" : // red 20
+				 	wastedVotePercent < 0.10 ? "#ff5c49": // red 40
+				 		wastedVotePercent < 0.20 ? "#aa231f" // red 60
+				 				: "#5c1f1b"; // red 80
 		}
 	}
 	function setEfficiencyGapLayer(mapData){
