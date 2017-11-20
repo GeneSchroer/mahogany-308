@@ -1,5 +1,12 @@
 define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/request", "dojo/when"], 
 		function(declare, on, topic, domStyle, request, when){
+	var METRIC_DEFAULT_MODE = 0;
+	var METRIC_EFFICIENCY_GAP = 1;
+	
+	var MAP_MODE_STATE = 101;
+	var MAP_MODE_DISTRICT = 102;
+	
+	
 	function stateLayerStyle(mapData){
 		return {
 			weight: 1,
@@ -116,13 +123,33 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 					mapData.state = e.target.feature.properties.name;
 					mapData.map.fitBounds(e.target.getBounds());
 					mapData.zoomOutBtn.enable();
-					getDistrictsRequest(mapData);
+					loadDistrictData(mapData);
 				}
 			});
 		}
 	}
 	
-	
+	function loadDistrictData(mapData){
+		getDistrictsRequest(mapData);
+		if(mapData.metricMode == METRIC_DEFAULT_MODE){
+			getElectionDataRequest(mapData);
+		}
+		else if(mapData.metricMode == METRIC_EFFICIENCY_GAP){
+			
+		}
+	}
+	function getElectionDataRequest(mapData){
+		request("electionDataRequest",{
+			method: "GET",
+			query:{
+				state: mapData.state,
+				congress: mapData.congress
+			}, 
+			handleAs: "json"
+		}).response.then(function(success){
+			mapData.metricData.defaultMode = success.data;
+		});
+	}
 	
 	function getDistrictsRequest(mapData){
 		
@@ -191,6 +218,10 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 			this._mapData.zoomOutBtn = this._createZoomOutBtn(this._mapData);
 			this._mapData.zoomOutBtn.addTo(this._mapData.map);
 			
+			
+			this._mapData.metricMode=METRIC_DEFAULT_MODE;
+			this._mapData.metricData = {};
+			
 			setStateLayersRequest(this._mapData);
 		},	
 		_createMap: function(map){
@@ -252,12 +283,17 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 				getDistrictsRequest(this._mapData);
 			}
 		},
-		setMetric: function(metric){
-			this._mapData.metric = metric;
+		setMetricToEfficiencyGap: function(){
+			this._mapData.metricMode = METRIC_EFFICIENCY_GAP;
 			
-		//	metricDataRequest(this._mapData);
-			if(metric == "efficiencyGap"){
+			if(!this._mapData.metricData.efficiencyGap){
 				efficiencyGapRequest(this._mapData);
+			}
+		},
+		setMetricToDefaultMode: function(){
+			this._mapData.metricMode = METRIC_DEFAULT_MODE;
+			if(!this._mapData.metricData.defaultMode){
+				electionDataRequest(this._mapData);
 			}
 		}
 	

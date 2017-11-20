@@ -9,18 +9,23 @@ define(["dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/dom-style",
 		
 		constructor: function(builder){
 			//this.yearSelector = builder.yearSelector;
+			//console.log(JSON.parse(JSON.stringify(builder)))
 			this._pageElements = {};
 			this._pageElements.mapManager = GerrymanderMapManager.create(builder.map);
 			this._pageElements.congressSelector = builder.congressSelector;
 			this._pageElements.repTable = builder.repTable;
 			this._pageElements.partyCheckbox = builder.partyCheckbox;
 			this._pageElements.metricSelectForm = builder.metricSelectForm;
+			this._pageElements.defaultModeRadioBtn = builder.defaultModeRadioBtn;
+			this._pageElements.efficiencyGapRadioBtn = builder.efficiencyGapRadioBtn;
 			
 			//console.log(builder.yearSelector);
 			this._initializeCongressSelector(this._pageElements);
 			this._initializeRepTable(this._pageElements);
 			this._initializePartyCheckbox(this._pageElements);
-			this._initializeMetricSelectForm(this._pageElements);
+			//this._initializeMetricSelectForm(this._pageElements);
+			this._initializeDefaultModeButton(this._pageElements);
+			this._initializeEfficiencyGapButton(this._pageElements);
 		},
 		
 		_initializeCongressSelector: function(pageElements){
@@ -70,6 +75,18 @@ define(["dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/dom-style",
 				pageElements.mapManager.setMetric(metricRadioButtons.metric.value);
 			});
 			
+		},
+		_initializeDefaultModeButton: function(pageElements){
+			var defaultModeRadioBtn = pageElements.defaultModeRadioBtn;
+			on(defaultModeRadioBtn, "click", function(e){
+				pageElements.mapManager.setMetricToDefaultMode();
+			});
+		},
+		_initializeEfficiencyGapButton: function(pageElements){
+			var efficiencyGapRadioBtn = pageElements.efficiencyGapRadioBtn;
+			on(efficiencyGapRadioBtn, "click", function(e){
+				pageElements.mapManager.setMetricToEfficiencyGap();
+			});
 		}
 		
 		
@@ -83,6 +100,8 @@ define(["dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/dom-style",
 		repTable: null,
 		partyCheckbox: null,
 		metricSelectForm: null,
+		defaultModeRadioBtn: null,
+		efficiencyGapRadioBtn: null,
 		addMap: function(map){
 			this.map = map;
 			return this;
@@ -101,6 +120,14 @@ define(["dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/dom-style",
 		},
 		addMetricSelectForm: function(form){
 			this.metricSelectForm = form;
+			return this;
+		},
+		addDefaultModeRadioButton: function(button){
+			this.defaultModeRadioBtn = button;
+			return this;
+		},
+		addEfficiencyGapRadioButton: function(button){
+			this.efficiencyGapRadioBtn = button;
 			return this;
 		},
 		build: function(){

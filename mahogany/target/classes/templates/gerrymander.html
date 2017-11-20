@@ -57,7 +57,8 @@
 							.addMap(dom.byId("gerrymanderMap"))
 							.addCongressSelector(registry.byId("gerrymanderCongressSelect"))
 							.addRepTable(dom.byId("gerrymanderRepTable"))
-							.addMetricSelectForm(dom.byId("gerrymanderMetricSelectForm"))
+							.addDefaultModeRadioButton(dom.byId("gerrymanderDefaultMode"))
+							.addEfficiencyGapRadioButton(dom.byId("gerrymanderEfficiencyGap"))
 							.build();
 				L.esri.basemapLayer('Topographic').addTo(map_g._pageElements.mapManager._mapData.map);
 				
@@ -82,9 +83,9 @@
 					<label></label>
 					<form id="gerrymanderMetricSelectForm">
 						<label>None</label>
-						<input checked="true" type="radio" name="metric" value="none" data-dojo-type="dijit/form/RadioButton"/>
+						<input id="gerrymanderDefaultMode" checked="true" type="radio" name="metric" value="none" data-dojo-type="dijit/form/RadioButton"/>
 						<label>Efficiency Gap</label>
-						<input type="radio" name="metric" value="efficiencyGap" data-dojo-type="dijit/form/RadioButton"/>
+						<input id="gerrymanderEfficiencyGap" type="radio" name="metric" value="efficiencyGap" data-dojo-type="dijit/form/RadioButton"/>
 					</form>
 				</div>
 				
