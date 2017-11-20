@@ -135,7 +135,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 			getElectionDataRequest(mapData);
 		}
 		else if(mapData.metricMode == METRIC_EFFICIENCY_GAP){
-			
+			efficiencyGapRequest(mapData);
 		}
 	}
 	function getElectionDataRequest(mapData){
@@ -149,6 +149,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 		}).response.then(function(success){
 			console.log(success.data);
 			mapData.metricData.defaultMode = success.data;
+			setElectionDataLayer(mapData);
 		});
 	}
 	
@@ -290,11 +291,17 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 			if(!this._mapData.metricData.efficiencyGap){
 				efficiencyGapRequest(this._mapData);
 			}
+			else{
+				setEfficiencyGapLayer(this._mapData);
+			}
 		},
 		setMetricToDefaultMode: function(){
 			this._mapData.metricMode = METRIC_DEFAULT_MODE;
 			if(!this._mapData.metricData.defaultMode){
-				electionDataRequest(this._mapData);
+				getElectionDataRequest(this._mapData);
+			}
+			else{
+				setElectionDataLayer(this._mapData);
 			}
 		}
 	
@@ -314,7 +321,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 			},
 			handleAs: "json"
 		}).response.then(function(success){
-			mapData.metricData = success.data;
+			mapData.metricData.efficiencyGap = success.data;
 			setEfficiencyGapLayer(mapData);
 		});
 
@@ -327,14 +334,14 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 				fillOpacity: 0.8,
 				weight: 1,
 				color: "yellow",
-				fillColor: x(mapData, feature.properties.id)
+				fillColor: efficiencyGapFillColor(mapData, feature.properties.id)
 
 			};
 		};
 	}
-	function x(mapData, id){
+	function efficiencyGapFillColor(mapData, id){
 		var districtId = id;
-		var metricData = mapData.metricData;
+		var metricData = mapData.metricData.efficiencyGap;
 		var districtData = metricData.districtData[districtId];
 		var wastedVotePercent;
 		var voteData;
@@ -363,6 +370,11 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 		
 		
 			L.Util.setOptions(mapData.districtLayer, { style: efficiencyGapStyle(mapData)	});
+	}
+	
+	function setElectionDataLayer(mapData){
+		mapData.districtLayer.setStyle(setDistrictLayerStyle(mapData));
+		L.Util.setOptions(mapData.districtLayer, {style: setDistrictLayerStyle(mapData)});
 	}
 	
 	function metricDataRequest(mapData){
