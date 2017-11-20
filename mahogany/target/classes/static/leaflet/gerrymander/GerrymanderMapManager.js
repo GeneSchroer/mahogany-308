@@ -1,5 +1,6 @@
-define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/request", "dojo/when"], 
-		function(declare, on, topic, domStyle, request, when){
+define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/request", "dojo/when",
+	"leaflet/gerrymander/metrics/ElectionData"], 
+		function(declare, on, topic, domStyle, request, when, ElectionData){
 	var METRIC_DEFAULT_MODE = "defaultMode";
 	var METRIC_EFFICIENCY_GAP = "efficiency gap";
 	
@@ -15,104 +16,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 			fillOpacity: 0.1
 		};
 	}
-	
-	function setDistrictPopup(mapData){
-		return function(layer){
-			return layer.feature.properties.state;
-		};
-	}
-	
-	function setDefaultHighlightColor(feature, mapData){
-		var winningParty = feature.properties.winningParty;
 		
-		if(winningParty){
-			if(winningParty == "Democrat"){
-				return "navy";
-			}
-			else if(winningParty == "Republican"){
-				return "darkred";
-			}
-			else{
-				return "lime";
-			}
-		}
-		else{
-			return "lightgray";
-		}
-	}
-	
-	function setDefaultColor(feature, mapData){
-		
-		var winningParty = feature.properties.winningParty;
-		
-		if(winningParty){
-			if(winningParty == "Democrat"){
-				return "blue";
-			}
-			else if(winningParty == "Republican"){
-				return "red";
-			}
-			else{
-				return "green";
-			}
-		}
-		else{
-			return "gray";
-		}
-	}
-	
-	function setDefaultDistrictLayerEvents(mapData){
-		return function (feature, layer){
-			layer.on({
-				mouseover: function(e){
-					layer = e.target;
-					layer.setStyle({
-						weight: 0.5,
-						fillColor: setDefaultHighlightColor(layer.feature, mapData),
-						dataArray:' ',
-						fillOpacity: 1
-					});
-					
-				},
-				mouseout:function(e){
-					mapData.districtLayer.resetStyle(e.target);
-				},
-				click: function(e){
-					electionLayerPopup(mapData, e);
-				}
-			});
-		};
-	}
-	
-	function electionLayerPopup(mapData, layer){
-		var districtNumber = layer.target.feature.properties.districtNumber;
-		var winningParty = layer.target.feature.properties.winningParty;
-		if(districtNumber < 10){
-			districtNumber = "0" + districtNumber;
-		}
-		var electionData = "District: " + districtNumber + "<br/>"
-							+ "Party: " + winningParty + "<br/>";
-							
-		var popup = L.popup()
-		.setLatLng(layer.latlng)
-		.setContent(electionData)
-		.openOn(mapData.map);
-	}
-	
-	function setDistrictLayerStyle(mapData){
-		return function(feature){
-			//console.log(mapData);
-			return{
-				weight: 0.5,
-				color: "yellow",
-				fillColor: setDefaultColor(feature, mapData),
-				
-				dataArray: ' ',
-				fillOpacity: 0.8
-			};
-		};
-	}
-	
 	function setStateLayerEvents(mapData){
 		return function(feature, layer){
 	
@@ -131,7 +35,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 				},
 				click: function(e){
 					mapData.districtLayer.clearLayers();
-					mapData.mode = "District";
+					mapData.mode = MAP_MODE_DISTRICT;
 					console.log(e.target.feature);
 					mapData.state = e.target.feature.properties.name;
 					mapData.map.fitBounds(e.target.getBounds());
@@ -206,7 +110,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 		_mapData: null,
 		initialize: function(map){
 			this._constructGerrymanderMap(map);
-			this._mapData.mode = "State";
+			this._mapData.mode = MAP_MODE_STATE;
 		},
 		
 		_constructGerrymanderMap:function(map){
@@ -222,7 +126,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 			this._mapData.stateLayer = this._createStateLayer(this._mapData);
 			this._mapData.stateLayer.addTo(this._mapData.map);
 			
-			this._mapData.mode = "State";
+			this._mapData.mode = MAP_MODE_STATE;
 			
 			console.log("Create zoom out button")
 			this._mapData.zoomOutBtn = this._createZoomOutBtn(this._mapData);
@@ -246,8 +150,6 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 		},
 		_createDistrictLayer: function(mapData){
 			var districtLayer = L.geoJson(null, {
-				style: setDistrictLayerStyle(mapData),
-				onEachFeature: setDefaultDistrictLayerEvents(mapData) 
 				});
 
 			return districtLayer;
@@ -268,7 +170,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 				return this._div;
 			};
 			zoomOutBtn.disable = function(){
-				mapData.mode="State";
+				mapData.mode=MAP_MODE_STATE;
 				domStyle.set(this._div, "display", "none");
 				mapData.map.setView([38, -88], 4, true);
 				L.DomEvent.off(zoomOutBtn);
@@ -289,7 +191,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 			this._mapData.congress = congress;
 		},
 		updateMap: function(){
-			if(this._mapData.mode=="State"){
+			if(this._mapData.mode==MAP_MODE_STATE){
 				getCountryMapRequest(this._mapData);
 			}
 			else{
@@ -384,8 +286,9 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 	}
 	
 	function setElectionDataLayer(mapData){
-		mapData.districtLayer.setStyle(setDistrictLayerStyle(mapData));
-		L.Util.setOptions(mapData.districtLayer, {style: setDistrictLayerStyle(mapData)});
+		console.log(ElectionData);
+		mapData.districtLayer.setStyle(ElectionData.setStyle(mapData));
+		L.Util.setOptions(mapData.districtLayer, {style: ElectionData.setStyle(mapData)});
 	}
 	
 		
