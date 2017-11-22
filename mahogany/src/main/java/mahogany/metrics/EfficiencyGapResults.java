@@ -1,6 +1,6 @@
 package mahogany.metrics;
 
-public class EfficiencyGapResults extends TestResult<DistrictData<WastedVoteData>>{
+public class EfficiencyGapResults extends GerrymanderData<DistrictData<WastedVoteData>>{
 	private Float efficiencyGap;
 
 	public Float getEfficiencyGap() {

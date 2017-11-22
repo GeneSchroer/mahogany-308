@@ -4,26 +4,24 @@ define(["dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/dom-style",
 	
 	var GerrymanderPageManager = declare(null, {
 		_pageElements: null,
-		_mapManager: null,
-		_yearSelector: null,
 		
 		constructor: function(builder){
 			this._pageElements = builder;
 			
 			
 			this._pageElements.mapManager = GerrymanderMapManager.create(this._pageElements.map);
-			this._initializeCongressSelector(this._pageElements);
+			this._initializeYearSelector(this._pageElements);
 			this._initializeRepTable(this._pageElements);
 			this._initializePartyCheckbox(this._pageElements);
 			this._initializeDefaultModeButton(this._pageElements);
 			this._initializeEfficiencyGapButton(this._pageElements);
 		},
 		
-		_initializeCongressSelector: function(pageElements){
-			pageElements.mapManager.setCongress(pageElements.congressSelector.value);
-			on(registry.byId(pageElements.congressSelector), "change", function(){
+		_initializeYearSelector: function(pageElements){
+			pageElements.mapManager.setYear(pageElements.yearSelector.value);
+			on(registry.byId(pageElements.yearSelector), "change", function(){
 				console.log("selected");
-				pageElements.mapManager.setCongress(pageElements.congressSelector.value);
+				pageElements.mapManager.setYear(pageElements.yearSelector.value);
 				pageElements.mapManager.updateMap();
 			});
 			
@@ -45,7 +43,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/dom-style",
 				districts = response.data.features;
 				//console.log(districts);
 				for(count = 0; count < districts.length; count = count + 1){
-					var member = districts[count].properties.member[pageElements.congressSelector.value];
+					var member = districts[count].properties.member[pageElements.yearSelector.value];
 					//console.log(member);
 					for (column in member){
 						//console.log(column);
@@ -80,19 +78,12 @@ define(["dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/dom-style",
 	
 	return {
 		builder: {},
-		map: null,
-		congressSelector: null,
-		repTable: null,
-		partyCheckbox: null,
-		metricSelectForm: null,
-		defaultModeRadioBtn: null,
-		efficiencyGapRadioBtn: null,
 		addMap: function(map){
 			this.builder.map = map;
 			return this;
 		},
-		addCongressSelector:function(select){
-			this.builder.congressSelector = select;
+		addYearSelector:function(select){
+			this.builder.yearSelector = select;
 			return this;
 		},
 		addRepTable: function(table){

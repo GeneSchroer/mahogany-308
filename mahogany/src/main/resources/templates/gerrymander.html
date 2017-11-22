@@ -55,7 +55,7 @@
     	
 				var map_g = GerrymanderPageManager
 							.addMap(dom.byId("gerrymanderMap"))
-							.addCongressSelector(registry.byId("gerrymanderCongressSelect"))
+							.addYearSelector(registry.byId("gerrymanderYearSelect"))
 							.addRepTable(dom.byId("gerrymanderRepTable"))
 							.addDefaultModeRadioButton(dom.byId("gerrymanderDefaultMode"))
 							.addEfficiencyGapRadioButton(dom.byId("gerrymanderEfficiencyGap"))
@@ -73,12 +73,12 @@
 			</div>
 			<div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="region:'left'" style="width:30%;">
 				<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'" style="height: 10%;">
-					<label for="gerrymanderCongressSelect">Session of Congress: </label>
-					<div id="gerrymanderCongressSelect" data-dojo-type="dijit/form/Select">
-						<span value="112">112</span>
-						<span value="111">111</span>
-						<span value="107">107</span>
-						<span value="103">103</span>
+					<label for="gerrymanderYearSelect">Year of Congress: </label>
+					<div id="gerrymanderYearSelect" data-dojo-type="dijit/form/Select">
+						<span value="2010">2010</span>
+						<span value="2008">2008</span>
+						<span value="2006">2006</span>
+						<span value="2004">2004</span>
 					</div>
 					<label></label>
 					<form id="gerrymanderMetricSelectForm">

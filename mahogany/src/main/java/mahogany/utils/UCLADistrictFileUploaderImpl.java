@@ -100,11 +100,13 @@ public class UCLADistrictFileUploaderImpl {
 				System.out.println("Creating Districts Entity for session " + currentCongress);
 				
 				
-				Districts districtsEntity = districtsRepo.findByStateEntityAndNumberAndCongress(stateNamesEntity, districtNumber, currentCongress);
+				Integer raceYear = 1786 + (2 * currentCongress);
+				
+				Districts districtsEntity = districtsRepo.findByStateEntityAndDistrictNumberAndYear(stateNamesEntity, districtNumber, currentCongress);
 				if(districtsEntity == null) {	
 					districtsEntity = new Districts();
-					districtsEntity.setCongress(currentCongress);
-					districtsEntity.setNumber(districtNumber);
+					districtsEntity.setYear(raceYear);
+					districtsEntity.setDistrictNumber(districtNumber);
 					districtsEntity.setStateName(stateNamesEntity);
 					
 				}

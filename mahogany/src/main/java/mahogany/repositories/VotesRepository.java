@@ -14,8 +14,8 @@ import mahogany.entities.Votes;
 @Repository
 public interface VotesRepository extends CrudRepository<Votes, Long> {
 	
-	//@Query("Select v from Votes V, Elections e, Districts d where v.election = e and e.district = d and d.stateName.name = ?1 and d.number = ?2 and d.congress = ?3")
-	//List<Votes> findByStateNameAndNumberAndCongress(String stateName, Integer number, Integer congress);
+	//@Query("Select v from Votes V, Elections e, Districts d where v.election = e and e.district = d and d.stateName.name = ?1 and d.number = ?2 and d.year = ?3")
+	//List<Votes> findByStateNameAndNumberAndYear(String stateName, Integer number, Integer year);
 	
 	@Query("select v from Votes v, Elections e where v.election = e and e.district = ?1 and v.party = ?2")
 	Votes findByDistrictAndParty(Districts district, Parties party);

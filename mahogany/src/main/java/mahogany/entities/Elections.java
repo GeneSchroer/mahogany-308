@@ -19,6 +19,8 @@ public class Elections {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
+	private Integer totalVotes;
+	
 	
 	@OneToOne
 	@JoinColumn(name="districtId")
@@ -42,6 +44,14 @@ public class Elections {
 	
 	public Long getId() {
 		return id;
+	}
+	
+	public Integer getTotalVotes() {
+		return totalVotes;
+	}
+	
+	public void setTotalVotes(Integer totalVotes) {
+		this.totalVotes = totalVotes;
 	}
 	
 	public Districts getDistrict() {

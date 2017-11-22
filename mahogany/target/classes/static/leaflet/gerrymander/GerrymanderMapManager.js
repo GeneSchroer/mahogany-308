@@ -60,7 +60,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 			method: "GET",
 			query:{
 				state: mapData.state,
-				congress: mapData.congress
+				year: mapData.year
 			}, 
 			handleAs: "json"
 		}).response.then(function(success){
@@ -78,7 +78,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 			method: "POST",
 			data: {
 				state: mapData.state,
-				congress: mapData.congress
+				year: mapData.year
 			},
 			handleAs: 'json'
 		}).response.then(function(success){
@@ -187,8 +187,8 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 			};
 			return zoomOutBtn;
 		},
-		setCongress: function(congress){
-			this._mapData.congress = congress;
+		setYear: function(year){
+			this._mapData.year = year;
 		},
 		updateMap: function(){
 			if(this._mapData.mode==MAP_MODE_STATE){
@@ -230,7 +230,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 			method: "GET",
 			query: {
 				state: mapData.state,
-				congress: mapData.congress
+				year: mapData.year
 			},
 			handleAs: "json"
 		}).response.then(function(success){

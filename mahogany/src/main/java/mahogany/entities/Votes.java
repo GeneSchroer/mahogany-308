@@ -17,7 +17,6 @@ public class Votes {
 	private Long id;
 	
 	private Integer votes;
-	private Float percentage;
 	
 	@ManyToOne
 	@JoinColumn(name="partyId")
@@ -41,12 +40,6 @@ public class Votes {
 	}
 	public void setVotes(Integer count) {
 		this.votes = count;
-	}
-	public Float getPercentage() {
-		return percentage;
-	}
-	public void setPercentage(Float percentage) {
-		this.percentage = percentage;
 	}
 	
 	public Elections getElection() {

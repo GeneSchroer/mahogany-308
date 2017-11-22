@@ -7,11 +7,11 @@ import java.util.Map;
 import mahogany.entities.Elections;
 import mahogany.entities.Votes;
 
-public class ElectionDataService implements AlgorithmTest<TestResult<DistrictData<VoteData>>> {
+public class ElectionDataService implements AlgorithmTest<GerrymanderData<DistrictData<VoteData>>> {
 
 	@Override
-	public TestResult<DistrictData<VoteData>> generateTestResults(List<Elections> electionList) {
-		TestResult<DistrictData<VoteData>> electionDataResults = new TestResult<DistrictData<VoteData>>();
+	public GerrymanderData<DistrictData<VoteData>> generateMetricData(List<Elections> electionList) {
+		GerrymanderData<DistrictData<VoteData>> electionDataResults = new GerrymanderData<DistrictData<VoteData>>();
 		Map<String, DistrictData<VoteData>> districtDataMap = new HashMap<String, DistrictData<VoteData>>();
 		
 		Integer totalDemocratVotes = 0;
@@ -42,7 +42,6 @@ public class ElectionDataService implements AlgorithmTest<TestResult<DistrictDat
 				
 				if(party.equals("Democrat")) {
 					democratVotes = electionVote.getVotes();
-					democratPercent = electionVote.getPercentage();
 					totalDemocratVotes += democratVotes;
 					
 					voteData.setVotes(democratVotes);
@@ -52,7 +51,6 @@ public class ElectionDataService implements AlgorithmTest<TestResult<DistrictDat
 				}
 				else if(party.equals("Republican")) {
 					republicanVotes = electionVote.getVotes();
-					republicanPercent = electionVote.getPercentage();
 					totalRepublicanVotes += republicanVotes;
 
 					

@@ -33,24 +33,24 @@ public class GerrymanderController {
 	
 	@RequestMapping("/districtBoundariesRequest")
 	public @ResponseBody JsonNode getDistrictBoundariesRequest(@RequestParam(name="state")String state, 
-																	@RequestParam(name="congress") int congress) {
-		JsonNode districtJsonNode = helper.getDistrictBoundaries(state, congress);
+																	@RequestParam(name="year") int year) {
+		JsonNode districtJsonNode = helper.getDistrictBoundaries(state, year);
 		
 		return districtJsonNode;
 	}
 	
 	@RequestMapping("/electionDataRequest")
 	public @ResponseBody JsonNode getElectionDataRequest(@RequestParam("state")String stateName,
-															@RequestParam("congress")Integer congress) {
-		JsonNode electionDataJsonNode = helper.buildDistrictMetrics(MetricOption.ELECTION_DATA, stateName, congress);
+															@RequestParam("year")Integer year) {
+		JsonNode electionDataJsonNode = helper.getDistrictData(MetricOption.ELECTION_DATA, stateName, year);
 		
 		return electionDataJsonNode;
 	}
 	@RequestMapping("/efficiencyGapRequest")
-	public @ResponseBody JsonNode getDistrictMetricsRequest(@RequestParam(name="state") String stateName,
-																@RequestParam(name="congress")Integer congress) {
+	public @ResponseBody JsonNode getEfficiencyGapRequest(@RequestParam(name="state") String stateName,
+																@RequestParam(name="year")Integer year) {
 		
-		JsonNode metricsJsonNode = helper.buildDistrictMetrics(MetricOption.EFFICIENCY_GAP, stateName, congress);
+		JsonNode metricsJsonNode = helper.getDistrictData(MetricOption.EFFICIENCY_GAP, stateName, year);
 		
 		return metricsJsonNode;
 		
@@ -62,7 +62,7 @@ public class GerrymanderController {
 	}
 	
 	@RequestMapping("/upload")
-	public String uclaDistrictUploadRequest(@RequestParam("file")MultipartFile[] files) {
+	public String uclaDistrictDataUploadRequest(@RequestParam("file")MultipartFile[] files) {
 		//helper.setDistrictsRepository(districtsRepository);
 
 		helper.uploadDistrictFiles(files, Source.UCLA);

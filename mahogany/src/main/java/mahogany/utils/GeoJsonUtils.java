@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import mahogany.entities.Districts;
 import mahogany.entities.Elections;
-import mahogany.metrics.TestResult;
+import mahogany.metrics.GerrymanderData;
 
 @Component
 public class GeoJsonUtils {
@@ -42,7 +42,7 @@ public class GeoJsonUtils {
 			ObjectNode propertiesNode = featureNode.putObject("properties");
 			
 			propertiesNode.put("id", district.getId());
-			propertiesNode.put("districtNumber", district.getNumber());
+			propertiesNode.put("districtNumber", district.getDistrictNumber());
 			
 			Elections election = district.getElection();
 			if(election != null) {
@@ -66,7 +66,7 @@ public class GeoJsonUtils {
 		return (JsonNode) districtsJsonNode;
 	}
 	
-	public JsonNode generateMetricResultsJson(TestResult result) throws IOException {
+	public JsonNode generateMetricDataJson(GerrymanderData result) throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectReader reader = mapper.reader();
 		String metricResultsJsonString = mapper.writeValueAsString(result);

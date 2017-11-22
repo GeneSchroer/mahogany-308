@@ -6,8 +6,8 @@ import java.util.Map;
 import mahogany.entities.Districts;
 import mahogany.entities.Elections;
 
-public interface AlgorithmTest<T extends TestResult> {
+public interface AlgorithmTest<T extends GerrymanderData> {
 
-	T generateTestResults(List<Elections> electionList);
+	T generateMetricData(List<Elections> electionList);
 	
 }

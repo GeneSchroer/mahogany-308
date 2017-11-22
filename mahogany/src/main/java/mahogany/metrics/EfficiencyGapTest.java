@@ -12,7 +12,7 @@ import mahogany.entities.Votes;
 public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapResults>{
 
 	@Override
-	public EfficiencyGapResults  generateTestResults(List<Elections> electionList) {
+	public EfficiencyGapResults  generateMetricData(List<Elections> electionList) {
 
 		EfficiencyGapResults efficiencyResult = new EfficiencyGapResults();
 		
@@ -54,7 +54,6 @@ public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapResults>{
 				
 				if(party.equals("Democrat")) {
 					democratVotes = electionVote.getVotes();
-					democratPercent = electionVote.getPercentage();
 					democratWastedVotes = getWastedVotes(democratVotes, democratPercent);
 					totalDemocratVotes += democratVotes;
 					
@@ -66,7 +65,6 @@ public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapResults>{
 				}
 				else if(party.equals("Republican")) {
 					republicanVotes = electionVote.getVotes();
-					republicanPercent = electionVote.getPercentage();
 					republicanWastedVotes += getWastedVotes(republicanVotes, republicanPercent); 
 					totalRepublicanVotes += republicanVotes;
 

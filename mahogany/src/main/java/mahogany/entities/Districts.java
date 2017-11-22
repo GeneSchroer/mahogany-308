@@ -21,8 +21,8 @@ public class Districts {
 	@GeneratedValue(strategy= GenerationType.AUTO)
 	private Long id;
 	
-	private Integer number;
-	private Integer congress;
+	private Integer districtNumber;
+	private Integer year;
 	
 	@ManyToOne
 	@JoinColumn(name="stateId")//, updatable=false, insertable=false)
@@ -46,20 +46,20 @@ public class Districts {
 		return id;
 	}
 	
-	public Integer getNumber() {
-		return number;
+	public Integer getDistrictNumber() {
+		return districtNumber;
 	}
 	
-	public void setNumber(Integer number) {
-		this.number = number;
+	public void setDistrictNumber(Integer districtNumber) {
+		this.districtNumber = districtNumber;
 	}
 	
-	public Integer getCongress() {
-		return congress;
+	public Integer getYear() {
+		return year;
 	}
 	
-	public void setCongress(Integer congress) {
-		this.congress = congress;
+	public void setYear(Integer year) {
+		this.year = year;
 	}
 	
 	public StateNames getStateName() {

@@ -2,7 +2,7 @@ package mahogany.metrics;
 
 import java.util.Map;
 
-public class TestResult<T extends DistrictData<?>> {
+public class GerrymanderData<T extends DistrictData<?>> {
 	private TestNames testName;
 	private Integer totalRepublicanVotes;
 	private Integer totalDemocratVotes;

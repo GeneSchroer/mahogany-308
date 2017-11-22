@@ -20,7 +20,7 @@ import mahogany.metrics.EfficiencyGapResults;
 import mahogany.metrics.EfficiencyGapTest;
 import mahogany.metrics.ElectionDataService;
 import mahogany.metrics.MetricOption;
-import mahogany.metrics.TestResult;
+import mahogany.metrics.GerrymanderData;
 import mahogany.repositories.DistrictsRepository;
 import mahogany.repositories.ElectionsRepository;
 
@@ -41,8 +41,8 @@ public class GerrymanderHelper {
 	
 	
 	
-	public JsonNode getDistrictBoundaries(String state, int congress) {
-		ArrayList<Districts> districtList = (ArrayList<Districts>)districtsRepo.findAllByStateAndCongress(state, congress);
+	public JsonNode getDistrictBoundaries(String state, int year) {
+		ArrayList<Districts> districtList = (ArrayList<Districts>)districtsRepo.findAllByStateAndYear(state, year);
 		
 		
 		
@@ -62,17 +62,17 @@ public class GerrymanderHelper {
 	}
 	
 	
-	public JsonNode buildDistrictMetrics(MetricOption metric, String stateName, Integer congress) {
-		ArrayList<Elections> electionList = (ArrayList<Elections>)electionsRepo.findAllByStateAndCongress(stateName, congress);
+	public JsonNode getDistrictData(MetricOption metric, String stateName, Integer year) {
+		ArrayList<Elections> electionList = (ArrayList<Elections>)electionsRepo.findAllByStateAndYear(stateName, year);
 		
 		if(metric == MetricOption.EFFICIENCY_GAP) {
 			EfficiencyGapTest x = new EfficiencyGapTest();
-			EfficiencyGapResults metricResults = x.generateTestResults(electionList);
+			EfficiencyGapResults metricData = x.generateMetricData(electionList);
 		
 			
 			
 			try {
-				JsonNode metricsJson = geoJsonUtils.generateMetricResultsJson(metricResults);
+				JsonNode metricsJson = geoJsonUtils.generateMetricDataJson(metricData);
 				return metricsJson;
 			} catch (JsonProcessingException e) {
 				// TODO Auto-generated catch block
@@ -84,12 +84,12 @@ public class GerrymanderHelper {
 		}
 		else if(metric == MetricOption.ELECTION_DATA) {
 			ElectionDataService x = new ElectionDataService();
-			TestResult electionData= x.generateTestResults(electionList);
+			GerrymanderData electionData= x.generateMetricData(electionList);
 		
 			
 			
 			try {
-				JsonNode metricsJson = geoJsonUtils.generateMetricResultsJson(electionData);
+				JsonNode metricsJson = geoJsonUtils.generateMetricDataJson(electionData);
 				return metricsJson;
 			} catch (JsonProcessingException e) {
 				// TODO Auto-generated catch block
