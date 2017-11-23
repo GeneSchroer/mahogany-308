@@ -3,6 +3,7 @@ package mahogany.metrics;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -47,8 +48,10 @@ public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapResults>{
 				districtData.setWinningParty("Republican");
 			}
 		
-			
-			for(Votes electionVote: election.getVotes()) {
+			for(Entry<Long, Votes> entry: election.getVotes().entrySet()) {
+	
+				Votes electionVote = entry.getValue();
+				
 				WastedVoteData voteData = new WastedVoteData();
 				String party = electionVote.getParty().getName();
 				

@@ -102,13 +102,12 @@ public class UCLADistrictFileUploaderImpl {
 				
 				Integer raceYear = 1786 + (2 * currentCongress);
 				
-				Districts districtsEntity = districtsRepo.findByStateEntityAndDistrictNumberAndYear(stateNamesEntity, districtNumber, currentCongress);
+				Districts districtsEntity = districtsRepo.findByStateEntityAndDistrictNumberAndYear(stateNamesEntity, districtNumber, raceYear);
 				if(districtsEntity == null) {	
 					districtsEntity = new Districts();
 					districtsEntity.setYear(raceYear);
 					districtsEntity.setDistrictNumber(districtNumber);
 					districtsEntity.setStateName(stateNamesEntity);
-					
 				}
 				districtsEntity.setBoundaries(boundariesEntity);
 				districtsRepo.save(districtsEntity);

@@ -3,7 +3,10 @@ package mahogany.utils;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -87,7 +90,7 @@ public class PrincetonElectionDataUploaderImpl {
 				democratVotes = 0;
 			}
 			democratVotesPercentage = (float)democratPercentageCell.getNumericCellValue();
-			
+			System.out.println(democratVotesPercentage);
 			
 			String winningParty = "";
 			if(0.5 > democratVotesPercentage) {
@@ -131,6 +134,7 @@ public class PrincetonElectionDataUploaderImpl {
 				electionsEntity = new Elections();
 				electionsEntity.setDistrict(districtsEntity);
 				electionsEntity.setTotalVotes(0);
+				electionsEntity.setVotes(new HashMap<Long, Votes>());
 				Members membersEntity = membersRepo.findFirstByDistrict(districtsEntity);
 				if(membersEntity != null) {
 					electionsEntity.setWinner(membersEntity);
@@ -145,12 +149,6 @@ public class PrincetonElectionDataUploaderImpl {
 				electionsRepo.save(electionsEntity);
 			}
 			
-			
-			Integer totalVotes = electionsEntity.getTotalVotes();
-						
-			
-			
-			
 			Votes democratVotesEntity = votesRepo.findByDistrictAndParty(districtsEntity, democratPartyEntity);
 			if(democratVotesEntity == null) {
 				democratVotesEntity = new Votes();
@@ -159,11 +157,10 @@ public class PrincetonElectionDataUploaderImpl {
 				democratVotesEntity.setVotes(democratVotes);
 				votesRepo.save(democratVotesEntity);
 			}
-			totalVotes -= democratVotesEntity.getVotes();
-			totalVotes += democratVotes;
+			//System.out.println(democratVotesEntity.getId());
 			democratVotesEntity.setVotes(democratVotes);
-			
-			
+			votesRepo.save(democratVotesEntity);
+			//System.out.println(democratVotesEntity.getId());
 			
 			Votes republicanVotesEntity = votesRepo.findByDistrictAndParty(districtsEntity, republicanPartyEntity);
 			if(republicanVotesEntity == null) {
@@ -173,18 +170,29 @@ public class PrincetonElectionDataUploaderImpl {
 				republicanVotesEntity.setVotes(republicanVotes);
 				votesRepo.save(republicanVotesEntity);
 			}
-			totalVotes -= republicanVotesEntity.getVotes();
-			totalVotes += republicanVotes;
+			//System.out.println(republicanVotesEntity.getId());
 			republicanVotesEntity.setVotes(republicanVotes);
-
+			votesRepo.save(republicanVotesEntity);
+			//System.out.println(republicanVotesEntity.getId());
+			
+			
+			electionsEntity.getVotes().put(republicanPartyEntity.getId(), republicanVotesEntity);
+			electionsEntity.getVotes().put(democratPartyEntity.getId(), democratVotesEntity);
+			
+			Integer totalVotes = 0;
+			for(Entry<Long,Votes> entry: electionsEntity.getVotes().entrySet()) {
+			//	System.out.println(entry.getValue().getParty().getName());
+				totalVotes += entry.getValue().getVotes();
+			}
+			
+			electionsEntity.setTotalVotes(totalVotes);
+			
 			if(((float)republicanVotes/totalVotes) > 0.5) {
 				electionsEntity.setParty(republicanPartyEntity);
 			}
 			else if(((float)democratVotes/totalVotes) > 0.5){
 				electionsEntity.setParty(democratPartyEntity);
 			}
-			
-			electionsEntity.setTotalVotes(totalVotes);
 			electionsRepo.save(electionsEntity);
 			
 		}

@@ -3,6 +3,7 @@ package mahogany.metrics;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import mahogany.entities.Elections;
 import mahogany.entities.Votes;
@@ -36,7 +37,8 @@ public class ElectionDataService implements AlgorithmTest<GerrymanderData<Distri
 				++totalRepublicanSeats;
 				districtData.setWinningParty("Republican");
 			}
-			for(Votes electionVote: election.getVotes()) {
+			for(Entry<Long, Votes> entry: election.getVotes().entrySet()) {
+				Votes electionVote = entry.getValue();
 				VoteData voteData = new VoteData();
 				String party = electionVote.getParty().getName();
 				
