@@ -22,7 +22,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/dom-style",
 			on(registry.byId(pageElements.yearSelector), "change", function(){
 				console.log("selected");
 				pageElements.mapManager.setYear(pageElements.yearSelector.value);
-				pageElements.mapManager.updateMap();
+			//	pageElements.mapManager.updateMap();
 			});
 			
 		},

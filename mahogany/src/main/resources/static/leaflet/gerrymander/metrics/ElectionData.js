@@ -3,34 +3,14 @@ define([
 	"leaflet/gerrymander/constants/MapColors"
 	], function(ColorMode, MapColors){
 	
-	function setEvents2(mapData, layer){
-			layer.on({
-				mouseover: function(e){
-					layer = e.target;
-					layer.setStyle({
-						weight: 0.5,
-						fillColor: setColor(layer.feature, mapData, ColorMode.HIGHLIGHT_COLOR),
-						dataArray:' ',
-						fillOpacity: 1
-					});
-					
-				},
-				mouseout:function(e){
-					
-					mapData.districtLayer.resetStyle(e.target);
-				},
-				click: function(e){
-					electionLayerPopup(mapData, e);
-				}
-			});
-	}
 	
 	function setDataBlock(properties, efficiencyGap){
 		
 	}
 	
 	function setEvents(mapData){
-		return function (feature, layer){
+		return function (layer){
+			layer.off();
 			layer.on({
 				mouseover: function(e){
 					layer = e.target;
@@ -40,16 +20,41 @@ define([
 						dataArray:' ',
 						fillOpacity: 1
 					});
-					
+					mapData.districtMapControls.dataDisplay.update(setDisplay(layer, mapData));
 				},
 				mouseout:function(e){
 					mapData.districtLayer.resetStyle(e.target);
+					mapData.districtMapControls.dataDisplay.update(" ");
 				},
 				click: function(e){
 					electionLayerPopup(mapData, e);
 				}
 			});
 		};
+	}
+	
+	function setDisplay(layer, mapData){
+		var displayString = "";
+		
+		var districtNumber = layer.feature.properties.districtNumber;
+		if(districtNumber < 10){
+			districtNumber = "0" + districtNumber;
+		}
+		displayString += "District: " + districtNumber + "<br/>";
+		
+		displayString += "<h4>Votes:</h4>";
+		
+		var districtId = layer.feature.properties.id;
+		var districtData = mapData.metricData.defaultMode.districtData[districtId];
+		var voteData=districtData.voteData;
+		
+		
+		for(party in voteData){
+			var data = voteData[party];
+			displayString += party + ": " + data.votes + "<br/>";
+		}
+		
+		return displayString;
 	}
 	
 	function electionLayerPopup(mapData, layer){

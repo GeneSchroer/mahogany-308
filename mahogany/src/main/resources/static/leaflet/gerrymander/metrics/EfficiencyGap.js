@@ -5,6 +5,7 @@ define([
 	
 	function setEvents(mapData){
 		return function (layer){
+			layer.off();
 			layer.on({
 				mouseover: function(e){
 					layer = e.target;

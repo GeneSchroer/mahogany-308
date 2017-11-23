@@ -46,8 +46,8 @@ define([
 					console.log(e.target.feature);
 					mapData.state = e.target.feature.properties.name;
 					mapData.map.fitBounds(e.target.getBounds());
-					for(control in mapData.dataControls){
-						mapData.dataControls[control].enable();
+					for(control in mapData.districtMapControls){
+						mapData.districtMapControls[control].enable();
 					}
 					getDistrictsRequest(mapData);
 				}
@@ -135,15 +135,15 @@ define([
 			
 			this._mapData.mode = MAP_MODE_STATE;
 			
-			this._mapData.dataControls = {}
+			this._mapData.districtMapControls = {}
 			
 			console.log("Create zoom out button")
-			this._mapData.dataControls.zoomOutBtn = this._createZoomOutBtn(this._mapData);
-			this._mapData.dataControls.zoomOutBtn.addTo(this._mapData.map);
+			this._mapData.districtMapControls.zoomOutBtn = this._createZoomOutBtn(this._mapData);
+			this._mapData.districtMapControls.zoomOutBtn.addTo(this._mapData.map);
 			
 			
-			
-			
+			this._mapData.districtMapControls.dataDisplay = this._createDataDisplay(this._mapData);
+			this._mapData.districtMapControls.dataDisplay.addTo(this._mapData.map);
 			
 			this._mapData.metricMode=METRIC_DEFAULT_MODE;
 			this._mapData.metricData = {};
@@ -174,7 +174,7 @@ define([
 			return stateLayer;
 		},
 		_createZoomOutBtn:function(mapData){
-			var zoomOutBtn = L.control();
+			var zoomOutBtn = L.control({position:'topleft'});
 			zoomOutBtn.onAdd = function(map){
 				this._div=L.DomUtil.create('button', 'zoomOut');
 				this._div.innerHTML = "ZoomOut";
@@ -188,43 +188,48 @@ define([
 				L.DomEvent.off(zoomOutBtn);
 			};
 			zoomOutBtn.enable = function(){
-				domStyle.set(this._div, "display", "");
+				domStyle.set(this._div, "display", "block");
 				L.DomEvent.on(this._div, 'click', function(evt){
 					mapData.districtLayer.clearLayers();
 					L.Util.setOptions(mapData.districtLayer, {style:null});
 					mapData.metricData = {};
-					for(control in mapData.dataControls){
-						mapData.dataControls[control].disable();
+					for(control in mapData.districtMapControls){
+						mapData.districtMapControls[control].disable();
 					}
 					
 				});
 			};
 			return zoomOutBtn;
 		},
-		_createDistrictDataBlock: function(mapData){
-			var districtDataBlock = L.control();
-			districtDataBlock.onAdd = function(map){
-				this._div = L.DomUtil.create('div', 'dataView');
-				
+		_createDataDisplay: function(mapData){
+			var dataDisplay = L.control({position:'topright'});
+			dataDisplay.onAdd = function(map){
+				this._div = L.DomUtil.create('div', 'dataDisplay');
+				this._div.innerHTML = "Hello";
+				this.disable();
 				return this._div;
 			};
-			districtDataBlock.update = function (string) {
-			    this._div.innerHTML = string;
+			dataDisplay.update = function (string) {
+			    this._div.innerHTML = string ? string : "Data Not Available";
 			};
-
+			dataDisplay.disable = function(){
+				domStyle.set(this._div, "display", "none");
+			};
+			dataDisplay.enable = function(){
+				domStyle.set(this._div, "display", "block");
+			};
 			
+			return dataDisplay;
 			
 		},
 		setYear: function(year){
+			console.log(this);
 			this._mapData.year = year;
+			this._updateMap();
 		},
-		updateMap: function(){
-			if(this._mapData.mode==MAP_MODE_STATE){
-				getCountryMapRequest(this._mapData);
-			}
-			else{
-				getDistrictsRequest(this._mapData);
-			}
+		_updateMap: function(){
+			this._mapData.metricData={};
+			getDistrictsRequest(this._mapData);
 		},
 		setMetricToEfficiencyGap: function(){
 			this._mapData.metricMode = METRIC_EFFICIENCY_GAP;
@@ -291,9 +296,7 @@ define([
 		L.Util.setOptions(mapData.districtLayer, {style:null});
 		L.Util.setOptions(mapData.districtLayer, {style: ElectionData.setStyle(mapData)});
 		
-		mapData.districtLayer.eachLayer(function(layer){
-			ElectionData.setEvents2(mapData,layer);
-		});
+		mapData.districtLayer.eachLayer(ElectionData.setEvents(mapData));
 		
 	}
 	
