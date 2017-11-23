@@ -1,6 +1,11 @@
-define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/request", "dojo/when",
-	"leaflet/gerrymander/metrics/ElectionData"], 
-		function(declare, on, topic, domStyle, request, when, ElectionData){
+define([
+	"dojo/_base/declare",
+	"dojo/on",
+	"dojo/topic",
+	"dojo/dom-style",
+	"dojo/request",
+	"leaflet/gerrymander/metrics/ElectionData"
+	],function(declare, on, topic, domStyle, request, ElectionData){
 	var METRIC_DEFAULT_MODE = "defaultMode";
 	var METRIC_EFFICIENCY_GAP = "efficiency gap";
 	
@@ -91,7 +96,6 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 		});
 	}
 	function setStateLayersRequest(mapData){
-		console.log("Requesting states");
 		request("stateData.json",{
 			method: "GET",
 			handleAs: "json"
@@ -234,6 +238,7 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 			},
 			handleAs: "json"
 		}).response.then(function(success){
+			console.log(success.data);
 			mapData.metricData.efficiencyGap = success.data;
 			setEfficiencyGapLayer(mapData);
 		});
@@ -286,9 +291,10 @@ define(["dojo/_base/declare", "dojo/on", "dojo/topic", "dojo/dom-style", "dojo/r
 	}
 	
 	function setElectionDataLayer(mapData){
-		console.log(ElectionData);
+		//console.log(ElectionData);
 		mapData.districtLayer.setStyle(ElectionData.setStyle(mapData));
 		L.Util.setOptions(mapData.districtLayer, {style: ElectionData.setStyle(mapData)});
+		L.Util.setOptions(mapData.districtLayer, {onEachFeature: ElectionData.setEvents(mapData)});
 	}
 	
 		

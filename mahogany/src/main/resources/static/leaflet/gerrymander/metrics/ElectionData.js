@@ -1,4 +1,9 @@
-define([], function(){
+define([
+	"leaflet/gerrymander/utils/ColorMode"
+], function(ColorMode){
+	
+
+	
 	function setEvents(mapData){
 		return function (feature, layer){
 			layer.on({
@@ -6,7 +11,7 @@ define([], function(){
 					layer = e.target;
 					layer.setStyle({
 						weight: 0.5,
-						fillColor: setHighlightColor(layer.feature, mapData),
+						fillColor: setColor(layer.feature, mapData, ColorMode.HIGHLIGHT_COLOR),
 						dataArray:' ',
 						fillOpacity: 1
 					});
@@ -43,7 +48,7 @@ define([], function(){
 			return{
 				weight: 0.5,
 				color: "yellow",
-				fillColor: setColor(feature, mapData),
+				fillColor: setColor(feature, mapData, ColorMode.DEFAULT_COLOR),
 				
 				dataArray: ' ',
 				fillOpacity: 0.8
@@ -51,25 +56,26 @@ define([], function(){
 		};
 	}
 	
-	function setColor(feature, mapData){
+	function setColor(feature, mapData, colorMode){
 		
 		var winningParty = feature.properties.winningParty;
 		
 		if(winningParty){
 			if(winningParty == "Democrat"){
-				return "blue";
+				return colorMode == ColorMode.DEFAULT_COLOR ? "blue" : "cyan";
 			}
 			else if(winningParty == "Republican"){
-				return "red";
+				return colorMode == ColorMode.DEFAULT_COLOR ? "red": "ruby";
 			}
 			else{
-				return "green";
+				return colorMode == ColorMode.DEFAULT_COLOR ? "green" : "lime";
 			}
 		}
 		else{
-			return "gray";
+			return colorMode == ColorMode.DEFAULT_COLOR ? "gray" : "lightgray";
 		}
 	}
+	
 	
 	return{
 		setEvents: function(mapData){
