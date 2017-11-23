@@ -1,8 +1,28 @@
 define([
-	"leaflet/gerrymander/utils/ColorMode"
-], function(ColorMode){
+	"leaflet/gerrymander/utils/ColorMode",
+	"leaflet/gerrymander/constants/MapColors"
+	], function(ColorMode, MapColors){
 	
-
+	function setEvents2(mapData, layer){
+			layer.on({
+				mouseover: function(e){
+					layer = e.target;
+					layer.setStyle({
+						weight: 0.5,
+						fillColor: setColor(layer.feature, mapData, ColorMode.HIGHLIGHT_COLOR),
+						dataArray:' ',
+						fillOpacity: 1
+					});
+					
+				},
+				mouseout:function(e){
+					mapData.districtLayer.resetStyle(e.target);
+				},
+				click: function(e){
+					electionLayerPopup(mapData, e);
+				}
+			});
+	}
 	
 	function setEvents(mapData){
 		return function (feature, layer){
@@ -62,10 +82,10 @@ define([
 		
 		if(winningParty){
 			if(winningParty == "Democrat"){
-				return colorMode == ColorMode.DEFAULT_COLOR ? "blue" : "cyan";
+				return colorMode == ColorMode.DEFAULT_COLOR ? MapColors.BLUE_60 : MapColors.BLUE_30;
 			}
 			else if(winningParty == "Republican"){
-				return colorMode == ColorMode.DEFAULT_COLOR ? "red": "ruby";
+				return colorMode == ColorMode.DEFAULT_COLOR ? MapColors.RED_60: MapColors.RED_30;
 			}
 			else{
 				return colorMode == ColorMode.DEFAULT_COLOR ? "green" : "lime";
@@ -84,6 +104,9 @@ define([
 		
 		setStyle: function(mapData){
 			return setStyle(mapData);
+		},
+		setEvents2: function(mapData,layer){
+			return setEvents2(mapData,layer);
 		}
 	};
 	
