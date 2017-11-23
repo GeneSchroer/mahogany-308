@@ -25,7 +25,12 @@ define([], function(){
 		BLUE_70: "#25467a",
 		BLUE_80: "#1d3458",
 		BLUE_90: "#19273c",
-		BLUE_100: "#010205"
+		BLUE_100: "#010205",
+		
+		ULTRAMARINE_80: "#252e6a",
+		
+		PEACH_80: "#56251a"
+		
 	};
 	
 	

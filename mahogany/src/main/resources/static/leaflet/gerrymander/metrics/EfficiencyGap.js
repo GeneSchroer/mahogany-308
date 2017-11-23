@@ -15,7 +15,7 @@ define([
 						dataArray:' ',
 						fillOpacity: 1
 					});
-					
+					mapData.districtMapControls.dataDisplay.update(setDisplay(layer, mapData));
 				},
 				mouseout:function(e){
 					mapData.districtLayer.resetStyle(e.target);
@@ -26,13 +26,41 @@ define([
 			});
 		};
 	}
-	
+	function setDisplay(layer, mapData){
+		var displayString = "";
+		
+		var districtNumber = layer.feature.properties.districtNumber;
+		if(districtNumber < 10){
+			districtNumber = "0" + districtNumber;
+		}
+		displayString += "District: " + districtNumber + "<br/>";
+		
+		displayString += "<h4>Votes:</h4>";
+		
+		var districtId = layer.feature.properties.id;
+		var districtData = mapData.metricData.efficiencyGap.districtData[districtId];
+		var voteData=districtData.voteData;
+		
+		
+		for(party in voteData){
+			
+			var data = voteData[party];
+			displayString += "<h4>" + party + "</h4>";
+			displayString += "Votes: " + data.votes + "<br/>";
+			displayString += "Wasted Votes: " + data.wastedVotes + "<br/>";
+			var wastedVotes = (data.wastedVotes/data.votes).toFixed(3);
+			if(wastedVotes != 1){
+				displayString += "Wasted Vote Percentage: " + wastedVotes + "<br/>";
+			}
+		}		
+		return displayString;
+	}
 	
 	function setStyle(mapData){
 		return function(feature){
 			return{
-				fillOpacity: 0.8,
-				weight: 1,
+				fillOpacity: 1,
+				weight: 0.5,
 				color: "yellow",
 				fillColor: fillColor(mapData, feature.properties.id, ColorMode.DEFAULT_COLOR)
 
@@ -49,22 +77,22 @@ define([
 				voteData=districtData.voteData.Democrat;
 				wastedVotePercent = voteData.wastedVotes / voteData.votes;
 				//console.log(wastedVotePercent);
-				return colorMode == ColorMode.HIGHLIGHT_COLOR ? MapColors.BLUE_100 :
-					wastedVotePercent < 0.10 ? MapColors.BLUE_10 : 
-					 	wastedVotePercent < 0.20 ? MapColors.BLUE_30 : // blue 40
-					 		wastedVotePercent < 0.30 ? MapColors.BLUE_50 :// blue 60
-					 			wastedVotePercent < 0.40 ? MapColors.BLUE_70
-					 					: MapColors.BLUE_90; // blue 80
+				return colorMode == ColorMode.HIGHLIGHT_COLOR ? MapColors.ULTRAMARINE_80 :
+					wastedVotePercent < 0.10 ? MapColors.BLUE_20 : 
+					wastedVotePercent < 0.20 ? MapColors.BLUE_30 : // blue 40
+					wastedVotePercent < 0.30 ? MapColors.BLUE_40 :// blue 60
+					wastedVotePercent < 0.40 ? MapColors.BLUE_50
+					: MapColors.BLUE_60; // blue 80
 		}
 		else{
 			voteData=districtData.voteData.Republican;
 			wastedVotePercent = voteData.wastedVotes / voteData.votes;
-			return colorMode == ColorMode.HIGHLIGHT_COLOR ? MapColors.RED_100:
-				wastedVotePercent < 0.10 ? MapColors.RED_10: 
+			return colorMode == ColorMode.HIGHLIGHT_COLOR ? MapColors.PEACH_80:
+				wastedVotePercent < 0.10 ? MapColors.RED_20: 
 			 	wastedVotePercent < 0.20 ? MapColors.RED_30 : // blue 40
-			 		wastedVotePercent < 0.30 ? MapColors.RED_50 :// blue 60
-			 			wastedVotePercent < 0.40 ? MapColors.RED_70
-			 					: MapColors.RED_90;
+			 		wastedVotePercent < 0.30 ? MapColors.RED_40 :// blue 60
+			 			wastedVotePercent < 0.40 ? MapColors.RED_50
+			 					: MapColors.RED_60;
 		}
 	}
 	
