@@ -5,10 +5,11 @@ define([
 	"dojo/dom-style",
 	"dojo/request",
 	"leaflet/gerrymander/metrics/ElectionData",
-	"leaflet/gerrymander/metrics/EfficiencyGap"
+	"leaflet/gerrymander/metrics/EfficiencyGap",
+	
 	],function(declare, on, topic, domStyle, request, ElectionData, EfficiencyGap){
 	var METRIC_DEFAULT_MODE = "defaultMode";
-	var METRIC_EFFICIENCY_GAP = "efficiency gap";
+	var METRIC_EFFICIENCY_GAP = "efficiencyGap";
 	
 	var MAP_MODE_STATE = "state";
 	var MAP_MODE_DISTRICT = "district";
@@ -45,7 +46,9 @@ define([
 					console.log(e.target.feature);
 					mapData.state = e.target.feature.properties.name;
 					mapData.map.fitBounds(e.target.getBounds());
-					mapData.zoomOutBtn.enable();
+					for(control in mapData.dataControls){
+						mapData.dataControls[control].enable();
+					}
 					getDistrictsRequest(mapData);
 				}
 			});
@@ -132,9 +135,14 @@ define([
 			
 			this._mapData.mode = MAP_MODE_STATE;
 			
+			this._mapData.dataControls = {}
+			
 			console.log("Create zoom out button")
-			this._mapData.zoomOutBtn = this._createZoomOutBtn(this._mapData);
-			this._mapData.zoomOutBtn.addTo(this._mapData.map);
+			this._mapData.dataControls.zoomOutBtn = this._createZoomOutBtn(this._mapData);
+			this._mapData.dataControls.zoomOutBtn.addTo(this._mapData.map);
+			
+			
+			
 			
 			
 			this._mapData.metricMode=METRIC_DEFAULT_MODE;
@@ -185,11 +193,27 @@ define([
 					mapData.districtLayer.clearLayers();
 					L.Util.setOptions(mapData.districtLayer, {style:null});
 					mapData.metricData = {};
+					for(control in mapData.dataControls){
+						mapData.dataControls[control].disable();
+					}
 					
-					zoomOutBtn.disable();
 				});
 			};
 			return zoomOutBtn;
+		},
+		_createDistrictDataBlock: function(mapData){
+			var districtDataBlock = L.control();
+			districtDataBlock.onAdd = function(map){
+				this._div = L.DomUtil.create('div', 'dataView');
+				
+				return this._div;
+			};
+			districtDataBlock.update = function (string) {
+			    this._div.innerHTML = string;
+			};
+
+			
+			
 		},
 		setYear: function(year){
 			this._mapData.year = year;
@@ -257,7 +281,6 @@ define([
 			
 			mapData.districtLayer.eachLayer(EfficiencyGap.setEvents(mapData));
 			
-			//L.Util.setOptions(mapData.districtLayer, { onEachFeature: EfficiencyGap.setEvents(mapData)});
 			
 			mapData.districtLayer.setStyle(EfficiencyGap.setStyle(mapData));
 	}
@@ -271,8 +294,6 @@ define([
 		mapData.districtLayer.eachLayer(function(layer){
 			ElectionData.setEvents2(mapData,layer);
 		});
-		
-		//L.Util.setOptions(mapData.districtLayer, {onEachFeature: ElectionData.setEvents(mapData)});
 		
 	}
 	

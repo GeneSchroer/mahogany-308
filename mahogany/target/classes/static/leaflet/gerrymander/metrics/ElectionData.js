@@ -16,12 +16,17 @@ define([
 					
 				},
 				mouseout:function(e){
+					
 					mapData.districtLayer.resetStyle(e.target);
 				},
 				click: function(e){
 					electionLayerPopup(mapData, e);
 				}
 			});
+	}
+	
+	function setDataBlock(properties, efficiencyGap){
+		
 	}
 	
 	function setEvents(mapData){
