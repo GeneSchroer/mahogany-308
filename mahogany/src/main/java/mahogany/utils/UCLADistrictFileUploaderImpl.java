@@ -18,14 +18,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.vividsolutions.jts.geom.MultiPolygon;
 
 import mahogany.entities.Boundaries;
-import mahogany.entities.Boundaries2;
+import mahogany.entities.Boundaries;
 import mahogany.entities.Districts;
 import mahogany.entities.Elections;
 import mahogany.entities.MemberNames;
 import mahogany.entities.Members;
 import mahogany.entities.Parties;
 import mahogany.entities.StateNames;
-import mahogany.repositories.Boundaries2Repository;
+import mahogany.repositories.BoundariesRepository;
 import mahogany.repositories.BoundariesRepository;
 import mahogany.repositories.DistrictsRepository;
 import mahogany.repositories.ElectionsRepository;
@@ -43,7 +43,6 @@ public class UCLADistrictFileUploaderImpl {
 	@Autowired MemberNamesRepository memberNamesRepo;
 	@Autowired PartiesRepository partiesRepo;
 	@Autowired BoundariesRepository boundariesRepo;
-	@Autowired Boundaries2Repository boundaries2Repo;
 	@Autowired ElectionsRepository electionsRepo;
 	public JsonNode convertFileToJsonNode(MultipartFile file) throws IOException {
 		
@@ -65,19 +64,22 @@ public class UCLADistrictFileUploaderImpl {
 		ArrayList<Districts> districtList = new ArrayList<Districts>();
 		System.out.println("Going through list of districts");
 		ArrayNode districts = (ArrayNode)fileJsonNode.get("features");
-		
+		GeoJSONReader geoJsonReader = new GeoJSONReader();
+
 		
 		for(int index=0; index<districts.size(); ++index) {
 			ObjectNode districtPropertiesObject = (ObjectNode) districts.get(index).get("properties");
 			ObjectNode districtGeometryObject = (ObjectNode) districts.get(index).get("geometry");
 			
-			ArrayNode coordinatesArray = (ArrayNode) districtGeometryObject.get("coordinates");
-			String coordinatesString = coordinatesArray.toString();
+			MultiPolygon multiPolygon = (MultiPolygon) geoJsonReader.read(districtGeometryObject.toString());
+
 			
-			Boundaries boundariesEntity = boundariesRepo.findByCoordinatesString(coordinatesString);
+			
+			Boundaries boundariesEntity = boundariesRepo.findByCoordinates(multiPolygon);
 			if(boundariesEntity == null) {
+				System.out.println("Creating new Boundaries entity");
 				boundariesEntity = new Boundaries();
-				boundariesEntity.setCoordinatesString(coordinatesString);
+				boundariesEntity.setCoordinates(multiPolygon);
 				boundariesRepo.save(boundariesEntity);
 			}
 			//System.out.println(districtObject.toString());
@@ -114,7 +116,7 @@ public class UCLADistrictFileUploaderImpl {
 					districtsEntity.setDistrictNumber(districtNumber);
 					districtsEntity.setStateName(stateNamesEntity);
 				}
-				//districtsEntity.setBoundaries(boundariesEntity);
+				districtsEntity.setBoundaries(boundariesEntity);
 				districtsRepo.save(districtsEntity);
 				System.out.println("Getting congressional members for district " + districtNumber + ", session " + currentCongress);
 				// list of all congressmen from this district during this session of congress
@@ -183,13 +185,13 @@ public ArrayList<Districts> uploadJsonToDatabase2(ObjectNode fileJsonNode) throw
 			ArrayNode coordinatesArray = (ArrayNode) districtGeometryObject.get("coordinates");
 			String coordinatesString = coordinatesArray.toString();
 			
-			Boundaries2 boundariesEntity = boundaries2Repo.findByCoordinates(multiPolygon);
+			Boundaries boundariesEntity = boundariesRepo.findByCoordinates(multiPolygon);
 			if(boundariesEntity == null) {
 				System.out.println("Creating new Boundaries entity");
-				boundariesEntity = new Boundaries2();
+				boundariesEntity = new Boundaries();
 				
 				boundariesEntity.setCoordinates(multiPolygon);
-				boundaries2Repo.save(boundariesEntity);
+				boundariesRepo.save(boundariesEntity);
 			}
 			String stateName = districtPropertiesObject.get("statename").asText();
 			

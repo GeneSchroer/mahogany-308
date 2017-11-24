@@ -7,6 +7,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
+
+import com.vividsolutions.jts.geom.Geometry;
+//import org.hibernate.annotations.Type;
+import com.vividsolutions.jts.geom.MultiPolygon;
+
+
 @Entity
 @Table(name="Boundaries")
 public class Boundaries {
@@ -14,19 +21,19 @@ public class Boundaries {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
-	
-	@Column(name="coordinates")
-	private String coordinatesString;
+	private MultiPolygon coordinates;
 	
 	public Long getId() {
 		return id;
 	}
 	
-	public String getCoordinatesString() {
-		return coordinatesString;
+	@Type(type = "org.hibernate.spatial.GeometryType")
+	@Column(columnDefinition="MultiPolygon")
+	public MultiPolygon getCoordinates() {
+		return coordinates;
 	}
-	
-	public void setCoordinatesString(String coordinatesString) {
-		this.coordinatesString = coordinatesString;
+
+	public void setCoordinates(MultiPolygon coordinates) {
+		this.coordinates = coordinates;
 	}
 }

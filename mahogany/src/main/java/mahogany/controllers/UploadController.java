@@ -20,9 +20,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.vividsolutions.jts.geom.MultiPolygon;
 
 import mahogany.entities.Boundaries;
-import mahogany.entities.Boundaries2;
+import mahogany.entities.Boundaries;
 import mahogany.entities.Districts;
-import mahogany.repositories.Boundaries2Repository;
+import mahogany.repositories.BoundariesRepository;
 import mahogany.utils.FileUploadHelper;
 import mahogany.utils.Source;
 import mahogany.utils.UCLADistrictFileUploaderImpl;
@@ -35,7 +35,7 @@ public class UploadController {
 	@Autowired
 	UCLADistrictFileUploaderImpl uclaDistrictConverter;
 	
-	@Autowired Boundaries2Repository boundaries2Repo ;
+	@Autowired BoundariesRepository boundaries2Repo ;
 	@RequestMapping("/upload")
 	public String uclaDistrictDataUploadRequest(@RequestParam("file")MultipartFile[] files) {
 		//helper.setDistrictsRepository(districtsRepository);
@@ -50,34 +50,6 @@ public class UploadController {
 	public String princetonElectionDataUploadRequest(@RequestParam("file")MultipartFile file) {
 		
 		helper.uploadElectionFile(file, Source.PRINCETON);
-		
-		return "gerrymander";
-	}
-	
-	@RequestMapping("/boundaryTest")
-	public String boundary2Request(@RequestParam("file")MultipartFile file) {
-		ObjectMapper jsonNodeMapper = new ObjectMapper();
-		ObjectReader jsonNodeReader = jsonNodeMapper.reader();
-		
-		System.out.println("Converting file: " + file.getOriginalFilename() );
-		
-		/* this line can throw an IOException*/
-		String fileAsJsonString;
-		try {
-			fileAsJsonString = new String(file.getBytes());
-			ObjectNode fileAsJsonNode = (ObjectNode)jsonNodeReader.readTree(fileAsJsonString);
-			
-			uclaDistrictConverter.uploadJsonToDatabase2(fileAsJsonNode);
-			
-			
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-		
 		
 		return "gerrymander";
 	}

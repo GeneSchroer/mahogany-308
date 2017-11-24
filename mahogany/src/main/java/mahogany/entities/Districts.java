@@ -30,7 +30,7 @@ public class Districts {
 	
 	@ManyToOne
 	@JoinColumn(name="boundaryId")
-	private Boundaries2 boundaries;
+	private Boundaries boundaries;
 	
 	@OneToOne(mappedBy="district")
 	private Elections election;
@@ -70,11 +70,11 @@ public class Districts {
 		this.stateName = stateName;
 	}
 	
-	public Boundaries2 getBoundaries() {
+	public Boundaries getBoundaries() {
 		return boundaries;
 	}
 	
-	public void setBoundaries(Boundaries2 boundaries) {
+	public void setBoundaries(Boundaries boundaries) {
 		this.boundaries = boundaries;
 	}
 	
