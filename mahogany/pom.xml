@@ -20,6 +20,18 @@
   </properties>
 
   <dependencies>
+<!-- https://mvnrepository.com/artifact/com.vividsolutions/jts-core -->
+<dependency>
+    <groupId>com.vividsolutions</groupId>
+    <artifactId>jts-core</artifactId>
+    <version>1.14.0</version>
+</dependency>
+
+
+
+  
+
+  
   	<dependency>
   	  <groupId>org.springframework.boot</groupId>
   	  <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -40,7 +52,6 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
 	
@@ -56,6 +67,35 @@
       <version>3.15</version>
 	</dependency>
 	
+	<!-- Used to store multipolygon -->
+	<!-- https://mvnrepository.com/artifact/com.vividsolutions/jts -->
+	<dependency>
+      <groupId>com.vividsolutions</groupId>
+      <artifactId>jts</artifactId>
+      <version>1.13</version>
+	</dependency>
+	
+	<!-- Used to convert from jts to geojson -->
+	<!-- https://mvnrepository.com/artifact/org.wololo/jts2geojson -->
+	<dependency>
+      <groupId>org.wololo</groupId>
+      <artifactId>jts2geojson</artifactId>
+      <version>0.11.0</version>
+	</dependency>
+	
+	<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-annotations -->
+<dependency>
+    <groupId>org.hibernate</groupId>
+    <artifactId>hibernate-annotations</artifactId>
+    <version>3.5.6-Final</version>
+</dependency>
+	
+	<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-spatial -->
+<dependency>
+    <groupId>org.hibernate</groupId>
+    <artifactId>hibernate-spatial</artifactId>
+    <version>5.2.12.Final</version>
+</dependency>
 	
 	
   </dependencies>

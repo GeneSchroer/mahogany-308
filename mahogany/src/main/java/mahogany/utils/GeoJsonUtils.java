@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
+import org.wololo.jts2geojson.GeoJSONWriter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -18,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.vividsolutions.jts.geom.MultiPolygon;
 
 import mahogany.entities.Districts;
 import mahogany.entities.Elections;
@@ -33,7 +35,7 @@ public class GeoJsonUtils {
 		
 		districtsJsonNode.put("type", "FeatureCollection");
 		ArrayNode featuresArray = districtsJsonNode.putArray("features");
-		
+		 
 		for(Districts district: districtList) {
 			ObjectNode featureNode= featuresArray.addObject();
 			
@@ -50,16 +52,19 @@ public class GeoJsonUtils {
 				propertiesNode.put("winningParty", winningParty);
 			}
 			
-			ObjectNode geometryNode = featureNode.putObject("geometry");
-			geometryNode.put("type", "MultiPolygon");
+			featureNode.putObject("geometry");
 			
-			String coordinatesString = district.getBoundaries().getCoordinatesString();
+			//String coordinatesString = district.getBoundaries().getCoordinatesString();
+			
+			MultiPolygon coordinates = district.getBoundaries().getCoordinates();
+			GeoJSONWriter writer = new GeoJSONWriter();
+			String boundaryString = writer.write(coordinates).toString();
+			
 			
 			ObjectMapper jsonNodeMapper = new ObjectMapper();
 			ObjectReader jsonNodeReader = jsonNodeMapper.reader();
-			geometryNode.putArray("coordinates");
-			ArrayNode coordinatesNode = (ArrayNode)jsonNodeReader.readTree(coordinatesString);
-			geometryNode.replace("coordinates", coordinatesNode);
+			ObjectNode boundaryNode = (ObjectNode)jsonNodeReader.readTree(boundaryString);
+			featureNode.replace("geometry", boundaryNode);
 		}
 		//System.out.println(districtsJsonNode.toString());
 		
