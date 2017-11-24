@@ -4,12 +4,10 @@
 /home/work/git/mahogany-308/mahogany/src/main/java/mahogany/metrics/GerrymanderData.java
 /home/work/git/mahogany-308/mahogany/src/main/java/mahogany/metrics/DistrictData.java
 /home/work/git/mahogany-308/mahogany/src/main/java/mahogany/entities/Boundaries.java
-/home/work/git/mahogany-308/mahogany/src/main/java/mahogany/repositories/Boundaries2Repository.java
 /home/work/git/mahogany-308/mahogany/src/main/java/mahogany/App.java
 /home/work/git/mahogany-308/mahogany/src/main/java/mahogany/controllers/GerrymanderController.java
 /home/work/git/mahogany-308/mahogany/src/main/java/mahogany/utils/PrincetonElectionDataUploaderImpl.java
 /home/work/git/mahogany-308/mahogany/src/main/java/mahogany/controllers/UploadController.java
-/home/work/git/mahogany-308/mahogany/src/main/java/mahogany/entities/Boundaries2.java
 /home/work/git/mahogany-308/mahogany/src/main/java/mahogany/utils/FileUploadHelper.java
 /home/work/git/mahogany-308/mahogany/src/main/java/mahogany/metrics/MetricTestService.java
 /home/work/git/mahogany-308/mahogany/src/main/java/mahogany/entities/Districts.java

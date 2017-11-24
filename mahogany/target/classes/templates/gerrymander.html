@@ -103,19 +103,42 @@
 			<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'">
 				<div id="gerrymanderMap"></div>
 			</div>
-			<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'bottom'">
-				<form action="/upload" enctype="multipart/form-data" method="POST">
-					<input name="file" type="file" multiple="true"/>
-					<input type="submit"/>
-					<br/>
-				</form>
-				<form action="/test" enctype="multipart/form-data" method="POST">
-					<input name="file" type="file"/>
-					<input type="submit" value="Submit Election Data"/>
-				</form>
-				
-				
+			<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'bottom'" style="height:20%;">
+			Admin Options
+			<div data-dojo-type="dijit/layout/TabContainer">
+				<div data-dojo-type="dijit/layout/ContentPane" title="UCLA">
+					<form action="/upload" enctype="multipart/form-data" method="POST">
+						<input name="file" type="file" multiple="true"/>
+						<input type="submit"/>
+						<br/>
+					</form>
+				</div>
+				<div data-dojo-type="dijit/layout/ContentPane" title="Princeton">
+					<form action="/test" enctype="multipart/form-data" method="POST">
+						<input name="file" type="file"/>
+						<input type="submit" value="Submit Election Data"/>
+					</form>	
+				</div>
+				<div data-dojo-type="dijit/layout/ContentPane" title="Manual Entry">
+					<div data-dojo-type="dijit/layout/TabContainer">
+						<div data-dojo-type="dijit/layout/ContentPane" title="Congressional Member">
+							<label>Year: </label><input type="text"/>
+							<label>State: </label><select></select>
+							<label>District No.: </label> <input type="text"/>
+							<label>Party: </label> <select></select>
+							<label>Name: </label> <input type="text"/>
+							
+						</div>
+						<div data-dojo-type="dijit/layout/ContentPane" title="Election Data">
+							<label>Year: </label><input type="text"/>
+							<label>State: </label><select></select>
+							<label>District No.: </label> <input type="text"/>
+							<label>Party: </label> <select></select>
+							<label>Votes: </label> <input type="text"/>
+						</div>
+					</div>
+				</div>
+				</div>
 			</div>
 		</div>
-		
 </html>
