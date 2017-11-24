@@ -6,13 +6,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import mahogany.utils.GerrymanderHelper;
+import mahogany.utils.FileUploadHelper;
 import mahogany.utils.Source;
 
 @Controller
 public class UploadController {
 
-	@Autowired GerrymanderHelper helper;
+	@Autowired FileUploadHelper helper;
 	
 	
 	@RequestMapping("/upload")
