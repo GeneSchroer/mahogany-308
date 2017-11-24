@@ -61,23 +61,9 @@ public class GerrymanderController {
 		return "home";
 	}
 	
-	@RequestMapping("/upload")
-	public String uclaDistrictDataUploadRequest(@RequestParam("file")MultipartFile[] files) {
-		//helper.setDistrictsRepository(districtsRepository);
-
-		helper.uploadDistrictFiles(files, Source.UCLA);
-		
-		
-		return "gerrymander";
-	}
 	
-	@RequestMapping("/test")
-	public String princetonElectionDataUploadRequest(@RequestParam("file")MultipartFile file) {
-		
-		helper.uploadElectionFile(file, Source.PRINCETON);
-		
-		return "gerrymander";
-	}
+	
+	
 	
 	
 }
