@@ -1,5 +1,7 @@
 package mahogany.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -62,7 +64,12 @@ public class GerrymanderController {
 	}
 	
 	
-	
+	@RequestMapping("/getYears")
+	public @ResponseBody List<Integer> getYearListRequest(){
+		List<Integer> yearList = helper.getYearList();
+		
+		return yearList;
+	}
 	
 	
 	

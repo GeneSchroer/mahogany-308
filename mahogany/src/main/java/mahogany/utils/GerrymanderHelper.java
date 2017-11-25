@@ -2,6 +2,7 @@ package mahogany.utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,6 +100,12 @@ public class GerrymanderHelper {
 		}
 		
 		return null;
+	}
+
+
+	public List<Integer> getYearList() {
+		
+		return districtsRepo.findAllYears();
 	}
 	
 	

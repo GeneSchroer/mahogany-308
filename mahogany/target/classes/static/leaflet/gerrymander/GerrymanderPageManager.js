@@ -1,5 +1,13 @@
-define(["dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/dom-style", "dojo/request", "dojo/topic", "leaflet/gerrymander/GerrymanderMapManager", "dijit/registry"], 
-		function(declare, on, domConstruct, domStyle, request, topic, GerrymanderMapManager, registry){
+define([
+	"dojo/_base/declare", 
+	"dojo/on", 
+	"dojo/dom-construct", 
+	"dojo/dom-style", 
+	"dojo/request", 
+	"dojo/topic", 
+	"leaflet/gerrymander/GerrymanderMapManager", 
+	"dijit/registry"
+	], function(declare, on, domConstruct, domStyle, request, topic, GerrymanderMapManager, registry){
 	
 	
 	var GerrymanderPageManager = declare(null, {
@@ -18,12 +26,31 @@ define(["dojo/_base/declare", "dojo/on", "dojo/dom-construct", "dojo/dom-style",
 		},
 		
 		_initializeYearSelector: function(pageElements){
+			var yearSelector = pageElements.yearSelector;
 			pageElements.mapManager.setYear(pageElements.yearSelector.value);
 			on(registry.byId(pageElements.yearSelector), "change", function(){
 				console.log("selected");
 				pageElements.mapManager.setYear(pageElements.yearSelector.value);
 			//	pageElements.mapManager.updateMap();
 			});
+			
+			request("/getYears",{
+					method:"GET",
+					handleAs: "json"
+				}).response.then(function(success){
+					var yearList = success.data;
+					console.log(yearList);
+					
+					//yearList.sort();
+					
+					for(year in yearList){
+						var option = domConstruct.create("option", {label:yearList[year], value: yearList[year]});
+						yearSelector.addOption(option);
+					}
+					if(year[0]){
+						pageElements.mapManager.setYear(yearList[0]);
+					}
+				});
 			
 		},
 		_initializeRepTable: function(pageElements){

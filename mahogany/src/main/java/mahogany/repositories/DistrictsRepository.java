@@ -24,4 +24,7 @@ public interface DistrictsRepository extends CrudRepository<Districts, Long> {
 	
 	@Query("select distinct d.year from Districts d")
 	List<Integer> findAllSessionsOfYear();
+
+	@Query("select distinct year from Districts d order by year desc")
+	List<Integer> findAllYears();
 }
