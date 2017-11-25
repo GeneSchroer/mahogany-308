@@ -5,9 +5,9 @@ define([
 	"dojo/dom-style", 
 	"dojo/request", 
 	"dojo/topic", 
-	"leaflet/gerrymander/GerrymanderMapManager", 
+	"leaflet/gerrymander/GerrymanderMapBuilder", 
 	"dijit/registry"
-	], function(declare, on, domConstruct, domStyle, request, topic, GerrymanderMapManager, registry){
+	], function(declare, on, domConstruct, domStyle, request, topic, GerrymanderMapBuilder, registry){
 	
 	
 	var GerrymanderPageManager = declare(null, {
@@ -17,7 +17,7 @@ define([
 			this._pageElements = builder;
 			
 			
-			this._pageElements.mapManager = GerrymanderMapManager.create(this._pageElements.map);
+			this._pageElements.mapManager = GerrymanderMapBuilder.create(this._pageElements.map);
 			this._initializeYearSelector(this._pageElements);
 			this._initializeRepTable(this._pageElements);
 			this._initializePartyCheckbox(this._pageElements);

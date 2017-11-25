@@ -30,7 +30,7 @@ public class GeoJsonUtils {
 	
 	
 	
-	public JsonNode createDistrictBoundariesJson(List<Districts> districtList) throws JsonProcessingException, IOException {
+	public JsonNode createDistrictBoundariesJsonNode(List<Districts> districtList) throws JsonProcessingException, IOException {
 		ObjectNode districtsJsonNode = new ObjectMapper().createObjectNode();
 		
 		districtsJsonNode.put("type", "FeatureCollection");

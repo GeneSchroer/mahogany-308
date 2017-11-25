@@ -1,6 +1,6 @@
 package mahogany.utils;
 
-public enum Source {
+public enum FileSource {
 	UCLA,
 	PRINCETON;
 	

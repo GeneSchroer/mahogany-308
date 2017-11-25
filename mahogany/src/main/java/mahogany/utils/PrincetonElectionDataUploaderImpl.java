@@ -43,7 +43,7 @@ public class PrincetonElectionDataUploaderImpl {
 	@Autowired VotesRepository votesRepo;
 	
 	
-	public Workbook convertFileToExcel(MultipartFile file) throws IOException {
+	public Workbook convertFileToExcelWorkbook(MultipartFile file) throws IOException {
 		FileInputStream input = (FileInputStream)file.getInputStream();
 		Workbook workbook = new HSSFWorkbook(input);
 		
@@ -52,8 +52,8 @@ public class PrincetonElectionDataUploaderImpl {
 	
 	
 	@SuppressWarnings("deprecation")
-	public void uploadElectionDataToDatabase(Workbook electionWorkbook) {
-		Sheet firstSheet = electionWorkbook.getSheetAt(0);
+	public void uploadDataToDatabase(Workbook workbook) {
+		Sheet firstSheet = workbook.getSheetAt(0);
 		
 		for(Row row: firstSheet) {
 			

@@ -19,9 +19,9 @@ public class FileUploadHelper {
 	PrincetonElectionDataUploaderImpl princetonElectionUploader;
 	
 	
-public void uploadDistrictFiles(MultipartFile[] files, Source source){
+public void uploadDistrictFiles(MultipartFile[] files, FileSource source){
 		
-		if(source == Source.UCLA) {
+		if(source == FileSource.UCLA) {
 			for(MultipartFile file: files) {
 				try {
 					ObjectNode fileJsonObject = (ObjectNode)uclaDistrictConverter.convertFileToJsonNode(file);
@@ -34,11 +34,11 @@ public void uploadDistrictFiles(MultipartFile[] files, Source source){
 		}
 	}
 	
-	public void uploadElectionFile(MultipartFile file, Source source) {
-		if(source == Source.PRINCETON) {
+	public void uploadElectionFile(MultipartFile file, FileSource source) {
+		if(source == FileSource.PRINCETON) {
 			try {
-				Workbook electionWorkbook = princetonElectionUploader.convertFileToExcel(file);
-				princetonElectionUploader.uploadElectionDataToDatabase(electionWorkbook);
+				Workbook electionWorkbook = princetonElectionUploader.convertFileToExcelWorkbook(file);
+				princetonElectionUploader.uploadDataToDatabase(electionWorkbook);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

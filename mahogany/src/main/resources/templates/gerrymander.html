@@ -46,15 +46,15 @@
 		</style>
 		<script>
 		
-    		require(["javascript/LoadingScreen","dojo/parser", "dojo/dom", "leaflet/gerrymander/GerrymanderPageManager", "dijit/registry", "dijit/layout/ContentPane", "dijit/layout/BorderContainer", "dijit/layout/TabContainer", 
+    		require(["javascript/LoadingScreen","dojo/parser", "dojo/dom", "leaflet/gerrymander/GerrymanderPageBuilder", "dijit/registry", "dijit/layout/ContentPane", "dijit/layout/BorderContainer", "dijit/layout/TabContainer", 
     		"dijit/layout/AccordionContainer", "dijit/form/Button", "dijit/form/Select", "dijit/form/RadioButton"], 
-    		function(LoadingScreen, parser, dom, GerrymanderPageManager, registry){
+    		function(LoadingScreen, parser, dom, GerrymanderPageBuilder, registry){
     		
     			var loadingScreen = new LoadingScreen("gerrymanderLoadingScreen");	
     			parser.parse();
     			loadingScreen.endLoading();
     	
-				var map_g = GerrymanderPageManager
+				var map_g = GerrymanderPageBuilder
 							.addMap(dom.byId("gerrymanderMap"))
 							.addYearSelector(registry.byId("gerrymanderYearSelect"))
 							.addRepTable(dom.byId("gerrymanderRepTable"))

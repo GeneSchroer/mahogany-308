@@ -8,13 +8,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.fasterxml.jackson.databind.JsonNode;
 
 import mahogany.metrics.MetricOption;
 import mahogany.utils.GerrymanderHelper;
-import mahogany.utils.Source;
 
 @Controller
 public class GerrymanderController {
@@ -28,7 +25,7 @@ public class GerrymanderController {
 	}
 	
 	@RequestMapping("/gerrymander")
-	public String accessGerrymanderPage() {
+	public String accessGerrymanderPageRequest() {
 		
 		return "gerrymander";
 	}
@@ -36,7 +33,7 @@ public class GerrymanderController {
 	@RequestMapping("/districtBoundariesRequest")
 	public @ResponseBody JsonNode getDistrictBoundariesRequest(@RequestParam(name="state")String state, 
 																	@RequestParam(name="year") int year) {
-		JsonNode districtJsonNode = helper.getDistrictBoundaries(state, year);
+		JsonNode districtJsonNode = helper.createDistrictBoundariesJsonNode(state, year);
 		
 		return districtJsonNode;
 	}
@@ -44,7 +41,7 @@ public class GerrymanderController {
 	@RequestMapping("/electionDataRequest")
 	public @ResponseBody JsonNode getElectionDataRequest(@RequestParam("state")String stateName,
 															@RequestParam("year")Integer year) {
-		JsonNode electionDataJsonNode = helper.getDistrictData(MetricOption.ELECTION_DATA, stateName, year);
+		JsonNode electionDataJsonNode = helper.getDistrictDataJsonNode(MetricOption.ELECTION_DATA, stateName, year);
 		
 		return electionDataJsonNode;
 	}
@@ -52,7 +49,7 @@ public class GerrymanderController {
 	public @ResponseBody JsonNode getEfficiencyGapRequest(@RequestParam(name="state") String stateName,
 																@RequestParam(name="year")Integer year) {
 		
-		JsonNode metricsJsonNode = helper.getDistrictData(MetricOption.EFFICIENCY_GAP, stateName, year);
+		JsonNode metricsJsonNode = helper.getDistrictDataJsonNode(MetricOption.EFFICIENCY_GAP, stateName, year);
 		
 		return metricsJsonNode;
 		
