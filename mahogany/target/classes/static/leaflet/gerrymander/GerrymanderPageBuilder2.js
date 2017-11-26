@@ -5,9 +5,10 @@ define([
 	"dojo/dom-style", 
 	"dojo/request", 
 	"dojo/topic", 
-	"leaflet/gerrymander/GerrymanderMapBuilder2", 
+	"leaflet/gerrymander/GerrymanderMapBuilder2",
+	"leaflet/gerrymander/constants/DataType",
 	"dijit/registry"
-	], function(declare, on, domConstruct, domStyle, request, topic, GerrymanderMapBuilder, registry){
+	], function(declare, on, domConstruct, domStyle, request, topic, GerrymanderMapBuilder, DataType, registry){
 	
 	
 	var GerrymanderPageManager = declare(null, {
@@ -27,11 +28,9 @@ define([
 		
 		_initializeYearSelector: function(pageElements){
 			var yearSelector = pageElements.yearSelector;
-			pageElements.mapManager.setYear(pageElements.yearSelector.value);
+			GerrymanderMapBuilder.setYear(pageElements.yearSelector.value);
 			on(registry.byId(pageElements.yearSelector), "change", function(){
-				console.log("selected");
-				pageElements.mapManager.setYear(pageElements.yearSelector.value);
-			//	pageElements.mapManager.updateMap();
+				GerrymanderMapBuilder.setYear(pageElements.yearSelector.value);
 			});
 			
 			request("/getYears",{
@@ -48,7 +47,7 @@ define([
 						yearSelector.addOption(option);
 					}
 					if(year[0]){
-						pageElements.mapManager.setYear(yearList[0]);
+						GerrymanderMapBuilder.setYear(yearList[0]);
 					}
 				});
 			
@@ -88,13 +87,13 @@ define([
 		_initializeDefaultModeButton: function(pageElements){
 			var defaultModeRadioBtn = pageElements.defaultModeRadioBtn;
 			on(defaultModeRadioBtn, "click", function(e){
-				pageElements.mapManager.setMetricToDefaultMode();
+				GerrymanderMapBuilder.setDataMode(DataType.ELECTION_DATA);
 			});
 		},
 		_initializeEfficiencyGapButton: function(pageElements){
 			var efficiencyGapRadioBtn = pageElements.efficiencyGapRadioBtn;
 			on(efficiencyGapRadioBtn, "click", function(e){
-				pageElements.mapManager.setMetricToEfficiencyGap();
+				GerrymanderMapBuilder.setDataMode(DataType.EFFICIENCY_GAP);
 			});
 		}
 		

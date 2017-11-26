@@ -63,7 +63,7 @@ public class ElectionDataService implements AlgorithmTest<GerrymanderData<Distri
 				}
 			}
 			districtData.setVoteData(voteMap);
-			districtDataMap.put(election.getId().toString(), districtData);
+			districtDataMap.put(election.getDistrict().getId().toString(), districtData);
 			
 			
 		}

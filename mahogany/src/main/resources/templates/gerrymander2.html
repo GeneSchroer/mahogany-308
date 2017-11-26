@@ -46,7 +46,7 @@
 		</style>
 		<script>
 		
-    		require(["javascript/LoadingScreen","dojo/parser", "dojo/dom", "leaflet/gerrymander/GerrymanderPageBuilder", "dijit/registry", "dijit/layout/ContentPane", "dijit/layout/BorderContainer", "dijit/layout/TabContainer", 
+    		require(["javascript/LoadingScreen","dojo/parser", "dojo/dom", "leaflet/gerrymander/GerrymanderPageBuilder2", "dijit/registry", "dijit/layout/ContentPane", "dijit/layout/BorderContainer", "dijit/layout/TabContainer", 
     		"dijit/layout/AccordionContainer", "dijit/form/Button", "dijit/form/Select", "dijit/form/RadioButton"], 
     		function(LoadingScreen, parser, dom, GerrymanderPageBuilder, registry){
     		
@@ -61,7 +61,7 @@
 							.addDefaultModeRadioButton(dom.byId("gerrymanderDefaultMode"))
 							.addEfficiencyGapRadioButton(dom.byId("gerrymanderEfficiencyGap"))
 							.build();
-				L.esri.basemapLayer('Topographic').addTo(map_g._pageElements.mapManager._mapData.map);
+				L.esri.basemapLayer('Topographic').addTo(map_g._pageElements.mapManager);
 				
 				});
 		</script>

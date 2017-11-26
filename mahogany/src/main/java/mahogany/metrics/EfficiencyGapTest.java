@@ -89,7 +89,7 @@ public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapResults>{
 				}
 			}
 			districtData.setVoteData(wastedVoteMap);
-			districtDataMap.put(election.getId().toString(), districtData);
+			districtDataMap.put(election.getDistrict().getId().toString(), districtData);
 			
 			System.out.println((float)republicanWastedVotes/republicanVotes);
 			System.out.println((float)democratWastedVotes/democratVotes);

@@ -30,6 +30,13 @@ public class GerrymanderController {
 		return "gerrymander";
 	}
 	
+	@RequestMapping("/gerrymander2")
+	public String accessGerrymanderPage2Request() {
+		
+		return "gerrymander2";
+	}
+	
+	
 	@RequestMapping("/districtBoundariesRequest")
 	public @ResponseBody JsonNode getDistrictBoundariesRequest(@RequestParam(name="state")String state, 
 																	@RequestParam(name="year") int year) {
