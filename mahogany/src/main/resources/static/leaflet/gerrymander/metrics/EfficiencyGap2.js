@@ -46,11 +46,12 @@ define([
 		for(party in voteData){
 			
 			var data = voteData[party];
-			displayString += "<h4>" + party + "</h4>";
+			displayString += "<b>" + party + "</b><br/>";
 			displayString += "Votes: " + data.votes + "<br/>";
-			displayString += "Wasted Votes: " + data.wastedVotes + "<br/>";
+			
 			var wastedVotes = (data.wastedVotes/data.votes).toFixed(3);
-			if(wastedVotes != 1){
+			if(wastedVotes != 1 && data.votes!=0){
+				displayString += "Wasted Votes: " + data.wastedVotes + "<br/>";
 				displayString += "Wasted Vote Percentage: " + wastedVotes + "<br/>";
 			}
 		}		

@@ -6,9 +6,10 @@ define([
 	"dojo/request",
 	"leaflet/gerrymander/metrics/ElectionData2",
 	"leaflet/gerrymander/metrics/EfficiencyGap2",
-	"leaflet/gerrymander/constants/DataType"
+	"leaflet/gerrymander/constants/DataType",
+	"leaflet/gerrymander/constants/MapColors"
 	
-	],function(declare, on, topic, domStyle, request, ElectionData, EfficiencyGap, DataType){
+	],function(declare, on, topic, domStyle, request, ElectionData, EfficiencyGap, DataType, MapColors){
 	
 	var MAP_MODE_STATE = "state";
 	var MAP_MODE_DISTRICT = "district";
@@ -54,6 +55,10 @@ define([
 		dataDisplay = createDataDisplay();
 		dataDisplay.addTo(map);
 		mapControls.dataDisplay = dataDisplay;
+		
+		legendControl = createLegendControl();
+		legendControl.addTo(map);
+		mapControls.legendControl = legendControl;
 		
 		dataMode = DataType.ELECTION_DATA;
 		
@@ -133,6 +138,48 @@ define([
 		
 		return dataDisplay;
 	}
+	
+	function createLegendControl(){
+		var legendControl = L.control({position:'bottomright'});
+		legendControl.onAdd = function(map){
+			this._div = L.DomUtil.create('div', 'dataDisplay legendControl');
+			this._div.innerHTML = electionDataLegend();
+			this.disable();
+			return this._div;
+		};
+		legendControl.update = function (string) {
+		    this._div.innerHTML = string ? string : "Data Not Available";
+		};
+		legendControl.disable = function(){
+			domStyle.set(this._div, "display", "none");
+		};
+		legendControl.enable = function(){
+			domStyle.set(this._div, "display", "block");
+		};
+		
+		
+		return legendControl;
+	}
+	function electionDataLegend(){
+		var legendDisplay = "";
+		legendDisplay += "<h4>Parties:</h4>";
+		legendDisplay += "Democrat " + '<i style="background:' + MapColors.BLUE_60 + ';"></i><br/>';
+		legendDisplay += "Republican " + '<i style="background:' + MapColors.RED_60 + ';"></i><br/>';
+		
+		return legendDisplay;
+	}
+	
+	function efficiencyGapLegend(){
+		var legendDisplay = "";
+		legendDisplay += "<b>Wasted Vote Percentage:</b><br/>";
+		legendDisplay += "0-10 " + '<i style="background:' + MapColors.BLUE_20 + ';"></i><i style="background:' + MapColors.RED_20 + '"></i><br/>';
+		legendDisplay += "10-20 " + '<i style="background:' + MapColors.BLUE_30 + ';"></i><i style="background:' + MapColors.RED_30 + '"></i><br/>';
+		legendDisplay += "20-30 " + '<i style="background:' + MapColors.BLUE_40 + ';"></i><i style="background:' + MapColors.RED_40 + '"></i><br/>';
+		legendDisplay += "30-40 " + '<i style="background:' + MapColors.BLUE_50 + ';"></i><i style="background:' + MapColors.RED_50 + '"></i><br/>';
+		legendDisplay += "40-50 " + '<i style="background:' + MapColors.BLUE_60 + ';"></i><i style="background:' + MapColors.RED_60 + '"></i><br/>';
+		return legendDisplay;
+	}
+	
 	function initializeDistrictLayer(){
 	
 	}
@@ -248,6 +295,7 @@ define([
 	
 	
 	function setEfficiencyGapLayer(){
+		legendControl.update(efficiencyGapLegend());
 		districtLayer.setStyle(null);
 		L.Util.setOptions(districtLayer, {style:null});
 		L.Util.setOptions(districtLayer, { style: EfficiencyGap.setStyle(mapData)	});
@@ -256,7 +304,7 @@ define([
 	}
 	
 	function setElectionDataLayer(){
-		
+		legendControl.update(electionDataLegend());
 		districtLayer.setStyle(null);
 		L.Util.setOptions(districtLayer, {style:null});
 		L.Util.setOptions(districtLayer, {style: ElectionData.setStyle()});

@@ -18,7 +18,6 @@ mahogany/entities/Elections.class
 mahogany/utils/GerrymanderHelper.class
 mahogany/metrics/DistrictData.class
 mahogany/entities/Districts.class
-mahogany/utils/Source.class
 mahogany/utils/StateNamesEnum.class
 mahogany/entities/Votes.class
 mahogany/metrics/EfficiencyGapTest.class
@@ -31,6 +30,7 @@ mahogany/entities/Parties.class
 mahogany/repositories/RedistrictController.class
 mahogany/entities/Members.class
 mahogany/utils/GeoJsonUtils.class
+mahogany/utils/FileSource.class
 mahogany/utils/StateNamesEnum$1.class
 mahogany/metrics/WastedVoteData.class
 mahogany/metrics/TestNames$1.class
