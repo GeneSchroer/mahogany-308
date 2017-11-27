@@ -61,7 +61,7 @@
 							.addDefaultModeRadioButton(dom.byId("gerrymanderDefaultMode"))
 							.addEfficiencyGapRadioButton(dom.byId("gerrymanderEfficiencyGap"))
 							.build();
-				L.esri.basemapLayer('Topographic').addTo(map_g._pageElements.mapManager);
+				L.esri.basemapLayer('Topographic').addTo(map_g);
 				
 				});
 		</script>
@@ -78,7 +78,7 @@
 					<div id="gerrymanderYearSelect" data-dojo-type="dijit/form/Select"></div>
 					<label></label>
 					<form id="gerrymanderMetricSelectForm">
-						<label>None</label>
+						<label>Election Data</label>
 						<input id="gerrymanderDefaultMode" checked="true" type="radio" name="metric" value="none" data-dojo-type="dijit/form/RadioButton"/>
 						<label>Efficiency Gap</label>
 						<input id="gerrymanderEfficiencyGap" type="radio" name="metric" value="efficiencyGap" data-dojo-type="dijit/form/RadioButton"/>
