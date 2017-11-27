@@ -18,6 +18,7 @@ define([
 					dataControl.update(setDisplay(layer, mapData));
 				},
 				mouseout:function(e){
+					dataControl.update(" ");
 					districtLayer.resetStyle(e.target);
 				},
 				click: function(e){
@@ -70,6 +71,8 @@ define([
 	function fillColor(mapData, id, colorMode){
 		var districtId = id;
 		var metricData = mapData;
+//		console.log(districtId);
+	//	console.log(metricData);
 		var districtData = metricData.districtData[districtId];
 		var wastedVotePercent;
 		var voteData;
@@ -101,10 +104,6 @@ define([
 		setEvents: function(mapData, districtLayer, dataControl){
 			return setEvents(mapData, districtLayer, dataControl);
 		},
-		setEvents2: function(mapData){
-			return setEvents2(mapData);
-		},
-		
 		setStyle: function(mapData){
 			return setStyle(mapData);
 		}

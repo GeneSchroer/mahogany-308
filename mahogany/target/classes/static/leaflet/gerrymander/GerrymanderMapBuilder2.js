@@ -57,7 +57,6 @@ define([
 		
 		dataMode = DataType.ELECTION_DATA;
 		
-		mapData = {};
 		initializeDistrictLayer();
 		initializeStateLayer();
 		
@@ -161,10 +160,12 @@ define([
 		});
 	}
 	function updateMap(){
-		metricData={};
-		loadDistrictBoundariesRequest();
+		if(mapMode == MAP_MODE_DISTRICT){
+			districtLayer.clearLayers();
+			L.Util.setOptions(districtLayer, {style:null, onEachFeature:null});
+			loadDistrictBoundariesRequest();
+		}
 	}
-	
 	
 	function loadStateBoundariesRequest(stateLayer){
 		request("stateBoundaries.json",{
@@ -186,7 +187,7 @@ define([
 		};
 	}
 	function loadDistrictBoundariesRequest(){
-		request("districtBoundariesRequest", {
+		request("/districtBoundariesRequest", {
 			method: "POST",
 			data: {
 				state: currentState,
@@ -199,7 +200,7 @@ define([
 			var districtData = success.data;
 			//districtLayer.clearLayers();
 			districtLayer.addData(districtData);
-			loadDistrictData(mapData);
+			loadDistrictData();
 		});
 		
 	}
@@ -208,7 +209,7 @@ define([
 			electionDataRequest();
 		}
 		else if(dataMode == DataType.EFFICIENCY_GAP){
-			
+			efficiencyGapRequest();
 		}
 	}
 	
@@ -226,16 +227,6 @@ define([
 			setElectionDataLayer();
 		});
 	}
-	
-
-	
-	
-	
-	
-			
-			
-			
-	
 	function efficiencyGapRequest(){
 
 		request("/efficiencyGapRequest",{
@@ -248,7 +239,7 @@ define([
 		}).response.then(function(success){
 			console.log(success.data);
 			mapData = success.data;
-			setEfficiencyGapLayer(mapData);
+			setEfficiencyGapLayer();
 		});
 
 	}
@@ -257,18 +248,19 @@ define([
 	
 	
 	function setEfficiencyGapLayer(){
-			L.Util.setOptions(districtLayer, {style:null});
-			L.Util.setOptions(districtLayer, { style: EfficiencyGap.setStyle(mapData)	});
-			districtLayer.eachLayer(EfficiencyGap.setEvents(mapData, districtLayer, mapControls.dataDisplay));
-			districtLayer.setStyle(EfficiencyGap.setStyle(mapData));
+		districtLayer.setStyle(null);
+		L.Util.setOptions(districtLayer, {style:null});
+		L.Util.setOptions(districtLayer, { style: EfficiencyGap.setStyle(mapData)	});
+		districtLayer.setStyle(EfficiencyGap.setStyle(mapData));
+		districtLayer.eachLayer(EfficiencyGap.setEvents(mapData, districtLayer, mapControls.dataDisplay));
 	}
 	
 	function setElectionDataLayer(){
 		
-		districtLayer.setStyle(ElectionData.setStyle());
+		districtLayer.setStyle(null);
 		L.Util.setOptions(districtLayer, {style:null});
 		L.Util.setOptions(districtLayer, {style: ElectionData.setStyle()});
-		
+		districtLayer.setStyle(ElectionData.setStyle());
 		districtLayer.eachLayer(ElectionData.setEvents(mapData, districtLayer, mapControls.dataDisplay));
 		
 	}
