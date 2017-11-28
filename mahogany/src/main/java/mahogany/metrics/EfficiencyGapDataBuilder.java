@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import mahogany.entities.Elections;
 import mahogany.entities.Votes;
 
-public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapStateData>{
+public class EfficiencyGapDataBuilder implements AlgorithmTest<EfficiencyGapStateData>{
 
 	@Override
 	public EfficiencyGapStateData generateMetricData(List<Elections> electionList) {

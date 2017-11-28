@@ -24,7 +24,6 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import mahogany.entities.Districts;
 import mahogany.entities.Elections;
 import mahogany.metrics.AbstractStateData;
-import mahogany.metrics.GerrymanderData;
 
 @Component
 public class GeoJsonUtils {

@@ -10,13 +10,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import mahogany.entities.Districts;
 import mahogany.entities.Elections;
-import mahogany.metrics.EfficiencyGapResults;
 import mahogany.metrics.EfficiencyGapStateData;
-import mahogany.metrics.EfficiencyGapTest;
-import mahogany.metrics.ElectionDataService;
+import mahogany.metrics.EfficiencyGapDataBuilder;
+import mahogany.metrics.ElectionDataBuilder;
 import mahogany.metrics.ElectionStateData;
 import mahogany.metrics.MetricOption;
-import mahogany.metrics.GerrymanderData;
 import mahogany.repositories.DistrictsRepository;
 import mahogany.repositories.ElectionsRepository;
 
@@ -63,7 +61,7 @@ public class GerrymanderHelper {
 		
 		if(metric == MetricOption.EFFICIENCY_GAP) {
 			ArrayList<Elections> electionList = (ArrayList<Elections>)electionsRepo.findAllByStateAndYear(stateName, year);
-			EfficiencyGapTest x = new EfficiencyGapTest();
+			EfficiencyGapDataBuilder x = new EfficiencyGapDataBuilder();
 			EfficiencyGapStateData metricData = x.generateMetricData(electionList);
 		
 			
@@ -81,7 +79,7 @@ public class GerrymanderHelper {
 		}
 		else if(metric == MetricOption.ELECTION_DATA) {
 			ArrayList<Elections> electionList = (ArrayList<Elections>)electionsRepo.findAllByStateAndYear(stateName, year);
-			ElectionDataService x = new ElectionDataService();
+			ElectionDataBuilder x = new ElectionDataBuilder();
 			ElectionStateData electionData= x.generateMetricData(electionList);
 		
 			
@@ -99,7 +97,7 @@ public class GerrymanderHelper {
 		}
 		else if(metric == MetricOption.MEMBER_DATA) {
 			ArrayList<Elections> electionList = (ArrayList<Elections>)electionsRepo.findAllByStateAndYear(stateName, year);
-			ElectionDataService x = new ElectionDataService();
+			ElectionDataBuilder x = new ElectionDataBuilder();
 			ElectionStateData electionData= x.generateMetricData(electionList);
 		
 			

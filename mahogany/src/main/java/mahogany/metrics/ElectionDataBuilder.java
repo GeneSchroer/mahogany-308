@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import mahogany.entities.Elections;
 import mahogany.entities.Votes;
 
-public class ElectionDataService implements AlgorithmTest<ElectionStateData> {
+public class ElectionDataBuilder implements AlgorithmTest<ElectionStateData> {
 
 	@Override
 	public ElectionStateData generateMetricData(List<Elections> electionList) {
