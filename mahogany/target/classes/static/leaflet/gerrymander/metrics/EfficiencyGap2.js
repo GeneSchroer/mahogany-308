@@ -3,6 +3,18 @@ define([
 	"leaflet/gerrymander/constants/MapColors"
 	], function(ColorMode, MapColors){
 	
+	function setStyle(mapData){
+		return function(feature){
+			return{
+				fillOpacity: 0.6,
+				weight: 0.5,
+				color: "yellow",
+				fillColor: fillColor(mapData, feature.properties.id, ColorMode.DEFAULT_COLOR)
+
+			};
+		};
+	}
+	
 	function setEvents(mapData, districtLayer, dataControl){
 		return function (layer){
 			layer.off();
@@ -12,8 +24,7 @@ define([
 					layer.setStyle({
 						weight: 0.5,
 						fillColor: fillColor( mapData,layer.feature.properties.id, ColorMode.HIGHLIGHT_COLOR),
-						dataArray:' ',
-						fillOpacity: 1
+						dataArray:' '
 					});
 					dataControl.update(setDisplay(layer, mapData));
 				},
@@ -47,28 +58,18 @@ define([
 			
 			var data = voteData[party];
 			displayString += "<b>" + party + "</b><br/>";
-			displayString += "Votes: " + data.votes + "<br/>";
+			displayString += "Votes: " + data.votes.toLocaleString() + "<br/>";
 			
-			var wastedVotes = (data.wastedVotes/data.votes).toFixed(3);
-			if(wastedVotes != 1 && data.votes!=0){
-				displayString += "Wasted Votes: " + data.wastedVotes + "<br/>";
-				displayString += "Wasted Vote Percentage: " + wastedVotes + "<br/>";
+			var wastedVotesPercentage = (data.wastedVotes/data.votes).toFixed(3);
+			if(wastedVotesPercentage != 1 && data.votes!=0){
+				displayString += "Wasted Votes: " + data.wastedVotes.toLocaleString() + "<br/>";
+				displayString += "Wasted Vote Percentage: " + wastedVotesPercentage + "<br/>";
 			}
 		}		
 		return displayString;
 	}
 	
-	function setStyle(mapData){
-		return function(feature){
-			return{
-				fillOpacity: 1,
-				weight: 0.5,
-				color: "yellow",
-				fillColor: fillColor(mapData, feature.properties.id, ColorMode.DEFAULT_COLOR)
-
-			};
-		};
-	}
+	
 	function fillColor(mapData, id, colorMode){
 		var districtId = id;
 		var metricData = mapData;

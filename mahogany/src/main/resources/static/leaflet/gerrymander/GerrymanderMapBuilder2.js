@@ -162,7 +162,7 @@ define([
 	}
 	function electionDataLegend(){
 		var legendDisplay = "";
-		legendDisplay += "<h4>Parties:</h4>";
+		legendDisplay += "<b>Parties:</b><br/>";
 		legendDisplay += "Democrat " + '<i style="background:' + MapColors.BLUE_60 + ';"></i><br/>';
 		legendDisplay += "Republican " + '<i style="background:' + MapColors.RED_60 + ';"></i><br/>';
 		

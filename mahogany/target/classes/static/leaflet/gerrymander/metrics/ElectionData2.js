@@ -7,9 +7,18 @@ define([
 	var districtLayer;
 	var displayControl;
 	
-	
-	function setDataBlock(properties, efficiencyGap){
-		
+	function setStyle(mapData){
+		return function(feature){
+			//console.log(mapData);
+			return{
+				weight: 0.5,
+				color: "yellow",
+				fillColor: setColor(feature, ColorMode.DEFAULT_COLOR),
+				
+				dataArray: ' ',
+				fillOpacity: 0.6
+			};
+		};
 	}
 	
 	function setEvents(mapData, districtLayer, displayControl){
@@ -21,8 +30,7 @@ define([
 					layer.setStyle({
 						weight: 0.5,
 						fillColor: setColor(layer.feature, ColorMode.HIGHLIGHT_COLOR),
-						dataArray:' ',
-						fillOpacity: 1
+						dataArray:' '
 					});
 					displayControl.update(setDisplay(layer, mapData));
 				},
@@ -46,7 +54,7 @@ define([
 		}
 		displayString += "District: " + districtNumber + "<br/>";
 		
-		displayString += "<h4>Votes:</h4>";
+		displayString += "<b>Votes:</b><br/>";
 		
 		var districtId = layer.feature.properties.id;
 		var districtData = mapData.districtData[districtId];
@@ -55,7 +63,7 @@ define([
 		
 		for(party in voteData){
 			var data = voteData[party];
-			displayString += party + ": " + data.votes + "<br/>";
+			displayString += party + ": " + data.votes.toLocaleString() + "<br/>";
 		}
 		
 		return displayString;
@@ -76,19 +84,7 @@ define([
 		.openOn(mapData.map);
 	}
 	
-	function setStyle(mapData){
-		return function(feature){
-			//console.log(mapData);
-			return{
-				weight: 0.5,
-				color: "yellow",
-				fillColor: setColor(feature, ColorMode.DEFAULT_COLOR),
-				
-				dataArray: ' ',
-				fillOpacity: 0.8
-			};
-		};
-	}
+	
 	
 	function setColor(feature, colorMode){
 		
