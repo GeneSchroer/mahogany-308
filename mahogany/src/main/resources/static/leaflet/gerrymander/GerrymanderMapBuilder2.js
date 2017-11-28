@@ -52,6 +52,10 @@ define([
 		});
 		mapControls.zoomOutBtn = zoomOutBtn;
 		
+		memberDisplay = createDataDisplay();
+		memberDisplay.addTo(map);
+		mapControls.memberDisplayer = memberDisplay;
+		
 		dataDisplay = createDataDisplay();
 		dataDisplay.addTo(map);
 		mapControls.dataDisplay = dataDisplay;
@@ -138,6 +142,8 @@ define([
 		
 		return dataDisplay;
 	}
+	
+	
 	
 	function createLegendControl(){
 		var legendControl = L.control({position:'bottomright'});

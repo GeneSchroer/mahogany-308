@@ -62,6 +62,17 @@ public class GerrymanderController {
 		
 	}
 	
+	@RequestMapping("/getMemberData")
+	public @ResponseBody JsonNode getMemberDataRequest(@RequestParam(name="state")String state,
+																												@RequestParam(name="year") Integer year) {
+		JsonNode memberDataJsonNode = null;
+		
+		return memberDataJsonNode;
+		
+	}
+																																									
+	
+	
 	@RequestMapping("/home")
 	public String login() {
 		return "home";
