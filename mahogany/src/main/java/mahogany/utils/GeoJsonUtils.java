@@ -23,6 +23,7 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 
 import mahogany.entities.Districts;
 import mahogany.entities.Elections;
+import mahogany.metrics.AbstractStateData;
 import mahogany.metrics.GerrymanderData;
 
 @Component
@@ -71,7 +72,7 @@ public class GeoJsonUtils {
 		return (JsonNode) districtsJsonNode;
 	}
 	
-	public JsonNode generateMetricDataJson(GerrymanderData result) throws IOException {
+	public JsonNode generateMetricDataJson(AbstractStateData<?> result) throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectReader reader = mapper.reader();
 		String metricResultsJsonString = mapper.writeValueAsString(result);

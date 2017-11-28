@@ -2,6 +2,7 @@ package mahogany.metrics;
 
 public enum MetricOption {
 	ELECTION_DATA,
-	EFFICIENCY_GAP;
+	EFFICIENCY_GAP,
+	MEMBER_DATA;
 	
 }

@@ -11,8 +11,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import mahogany.entities.Districts;
 import mahogany.entities.Elections;
 import mahogany.metrics.EfficiencyGapResults;
+import mahogany.metrics.EfficiencyGapStateData;
 import mahogany.metrics.EfficiencyGapTest;
 import mahogany.metrics.ElectionDataService;
+import mahogany.metrics.ElectionStateData;
 import mahogany.metrics.MetricOption;
 import mahogany.metrics.GerrymanderData;
 import mahogany.repositories.DistrictsRepository;
@@ -57,11 +59,12 @@ public class GerrymanderHelper {
 	
 	
 	public JsonNode getDistrictDataJsonNode(MetricOption metric, String stateName, Integer year) {
-		ArrayList<Elections> electionList = (ArrayList<Elections>)electionsRepo.findAllByStateAndYear(stateName, year);
+		
 		
 		if(metric == MetricOption.EFFICIENCY_GAP) {
+			ArrayList<Elections> electionList = (ArrayList<Elections>)electionsRepo.findAllByStateAndYear(stateName, year);
 			EfficiencyGapTest x = new EfficiencyGapTest();
-			EfficiencyGapResults metricData = x.generateMetricData(electionList);
+			EfficiencyGapStateData metricData = x.generateMetricData(electionList);
 		
 			
 			
@@ -77,8 +80,27 @@ public class GerrymanderHelper {
 			}
 		}
 		else if(metric == MetricOption.ELECTION_DATA) {
+			ArrayList<Elections> electionList = (ArrayList<Elections>)electionsRepo.findAllByStateAndYear(stateName, year);
 			ElectionDataService x = new ElectionDataService();
-			GerrymanderData electionData= x.generateMetricData(electionList);
+			ElectionStateData electionData= x.generateMetricData(electionList);
+		
+			
+			
+			try {
+				JsonNode metricsJson = geoJsonUtils.generateMetricDataJson(electionData);
+				return metricsJson;
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else if(metric == MetricOption.MEMBER_DATA) {
+			ArrayList<Elections> electionList = (ArrayList<Elections>)electionsRepo.findAllByStateAndYear(stateName, year);
+			ElectionDataService x = new ElectionDataService();
+			ElectionStateData electionData= x.generateMetricData(electionList);
 		
 			
 			

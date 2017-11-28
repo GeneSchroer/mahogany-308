@@ -8,12 +8,12 @@ import java.util.Map.Entry;
 import mahogany.entities.Elections;
 import mahogany.entities.Votes;
 
-public class ElectionDataService implements AlgorithmTest<GerrymanderData<DistrictData<VoteData>>> {
+public class ElectionDataService implements AlgorithmTest<ElectionStateData> {
 
 	@Override
-	public GerrymanderData<DistrictData<VoteData>> generateMetricData(List<Elections> electionList) {
-		GerrymanderData<DistrictData<VoteData>> electionDataResults = new GerrymanderData<DistrictData<VoteData>>();
-		Map<String, DistrictData<VoteData>> districtDataMap = new HashMap<String, DistrictData<VoteData>>();
+	public ElectionStateData generateMetricData(List<Elections> electionList) {
+		ElectionStateData electionDataResults = new ElectionStateData();
+		Map<String, ElectionDistrictData<VoteData>> districtDataMap = new HashMap<String, ElectionDistrictData<VoteData>>();
 		
 		Integer totalDemocratVotes = 0;
 		Integer totalDemocratSeats = 0;
@@ -21,7 +21,7 @@ public class ElectionDataService implements AlgorithmTest<GerrymanderData<Distri
 		Integer totalRepublicanSeats = 0;
 		
 		for(Elections election: electionList) {
-			DistrictData<VoteData> districtData = new DistrictData<VoteData>();
+			ElectionDistrictData<VoteData> districtData = new ElectionDistrictData<VoteData>();
 			Map<String, VoteData> voteMap = new HashMap<String, VoteData>();
 
 			
@@ -73,7 +73,7 @@ public class ElectionDataService implements AlgorithmTest<GerrymanderData<Distri
 		electionDataResults.setTotalRepublicanVotes(totalRepublicanVotes);
 		electionDataResults.setTotalDemocratSeats(totalDemocratSeats);
 		electionDataResults.setTotalRepublicanSeats(totalRepublicanSeats);
-		electionDataResults.setTestName(TestNames.NONE);
+		electionDataResults.setTestName(MetricOption.ELECTION_DATA.toString());
 
 		
 		return electionDataResults;

@@ -54,7 +54,7 @@ public class GerrymanderController {
 	}
 	@RequestMapping("/efficiencyGapRequest")
 	public @ResponseBody JsonNode getEfficiencyGapRequest(@RequestParam(name="state") String stateName,
-																@RequestParam(name="year")Integer year) {
+																													@RequestParam(name="year")Integer year) {
 		
 		JsonNode metricsJsonNode = helper.getDistrictDataJsonNode(MetricOption.EFFICIENCY_GAP, stateName, year);
 		
@@ -63,9 +63,10 @@ public class GerrymanderController {
 	}
 	
 	@RequestMapping("/getMemberData")
-	public @ResponseBody JsonNode getMemberDataRequest(@RequestParam(name="state")String state,
+	public @ResponseBody JsonNode getMemberDataRequest(@RequestParam(name="state")String stateName,
 																												@RequestParam(name="year") Integer year) {
-		JsonNode memberDataJsonNode = null;
+		
+		JsonNode memberDataJsonNode = helper.getDistrictDataJsonNode(MetricOption.MEMBER_DATA, stateName, year);
 		
 		return memberDataJsonNode;
 		

@@ -23,6 +23,7 @@ define([
 	var mapControls = {}; // object that holds out map controls/displays/legends.
 	var zoomOutBtn;
 	
+	var memberData;
 	var mapData;
 	
 	var currentState;
@@ -258,6 +259,9 @@ define([
 		
 	}
 	function loadDistrictData(){
+		
+		memberDataRequest();
+		
 		if(dataMode == DataType.ELECTION_DATA){
 			electionDataRequest();
 		}
@@ -265,6 +269,22 @@ define([
 			efficiencyGapRequest();
 		}
 	}
+	
+	function memberDataRequest(){
+		request("/getMemberData",{
+			method: "GET",
+			query:{
+				state: currentState,
+				year: year
+			}, 
+			handleAs: "json"
+		}).response.then(function(success){
+			console.log(success.data);
+			memberData = success.data;
+			
+		});
+	}
+	
 	
 	function electionDataRequest(){
 		request("/electionDataRequest",{

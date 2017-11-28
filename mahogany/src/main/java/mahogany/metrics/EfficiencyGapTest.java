@@ -10,14 +10,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import mahogany.entities.Elections;
 import mahogany.entities.Votes;
 
-public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapResults>{
+public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapStateData>{
 
 	@Override
-	public EfficiencyGapResults  generateMetricData(List<Elections> electionList) {
+	public EfficiencyGapStateData generateMetricData(List<Elections> electionList) {
 
-		EfficiencyGapResults efficiencyResult = new EfficiencyGapResults();
+		EfficiencyGapStateData efficiencyResult = new EfficiencyGapStateData();
 		
-		Map<String, DistrictData<WastedVoteData>> districtDataMap = new HashMap<String, DistrictData<WastedVoteData>>();
+		Map<String, ElectionDistrictData<WastedVoteData>> districtDataMap = new HashMap<String, ElectionDistrictData<WastedVoteData>>();
 		
 		
 		Integer totalStateVotes = 0;
@@ -31,7 +31,7 @@ public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapResults>{
 		
 		
 		for(Elections election: electionList) {
-			DistrictData<WastedVoteData> districtData = new DistrictData<WastedVoteData>();
+			ElectionDistrictData<WastedVoteData> districtData = new ElectionDistrictData<WastedVoteData>();
 			Map<String, WastedVoteData> wastedVoteMap = new HashMap<String, WastedVoteData>();
 			
 			Integer democratVotes = 0;
@@ -106,7 +106,7 @@ public class EfficiencyGapTest implements AlgorithmTest<EfficiencyGapResults>{
 		
 		efficiencyResult.setEfficiencyGap(efficiencyGap);
 		
-		efficiencyResult.setTestName(TestNames.EFFICIENCY_GAP);
+		efficiencyResult.setTestName(MetricOption.EFFICIENCY_GAP.toString());
 		
 		ObjectMapper x = new ObjectMapper();
 		System.out.println(x.valueToTree(efficiencyResult));
