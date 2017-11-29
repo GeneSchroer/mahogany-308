@@ -25,7 +25,7 @@ public class Districts {
 	private Integer year;
 	
 	@ManyToOne
-	@JoinColumn(name="stateId")//, updatable=false, insertable=false)
+	@JoinColumn(name="stateId")
 	private StateNames stateName;
 	
 	@ManyToOne
@@ -37,6 +37,7 @@ public class Districts {
 	
 	@OneToMany(mappedBy="district")
 	private List<Members> members;
+	
 	
 	public Districts() {
 		

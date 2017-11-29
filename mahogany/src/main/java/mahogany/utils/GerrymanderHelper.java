@@ -14,6 +14,8 @@ import mahogany.metrics.EfficiencyGapStateData;
 import mahogany.metrics.EfficiencyGapDataBuilder;
 import mahogany.metrics.ElectionDataBuilder;
 import mahogany.metrics.ElectionStateData;
+import mahogany.metrics.MemberDataBuilder;
+import mahogany.metrics.MemberStateData;
 import mahogany.metrics.MetricOption;
 import mahogany.repositories.DistrictsRepository;
 import mahogany.repositories.ElectionsRepository;
@@ -96,9 +98,9 @@ public class GerrymanderHelper {
 			}
 		}
 		else if(metric == MetricOption.MEMBER_DATA) {
-			ArrayList<Elections> electionList = (ArrayList<Elections>)electionsRepo.findAllByStateAndYear(stateName, year);
-			ElectionDataBuilder x = new ElectionDataBuilder();
-			ElectionStateData electionData= x.generateMetricData(electionList);
+			ArrayList<Districts> districtList = (ArrayList<Districts>)districtsRepo.findAllByStateAndYear(stateName, year);
+			MemberDataBuilder x = new MemberDataBuilder();
+			MemberStateData electionData= x.generateMetricData(districtList);
 		
 			
 			

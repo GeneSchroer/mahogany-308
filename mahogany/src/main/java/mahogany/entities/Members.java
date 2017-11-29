@@ -16,20 +16,16 @@ public class Members {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
-	//private Long nameId;
-	private Long districtId;
-	private Long partyId;
-	private Long nameId;
 	@ManyToOne
-	@JoinColumn(name="nameId", updatable=false, insertable=false)
+	@JoinColumn(name="nameId")
 	private MemberNames memberName;
 	
 	@ManyToOne
-	@JoinColumn(name="districtId", updatable=false, insertable=false)
+	@JoinColumn(name="districtId")
 	private Districts district;
 	
 	@ManyToOne
-	@JoinColumn(name="partyId", updatable=false, insertable=false)
+	@JoinColumn(name="partyId")
 	private Parties party;
 	
 	public Members() {
@@ -40,29 +36,6 @@ public class Members {
 		return id;
 	}
 	
-	public Long getNameId() {
-		return nameId;
-	}
-	
-	public void setNameId(Long nameId) {
-		this.nameId = nameId;
-	}
-	
-	public Long getDistrictId() {
-		return districtId;
-	}
-	
-	public void setDistrictId(Long districtId) {
-		this.districtId = districtId;
-	}
-	
-	public Long getPartyId() {
-		return partyId;
-	}
-	
-	public void setPartyId(Long partyId) {
-		this.partyId = partyId;
-	}
 
 	public Districts getDistrict() {
 		return district;
