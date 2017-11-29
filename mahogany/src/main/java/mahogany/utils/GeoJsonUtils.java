@@ -79,34 +79,4 @@ public class GeoJsonUtils {
 		return metricResultJson;
 	}
 	
-	
-	public Integer getStateCode(String stateName) {
-		return 	stateName.equals(StateNamesEnum.Alabama.getName()) ? StateNamesEnum.Alabama.getCode()
-				: stateName.equals(StateNamesEnum.Alaska.getName()) ? StateNamesEnum.Alaska.getCode()	
-				: stateName.equals(StateNamesEnum.Arizona.getName()) ? StateNamesEnum.Arizona.getCode()
-				: stateName.equals(StateNamesEnum.Arkansas.getName()) ? StateNamesEnum.Arkansas.getCode() 
-				: stateName.equals(StateNamesEnum.California.getName()) ? StateNamesEnum.California.getCode()
-				: stateName.equals(StateNamesEnum.Colorado.getName()) ? StateNamesEnum.Colorado.getCode()				
-				: stateName.equals(StateNamesEnum.Connecticut.getName()) ? StateNamesEnum.Connecticut.getCode()		
-				: stateName.equals(StateNamesEnum.Delaware.getName()) ? StateNamesEnum.Delaware.getCode()
-				: stateName.equals(StateNamesEnum.District_Of_Columbia.getName()) ? StateNamesEnum.District_Of_Columbia.getCode()
-				: stateName.equals(StateNamesEnum.Florida.getName()) ? StateNamesEnum.Florida.getCode()
-				: stateName.equals(StateNamesEnum.Georgia.getName()) ? StateNamesEnum.Georgia.getCode()
-				: stateName.equals(StateNamesEnum.Hawaii.getName()) ? StateNamesEnum.Hawaii.getCode()
-				: stateName.equals(StateNamesEnum.Idaho.getName()) ? StateNamesEnum.Idaho.getCode()
-																		: stateName.equals(StateNamesEnum.Illinois.getName()) ? StateNamesEnum.Illinois.getCode()
-																				: stateName.equals(StateNamesEnum.Indiana.getName()) ? StateNamesEnum.Indiana.getCode()
-																						: stateName.equals(StateNamesEnum.Iowa.getName()) ? StateNamesEnum.Iowa.getCode()
-																								: stateName.equals(StateNamesEnum.Kansas.getName()) ? StateNamesEnum.Kansas.getCode()
-																										: stateName.equals(StateNamesEnum.Alabama.getName()) ? StateNamesEnum.Alabama.getCode()
-																												: stateName.equals(StateNamesEnum.Alabama.getName()) ? StateNamesEnum.Alabama.getCode()
-																														: stateName.equals(StateNamesEnum.Alabama.getName()) ? StateNamesEnum.Alabama.getCode()
-																																: stateName.equals(StateNamesEnum.Alabama.getName()) ? StateNamesEnum.Alabama.getCode()
-																																		: stateName.equals(StateNamesEnum.Alabama.getName()) ? StateNamesEnum.Alabama.getCode()
-																																				: stateName.equals(StateNamesEnum.Alabama.getName()) ? StateNamesEnum.Alabama.getCode()
-																																						: stateName.equals(StateNamesEnum.Alabama.getName()) ? StateNamesEnum.Alabama.getCode()
-						:null;
-		
-		
-	}
 }
