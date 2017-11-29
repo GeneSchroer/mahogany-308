@@ -116,14 +116,16 @@ public class UCLADistrictFileUploaderImpl {
 					districtsEntity.setDistrictNumber(districtNumber);
 					districtsEntity.setStateName(stateNamesEntity);
 				}
+				System.out.println(districtsEntity.getMembers().toString());
 				districtsEntity.setBoundaries(boundariesEntity);
 				districtsRepo.save(districtsEntity);
 				System.out.println("Getting congressional members for district " + districtNumber + ", session " + currentCongress);
 				// list of all congressmen from this district during this session of congress
-				Iterator<JsonNode> memberList = sessionListObject.get(String.valueOf(currentCongress)).iterator();
+				Iterator<JsonNode> memberIterator = sessionListObject.get(String.valueOf(currentCongress)).iterator();
+				List<Members> memberList = new ArrayList<Members>();
 				
-				while(memberList.hasNext()) {
-					ObjectNode memberData = (ObjectNode)memberList.next();
+				while(memberIterator.hasNext()) {
+					ObjectNode memberData = (ObjectNode)memberIterator.next();
 					String party = memberData.get("party").asText();
 					// member name is lastname, firstname mi
 					String rawMemberName = memberData.get("name").asText("N/A");
@@ -144,131 +146,25 @@ public class UCLADistrictFileUploaderImpl {
 						memberNamesEntity.setName(memberName);
 						memberNamesRepo.save(memberNamesEntity);
 					}
-					Members membersEntity = membersRepo.findByNameIdAndPartyId(memberNamesEntity.getId(), partiesEntity.getId());
+					Members membersEntity = membersRepo.findByMemberNameAndPartyAndDistrict(memberNamesEntity, partiesEntity, districtsEntity);
 					if(membersEntity == null) {
 						membersEntity = new Members();
-						membersEntity.setPartyId(partiesEntity.getId());
-						membersEntity.setNameId(memberNamesEntity.getId());
-						membersEntity.setDistrictId(districtsEntity.getId());
+						membersEntity.setDistrict(districtsEntity);
+						membersEntity.setMemberName(memberNamesEntity);
+						membersEntity.setParty(partiesEntity);
 						membersRepo.save(membersEntity);
 					}
 					Elections electionsEntity = electionsRepo.findByDistrict(districtsEntity);
 					if(electionsEntity != null) {
 						electionsEntity.setWinner(membersEntity);
+						electionsEntity.setDistrict(districtsEntity);
 						electionsRepo.save(electionsEntity);
 					}
+					memberList.add(membersEntity);
 				}
-				
-				districtList.add(districtsEntity);
-			}
-			
-		}
-		
-		return districtList;
-	}
-	
-public ArrayList<Districts> uploadJsonToDatabase2(ObjectNode fileJsonNode) throws IOException{
-		
-		ArrayList<Districts> districtList = new ArrayList<Districts>();
-		System.out.println("Going through list of districts");
-		ArrayNode districts = (ArrayNode)fileJsonNode.get("features");
-		
-		GeoJSONReader geoJsonReader = new GeoJSONReader();
-		
-		
-		for(int index=0; index<districts.size(); ++index) {
-			ObjectNode districtPropertiesObject = (ObjectNode) districts.get(index).get("properties");
-			ObjectNode districtGeometryObject = (ObjectNode) districts.get(index).get("geometry");
-			
-			com.vividsolutions.jts.geom.MultiPolygon multiPolygon = (MultiPolygon) geoJsonReader.read(districtGeometryObject.toString());
-			
-			ArrayNode coordinatesArray = (ArrayNode) districtGeometryObject.get("coordinates");
-			String coordinatesString = coordinatesArray.toString();
-			
-			Boundaries boundariesEntity = boundariesRepo.findByCoordinates(multiPolygon);
-			if(boundariesEntity == null) {
-				System.out.println("Creating new Boundaries entity");
-				boundariesEntity = new Boundaries();
-				
-				boundariesEntity.setCoordinates(multiPolygon);
-				boundariesRepo.save(boundariesEntity);
-			}
-			String stateName = districtPropertiesObject.get("statename").asText();
-			
-			StateNames stateNamesEntity = stateNamesRepo.findByName(stateName);
-			if (stateNamesEntity == null) {
-				stateNamesEntity = new StateNames();
-				stateNamesEntity.setName(stateName);
-				stateNamesRepo.save(stateNamesEntity);
-			}
-			
-			int startCongress = districtPropertiesObject.get("startcong").asInt();
-			int endCongress = districtPropertiesObject.get("endcong").asInt();
-			int districtNumber = districtPropertiesObject.get("district").asInt();
-			
-			System.out.println("Reading district " + districtNumber 
-								+ " for state " + stateName
-								+ " from " + startCongress + " to " + endCongress + ".");
-			
-			// Data for all members of congress during this time period
-			ObjectNode sessionListObject= (ObjectNode)districtPropertiesObject.get("member");
-			
-			for(int currentCongress = startCongress; currentCongress <= endCongress; ++currentCongress) {
-				System.out.println("Creating Districts Entity for session " + currentCongress);
-				
-				
-				Integer raceYear = 1786 + (2 * currentCongress);
-				
-				Districts districtsEntity = districtsRepo.findByStateEntityAndDistrictNumberAndYear(stateNamesEntity, districtNumber, raceYear);
-				if(districtsEntity == null) {	
-					districtsEntity = new Districts();
-					districtsEntity.setYear(raceYear);
-					districtsEntity.setDistrictNumber(districtNumber);
-					districtsEntity.setStateName(stateNamesEntity);
-				}
-				districtsEntity.setBoundaries(boundariesEntity);
+				districtsEntity.setMembers(memberList);
+				System.out.println(districtsEntity.getMembers().toString());
 				districtsRepo.save(districtsEntity);
-				System.out.println("Getting congressional members for district " + districtNumber + ", session " + currentCongress);
-				// list of all congressmen from this district during this session of congress
-				Iterator<JsonNode> memberList = sessionListObject.get(String.valueOf(currentCongress)).iterator();
-				
-				while(memberList.hasNext()) {
-					ObjectNode memberData = (ObjectNode)memberList.next();
-					String party = memberData.get("party").asText();
-					// member name is lastname, firstname mi
-					String rawMemberName = memberData.get("name").asText("N/A");
-					String memberName = formatName(rawMemberName);
-					
-					System.out.println("Member Details - Name: " + memberName + ", Party: " + party);
-					
-					Parties partiesEntity = partiesRepo.findByName(party);
-					if (partiesEntity == null) {		
-						partiesEntity = new Parties();
-						partiesEntity.setName(party);
-						partiesRepo.save(partiesEntity);
-					}
-					
-					MemberNames memberNamesEntity = memberNamesRepo.findByName(memberName);
-					if(memberNamesEntity == null) {
-						memberNamesEntity =  new MemberNames();
-						memberNamesEntity.setName(memberName);
-						memberNamesRepo.save(memberNamesEntity);
-					}
-					Members membersEntity = membersRepo.findByNameIdAndPartyId(memberNamesEntity.getId(), partiesEntity.getId());
-					if(membersEntity == null) {
-						membersEntity = new Members();
-						membersEntity.setPartyId(partiesEntity.getId());
-						membersEntity.setNameId(memberNamesEntity.getId());
-						membersEntity.setDistrictId(districtsEntity.getId());
-						membersRepo.save(membersEntity);
-					}
-					Elections electionsEntity = electionsRepo.findByDistrict(districtsEntity);
-					if(electionsEntity != null) {
-						electionsEntity.setWinner(membersEntity);
-						electionsRepo.save(electionsEntity);
-					}
-				}
-				
 				districtList.add(districtsEntity);
 			}
 			
@@ -276,7 +172,6 @@ public ArrayList<Districts> uploadJsonToDatabase2(ObjectNode fileJsonNode) throw
 		
 		return districtList;
 	}
-	
 	
 	public String formatName(String rawName) {
 		String formattedName="";

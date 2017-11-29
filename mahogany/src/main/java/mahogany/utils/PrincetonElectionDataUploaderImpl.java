@@ -2,10 +2,7 @@ package mahogany.utils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -43,7 +40,7 @@ public class PrincetonElectionDataUploaderImpl {
 	@Autowired VotesRepository votesRepo;
 	
 	
-	public Workbook convertFileToExcel(MultipartFile file) throws IOException {
+	public Workbook convertFileToExcelWorkbook(MultipartFile file) throws IOException {
 		FileInputStream input = (FileInputStream)file.getInputStream();
 		Workbook workbook = new HSSFWorkbook(input);
 		
@@ -52,8 +49,8 @@ public class PrincetonElectionDataUploaderImpl {
 	
 	
 	@SuppressWarnings("deprecation")
-	public void uploadElectionDataToDatabase(Workbook electionWorkbook) {
-		Sheet firstSheet = electionWorkbook.getSheetAt(0);
+	public void uploadDataToDatabase(Workbook workbook) {
+		Sheet firstSheet = workbook.getSheetAt(0);
 		
 		for(Row row: firstSheet) {
 			

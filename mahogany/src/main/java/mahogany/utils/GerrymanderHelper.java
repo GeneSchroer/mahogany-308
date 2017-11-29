@@ -4,22 +4,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import mahogany.entities.Districts;
 import mahogany.entities.Elections;
-import mahogany.metrics.EfficiencyGapResults;
-import mahogany.metrics.EfficiencyGapTest;
-import mahogany.metrics.ElectionDataService;
+import mahogany.metrics.EfficiencyGapStateData;
+import mahogany.metrics.EfficiencyGapDataBuilder;
+import mahogany.metrics.ElectionDataBuilder;
+import mahogany.metrics.ElectionStateData;
+import mahogany.metrics.MemberDataBuilder;
+import mahogany.metrics.MemberStateData;
 import mahogany.metrics.MetricOption;
-import mahogany.metrics.GerrymanderData;
 import mahogany.repositories.DistrictsRepository;
 import mahogany.repositories.ElectionsRepository;
 
@@ -40,14 +37,14 @@ public class GerrymanderHelper {
 	
 	
 	
-	public JsonNode getDistrictBoundaries(String state, int year) {
+	public JsonNode createDistrictBoundariesJsonNode(String state, int year) {
 		ArrayList<Districts> districtList = (ArrayList<Districts>)districtsRepo.findAllByStateAndYear(state, year);
 		
 		
 		
 		JsonNode districtJsonNode;
 		try {
-			districtJsonNode = geoJsonUtils.createDistrictBoundariesJson(districtList);
+			districtJsonNode = geoJsonUtils.createDistrictBoundariesJsonNode(districtList);
 			return districtJsonNode;
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
@@ -61,12 +58,13 @@ public class GerrymanderHelper {
 	}
 	
 	
-	public JsonNode getDistrictData(MetricOption metric, String stateName, Integer year) {
-		ArrayList<Elections> electionList = (ArrayList<Elections>)electionsRepo.findAllByStateAndYear(stateName, year);
+	public JsonNode getDistrictDataJsonNode(MetricOption metric, String stateName, Integer year) {
+		
 		
 		if(metric == MetricOption.EFFICIENCY_GAP) {
-			EfficiencyGapTest x = new EfficiencyGapTest();
-			EfficiencyGapResults metricData = x.generateMetricData(electionList);
+			ArrayList<Elections> electionList = (ArrayList<Elections>)electionsRepo.findAllByStateAndYear(stateName, year);
+			EfficiencyGapDataBuilder x = new EfficiencyGapDataBuilder();
+			EfficiencyGapStateData metricData = x.generateMetricData(electionList);
 		
 			
 			
@@ -82,8 +80,27 @@ public class GerrymanderHelper {
 			}
 		}
 		else if(metric == MetricOption.ELECTION_DATA) {
-			ElectionDataService x = new ElectionDataService();
-			GerrymanderData electionData= x.generateMetricData(electionList);
+			ArrayList<Elections> electionList = (ArrayList<Elections>)electionsRepo.findAllByStateAndYear(stateName, year);
+			ElectionDataBuilder x = new ElectionDataBuilder();
+			ElectionStateData electionData= x.generateMetricData(electionList);
+		
+			
+			
+			try {
+				JsonNode metricsJson = geoJsonUtils.generateMetricDataJson(electionData);
+				return metricsJson;
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else if(metric == MetricOption.MEMBER_DATA) {
+			ArrayList<Districts> districtList = (ArrayList<Districts>)districtsRepo.findAllByStateAndYear(stateName, year);
+			MemberDataBuilder x = new MemberDataBuilder();
+			MemberStateData electionData= x.generateMetricData(districtList);
 		
 			
 			

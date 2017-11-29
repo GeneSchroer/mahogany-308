@@ -1,7 +1,20 @@
 package mahogany.metrics;
 
 public enum MetricOption {
-	ELECTION_DATA,
-	EFFICIENCY_GAP;
+	ELECTION_DATA{
+		public String toString(){
+			return "Election Data";
+		}
+	},
+	EFFICIENCY_GAP{
+		public String toString() {
+			return "Efficiency Gap";
+		}
+	},
+	MEMBER_DATA{
+		public String toString() {
+			return "Member Data";
+		}
+	};
 	
 }
