@@ -201,7 +201,7 @@ define([
 						weight: 2,
 						color: 'brown',
 						dataArray: ' ',
-						fillOpacity: 0.7
+						fillOpacity: 0.3
 					});
 				}, this);
 				layer.on("mouseout", function(e){

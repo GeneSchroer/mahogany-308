@@ -29,7 +29,11 @@ define([], function(){
 		
 		ULTRAMARINE_80: "#252e6a",
 		
-		PEACH_80: "#56251a"
+		PEACH_80: "#56251a",
+		COOL_GRAY_10: '#d0dada',
+		COOL_GRAY_30: '#9fa7a7',
+		WARM_GRAY_10: '#e2d5d5',
+		WARM_GRAY_30: '#b4a1a1'
 		
 	};
 	

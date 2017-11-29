@@ -6,7 +6,7 @@ define([
 	function setStyle(mapData){
 		return function(feature){
 			return{
-				fillOpacity: 0.6,
+				fillOpacity: 0.4,
 				weight: 0.5,
 				color: "black",
 				fillColor: fillColor(mapData, feature.properties.id, ColorMode.DEFAULT_COLOR)
@@ -23,7 +23,8 @@ define([
 					layer = e.target;
 					layer.setStyle({
 						fillColor: fillColor( mapData,layer.feature.properties.id, ColorMode.HIGHLIGHT_COLOR),
-						dataArray:' '
+						dataArray:' ',
+						fillOpacity: 0.4
 					});
 					dataControl.update(setDisplay(layer, mapData));
 				},
@@ -81,7 +82,7 @@ define([
 				voteData=districtData.voteData.Democrat;
 				wastedVotePercent = voteData.wastedVotes / voteData.votes;
 				//console.log(wastedVotePercent);
-				return colorMode == ColorMode.HIGHLIGHT_COLOR ? MapColors.ULTRAMARINE_80 :
+				return colorMode == ColorMode.HIGHLIGHT_COLOR ? MapColors.COOL_GRAY_30 :
 					wastedVotePercent < 0.10 ? MapColors.BLUE_20 : 
 					wastedVotePercent < 0.20 ? MapColors.BLUE_30 : // blue 40
 					wastedVotePercent < 0.30 ? MapColors.BLUE_40 :// blue 60
@@ -91,7 +92,7 @@ define([
 		else{
 			voteData=districtData.voteData.Republican;
 			wastedVotePercent = voteData.wastedVotes / voteData.votes;
-			return colorMode == ColorMode.HIGHLIGHT_COLOR ? MapColors.PEACH_80:
+			return colorMode == ColorMode.HIGHLIGHT_COLOR ? MapColors.WARM_GRAY_30:
 				wastedVotePercent < 0.10 ? MapColors.RED_20: 
 			 	wastedVotePercent < 0.20 ? MapColors.RED_30 : // blue 40
 			 		wastedVotePercent < 0.30 ? MapColors.RED_40 :// blue 60
