@@ -62,19 +62,22 @@ public class UCLADistrictFileUploaderImpl {
 	public ArrayList<Districts> uploadJsonToDatabase(ObjectNode fileJsonNode) throws IOException{
 		
 		ArrayList<Districts> districtList = new ArrayList<Districts>();
-		System.out.println("Going through list of districts");
-		ArrayNode districts = (ArrayNode)fileJsonNode.get("features");
+		
+		// part of the geojson file containing the district properties,
+		// including boundaries.
+		ArrayNode featuresArray = (ArrayNode)fileJsonNode.get("features");
+		
 		GeoJSONReader geoJsonReader = new GeoJSONReader();
 
-		
-		for(int index=0; index<districts.size(); ++index) {
-			ObjectNode districtPropertiesObject = (ObjectNode) districts.get(index).get("properties");
-			ObjectNode districtGeometryObject = (ObjectNode) districts.get(index).get("geometry");
+		// iterate through the array and persist data as entities.
+		for(int index=0; index<featuresArray.size(); ++index) {
+			// All the non-boundary properties of the district
+			ObjectNode districtPropertiesObject = (ObjectNode) featuresArray.get(index).get("properties");
 			
+			ObjectNode districtGeometryObject = (ObjectNode) featuresArray.get(index).get("geometry");
+			
+			/* find or creating an entity for the boundaries of the district */
 			MultiPolygon multiPolygon = (MultiPolygon) geoJsonReader.read(districtGeometryObject.toString());
-
-			
-			
 			Boundaries boundariesEntity = boundariesRepo.findByCoordinates(multiPolygon);
 			if(boundariesEntity == null) {
 				System.out.println("Creating new Boundaries entity");
@@ -82,9 +85,9 @@ public class UCLADistrictFileUploaderImpl {
 				boundariesEntity.setCoordinates(multiPolygon);
 				boundariesRepo.save(boundariesEntity);
 			}
-			//System.out.println(districtObject.toString());
+	
+			// find or create an entity for the name of the state.
 			String stateName = districtPropertiesObject.get("statename").asText();
-			
 			StateNames stateNamesEntity = stateNamesRepo.findByName(stateName);
 			if (stateNamesEntity == null) {
 				stateNamesEntity = new StateNames();
@@ -92,23 +95,28 @@ public class UCLADistrictFileUploaderImpl {
 				stateNamesRepo.save(stateNamesEntity);
 			}
 			
+
+			// The sessions of congress this data concerns,
+			// as well as the district number
 			int startCongress = districtPropertiesObject.get("startcong").asInt();
 			int endCongress = districtPropertiesObject.get("endcong").asInt();
 			int districtNumber = districtPropertiesObject.get("district").asInt();
+
 			
-			System.out.println("Reading district " + districtNumber 
-								+ " for state " + stateName
-								+ " from " + startCongress + " to " + endCongress + ".");
+			/* get the year of this congress and the congressional representatives */
+
 			
 			// Data for all members of congress during this time period
-			ObjectNode sessionListObject= (ObjectNode)districtPropertiesObject.get("member");
+			ObjectNode memberListObject= (ObjectNode)districtPropertiesObject.get("member");
 			
 			for(int currentCongress = startCongress; currentCongress <= endCongress; ++currentCongress) {
-				System.out.println("Creating Districts Entity for session " + currentCongress);
 				
-				
+				// The first session of congress was in 1786,
+				// And each session of congress lasts two years,
+				// So it's easy to find was year each session starts.
 				Integer raceYear = 1786 + (2 * currentCongress);
 				
+				// get or create the chosen district
 				Districts districtsEntity = districtsRepo.findByStateEntityAndDistrictNumberAndYear(stateNamesEntity, districtNumber, raceYear);
 				if(districtsEntity == null) {	
 					districtsEntity = new Districts();
@@ -116,23 +124,25 @@ public class UCLADistrictFileUploaderImpl {
 					districtsEntity.setDistrictNumber(districtNumber);
 					districtsEntity.setStateName(stateNamesEntity);
 				}
-				System.out.println(districtsEntity.getMembers().toString());
+
+				// Update the district boundaries.
 				districtsEntity.setBoundaries(boundariesEntity);
 				districtsRepo.save(districtsEntity);
-				System.out.println("Getting congressional members for district " + districtNumber + ", session " + currentCongress);
+				
 				// list of all congressmen from this district during this session of congress
-				Iterator<JsonNode> memberIterator = sessionListObject.get(String.valueOf(currentCongress)).iterator();
+				Iterator<JsonNode> memberIterator = memberListObject.get(String.valueOf(currentCongress)).iterator();
 				List<Members> memberList = new ArrayList<Members>();
 				
 				while(memberIterator.hasNext()) {
 					ObjectNode memberData = (ObjectNode)memberIterator.next();
 					String party = memberData.get("party").asText();
-					// member name is lastname, firstname mi
+					
+					// member name initially formatted as lastname, firstname mi
+					// so we need to convert it.
 					String rawMemberName = memberData.get("name").asText("N/A");
 					String memberName = formatName(rawMemberName);
 					
-					System.out.println("Member Details - Name: " + memberName + ", Party: " + party);
-					
+					// get or create a Parties entity to persist
 					Parties partiesEntity = partiesRepo.findByName(party);
 					if (partiesEntity == null) {		
 						partiesEntity = new Parties();
@@ -140,12 +150,15 @@ public class UCLADistrictFileUploaderImpl {
 						partiesRepo.save(partiesEntity);
 					}
 					
+					// get or create a MemberNames entity to persist.
 					MemberNames memberNamesEntity = memberNamesRepo.findByName(memberName);
 					if(memberNamesEntity == null) {
 						memberNamesEntity =  new MemberNames();
 						memberNamesEntity.setName(memberName);
 						memberNamesRepo.save(memberNamesEntity);
 					}
+					
+					// get or create a Members entity to persist.
 					Members membersEntity = membersRepo.findByMemberNameAndPartyAndDistrict(memberNamesEntity, partiesEntity, districtsEntity);
 					if(membersEntity == null) {
 						membersEntity = new Members();
@@ -154,6 +167,8 @@ public class UCLADistrictFileUploaderImpl {
 						membersEntity.setParty(partiesEntity);
 						membersRepo.save(membersEntity);
 					}
+					
+					// get or create an Elections entity to persist
 					Elections electionsEntity = electionsRepo.findByDistrict(districtsEntity);
 					if(electionsEntity != null) {
 						electionsEntity.setWinner(membersEntity);
@@ -162,8 +177,8 @@ public class UCLADistrictFileUploaderImpl {
 					}
 					memberList.add(membersEntity);
 				}
+				
 				districtsEntity.setMembers(memberList);
-				System.out.println(districtsEntity.getMembers().toString());
 				districtsRepo.save(districtsEntity);
 				districtList.add(districtsEntity);
 			}

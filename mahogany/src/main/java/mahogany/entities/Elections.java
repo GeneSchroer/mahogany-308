@@ -1,10 +1,7 @@
 package mahogany.entities;
 
-import java.util.List;
 import java.util.Map;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -26,7 +23,6 @@ public class Elections {
 	private Long id;
 	private Integer totalVotes;
 	
-	
 	@OneToOne
 	@JoinColumn(name="districtId")
 	private Districts district;
@@ -34,7 +30,6 @@ public class Elections {
 	@OneToOne
 	@JoinColumn(name="winnerId")
 	private Members winner;
-	
 
 	@OneToMany(mappedBy="election", fetch = FetchType.EAGER)
 	@MapKeyColumn(name="partyId")
@@ -47,7 +42,6 @@ public class Elections {
 	public Elections() {
 		
 	}
-	
 	
 	public Long getId() {
 		return id;
@@ -76,18 +70,15 @@ public class Elections {
 	public void setWinner(Members winner) {
 		this.winner = winner;
 	}
-	/*public List<Votes> getVotes(){
-		return votes;
-	}
-	public void setVotes(List<Votes> votes) {
-		this.votes = votes;
-	}*/
+	
 	public Map<Long, Votes> getVotes(){
 		return votes;
 	}
+	
 	public void setVotes(Map<Long, Votes> votes) {
 		this.votes = votes;
 	}
+	
 	public Parties getParty() {
 		return party;
 	}

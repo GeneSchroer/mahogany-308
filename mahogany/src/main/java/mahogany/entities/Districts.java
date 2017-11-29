@@ -38,7 +38,6 @@ public class Districts {
 	@OneToMany(mappedBy="district")
 	private List<Members> members;
 	
-	
 	public Districts() {
 		
 	}

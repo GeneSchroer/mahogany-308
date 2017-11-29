@@ -12,25 +12,18 @@ import mahogany.utils.FileSource;
 @Controller
 public class UploadController {
 
-	@Autowired FileUploadHelper helper;
-	
-	
-	@Autowired BoundariesRepository boundaries2Repo ;
+	@Autowired FileUploadHelper uploadHelper;
+	@Autowired BoundariesRepository boundariesRepo ;
+
 	@RequestMapping("/upload")
 	public String uclaBoundaryDataUploadRequest(@RequestParam("file")MultipartFile[] files) {
-		//helper.setDistrictsRepository(districtsRepository);
-
-		helper.uploadDistrictFiles(files, FileSource.UCLA);
-		
-		
+		uploadHelper.uploadDistrictFiles(files, FileSource.UCLA);
 		return "gerrymander";
 	}
 	
 	@RequestMapping("/test")
 	public String princetonElectionDataUploadRequest(@RequestParam("file")MultipartFile file) {
-		
-		helper.uploadElectionFile(file, FileSource.PRINCETON);
-		
+		uploadHelper.uploadElectionFile(file, FileSource.PRINCETON);
 		return "gerrymander";
 	}
 	

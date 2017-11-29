@@ -14,25 +14,29 @@ define([
 	var MAP_MODE_STATE = "state";
 	var MAP_MODE_DISTRICT = "district";
 	
-	var map;
-	var districtLayer;
-	var stateLayer;
-	var mapMode;
-	var dataMode;
+	var map;				
+	var districtLayer; // geoJson layer for districts boundaries
+	var stateLayer;    // geoJson layer for the state boundaries
+	var mapMode;			// used to determine whether we are in state or district mode
+	var dataMode;			// used to determine which type of data we are viewing.
 
 	var mapControls = {}; // object that holds out map controls/displays/legends.
-	var zoomOutBtn;
+	var zoomOutBtn;				// used to zoom out to the state view.
+	var memberDisplay;		// used to see the members of congress for a district
+	var dataDisplay; 			// used to view the data for a district.
+	var legendControl;    // legend for what the colors of each layer represent.
 	
-	var memberData;
-	var mapData;
 	
-	var currentState;
-	var year;
+	var memberData;			// holds the json data for members of congress
+	var mapData;				// holds district data, such as election results or the efficiency gap
+	
+	var currentState;		// state the map is focused on.
+	var year;						// the year of congress we are focused on.
+	
 	
 	function buildGerrymanderMap(mapBlock){
 		
 		map = createMap(mapBlock);
-		
 		
 		console.log("Create district layer")
 		districtLayer = L.geoJson();
@@ -42,10 +46,7 @@ define([
 		stateLayer = L.geoJson();
 		stateLayer.addTo(map);
 		
-
-		mapMode = MAP_MODE_STATE;
-		
-		//Add map controls
+		//Create map controls
 		zoomOutBtn = createZoomOutBtn();
 		zoomOutBtn.addTo(map);
 		L.DomEvent.on(zoomOutBtn._div, 'click', function(evt){
@@ -65,6 +66,7 @@ define([
 		legendControl.addTo(map);
 		mapControls.legendControl = legendControl;
 		
+		mapMode = MAP_MODE_STATE;
 		dataMode = DataType.ELECTION_DATA;
 		
 		initializeDistrictLayer();
@@ -74,6 +76,8 @@ define([
 		return map;
 	}
 	function createMap(map){
+		// the map needs to take up the whole block it's contained in,
+		// so it's styled here just in case it wasn't already.
 		domStyle.set(map, "width", "100%");
 		domStyle.set(map, "height", "100%");
 		domStyle.set(map, "position", "absolute");
@@ -86,6 +90,8 @@ define([
 
 	function createZoomOutBtn(){
 		var zoomOutBtn = L.control({position:'topleft'});	
+
+		// onAdd() triggers when the control is first added to the map
 		zoomOutBtn.onAdd = function(map){
 			this._div=L.DomUtil.create('button', 'zoomOut');
 			this._div.innerHTML = "ZoomOut";
@@ -103,28 +109,42 @@ define([
 		return zoomOutBtn;
 	
 	}
-	function zoomInMode(layer){
-		districtLayer.clearLayers();
-		mapMode = MAP_MODE_DISTRICT;
-		currentState = layer.feature.properties.name;
-		map.fitBounds(layer.getBounds());
-		for(control in mapControls){
-			mapControls[control].enable();
-		}
-		loadDistrictBoundariesRequest();
-	}
-	function zoomOutMode(){
+	
+	function clearDistrictLayer(){
 		districtLayer.clearLayers();
 		L.Util.setOptions(districtLayer, {style:null});
 		metricData = {};
+	}
+	
+	function zoomInMode(layer){
+		// clear the current layers from the map.
+		clearDistrictLayer();
+		
+		mapMode = MAP_MODE_DISTRICT;
+		currentState = layer.feature.properties.name;
+		map.fitBounds(layer.getBounds());
+		
+		for(control in mapControls){
+			mapControls[control].enable();
+		}
+		
+		loadDistrictBoundariesRequest();
+	}
+
+	function zoomOutMode(){
+		clearDistrictLayer();
 		mapMode = MAP_MODE_STATE;
 		map.setView([38, -88], 4, true);
+	
 		for(control in mapControls){
 			mapControls[control].disable();
 		}
 	}
+	
 	function createDataDisplay(){
 		var dataDisplay = L.control({position:'topright'});
+		
+	// onAdd() triggers when the control is first added to the map
 		dataDisplay.onAdd = function(map){
 			this._div = L.DomUtil.create('div', 'dataDisplay');
 			this._div.innerHTML = "";
@@ -148,6 +168,8 @@ define([
 	
 	function createLegendControl(){
 		var legendControl = L.control({position:'bottomright'});
+
+		// onAdd() triggers when the control is first added to the map
 		legendControl.onAdd = function(map){
 			this._div = L.DomUtil.create('div', 'dataDisplay legendControl');
 			this._div.innerHTML = electionDataLegend();
@@ -215,8 +237,7 @@ define([
 	}
 	function updateMap(){
 		if(mapMode == MAP_MODE_DISTRICT){
-			districtLayer.clearLayers();
-			L.Util.setOptions(districtLayer, {style:null, onEachFeature:null});
+			clearDistrictLayer();
 			loadDistrictBoundariesRequest();
 		}
 	}
@@ -294,18 +315,11 @@ define([
 		}
 		
 		var districtData = memberData.districtData[districtId];
-		
-		
-		
-		
 		var memberList = districtData.memberData;
-		
 		var electionDistrictData = null;
-		
 		if(mapData && mapData.districtData[districtId]){
 			electionDistrictData = mapData.districtData[districtId];
 		}
-		
 		for(m in memberList){
 			var member = memberList[m];
 			if(electionDistrictData && electionDistrictData.winningParty == member.party){
@@ -353,8 +367,6 @@ define([
 
 	}
 	
-
-	
 	
 	function setEfficiencyGapLayer(){
 		legendControl.update(efficiencyGapLegend());
@@ -363,8 +375,6 @@ define([
 		L.Util.setOptions(districtLayer, { style: EfficiencyGap.setStyle(mapData)	});
 		districtLayer.setStyle(EfficiencyGap.setStyle(mapData));
 		districtLayer.eachLayer(EfficiencyGap.setEvents(mapData, districtLayer, mapControls.dataDisplay));
-		
-		
 		
 	}
 	

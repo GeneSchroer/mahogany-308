@@ -15,7 +15,6 @@ public class Votes {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
-	
 	private Integer votes;
 	
 	@ManyToOne

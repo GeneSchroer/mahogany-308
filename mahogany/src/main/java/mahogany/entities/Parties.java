@@ -13,10 +13,11 @@ public class Parties {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
-	
 	private String name;
 	
-	public Parties() {}
+	public Parties() {
+		
+	}
 	
 	public Long getId() {
 		return id;

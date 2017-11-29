@@ -54,10 +54,13 @@ public class PrincetonElectionDataUploaderImpl {
 		
 		for(Row row: firstSheet) {
 			
-			//skip the first row
+			//The first row is just the header,
+			// so skip it
 			if(row.getRowNum() == 0) {
 				continue;
 			}
+			
+			
 			Cell stateCell = row.getCell(0);
 			Cell raceYearCell = row.getCell(1);
 			Cell districtNumberCell = row.getCell(2);
@@ -73,6 +76,11 @@ public class PrincetonElectionDataUploaderImpl {
 			Integer democratVotes; 
 			Float democratVotesPercentage;
 			
+			// Some Vote cells have "Unopposed"
+			// instead of a vote.
+			// There's no way to determine the actual vote count from here,
+			// So set the votes to 0 for the time being.
+
 			if(republicanVotesCell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
 				republicanVotes = (int)(republicanVotesCell.getNumericCellValue());
 			}
@@ -86,10 +94,17 @@ public class PrincetonElectionDataUploaderImpl {
 			else {
 				democratVotes = 0;
 			}
+			
+			// This data only contains information from
+			// the two main parties.
+			// We cannot determine the republican percentage of the votes
+			// because there may have been runners from other parties.
 			democratVotesPercentage = (float)democratPercentageCell.getNumericCellValue();
-			System.out.println(democratVotesPercentage);
+	//		System.out.println(democratVotesPercentage);
 			
 			String winningParty = "";
+			
+			
 			if(0.5 > democratVotesPercentage) {
 				winningParty = "Republican";
 			}
@@ -97,6 +112,9 @@ public class PrincetonElectionDataUploaderImpl {
 				winningParty = "Democrat";
 			}
 
+			// begin the process of storing data into entities,
+			// and persisting them into the database.
+			
 			StateNames stateNamesEntity = stateNamesRepo.findByName(stateName);
 			if(stateNamesEntity == null) {
 				stateNamesEntity = new StateNames();

@@ -15,10 +15,8 @@ import mahogany.utils.GerrymanderHelper;
 
 @Controller
 public class GerrymanderController {
+	@Autowired 	GerrymanderHelper helper; 	
 
-	
-	@Autowired
-	GerrymanderHelper helper; 	
 	@RequestMapping("/")
 	public String loader(){
 		return "index";
@@ -36,7 +34,6 @@ public class GerrymanderController {
 		return "gerrymander2";
 	}
 	
-	
 	@RequestMapping("/districtBoundariesRequest")
 	public @ResponseBody JsonNode getDistrictBoundariesRequest(@RequestParam(name="state")String state, 
 																	@RequestParam(name="year") int year) {
@@ -52,6 +49,7 @@ public class GerrymanderController {
 		
 		return electionDataJsonNode;
 	}
+	
 	@RequestMapping("/efficiencyGapRequest")
 	public @ResponseBody JsonNode getEfficiencyGapRequest(@RequestParam(name="state") String stateName,
 																													@RequestParam(name="year")Integer year) {

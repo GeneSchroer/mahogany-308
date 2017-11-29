@@ -6,7 +6,6 @@ public abstract class AbstractStateData<T extends AbstractDistrictData> {
 	private String testName;
 	private Map<String, T> districtData;
 	
-	
 	public String getTestName() {
 		return testName;
 	}
@@ -21,7 +20,5 @@ public abstract class AbstractStateData<T extends AbstractDistrictData> {
 	public void setDistrictData(Map<String, T> districtData){
 		this.districtData = districtData;
 	}
-	
-	
 	
 }

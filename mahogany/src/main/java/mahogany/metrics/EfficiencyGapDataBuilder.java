@@ -16,9 +16,7 @@ public class EfficiencyGapDataBuilder implements AlgorithmTest<EfficiencyGapStat
 	public EfficiencyGapStateData generateMetricData(List<Elections> electionList) {
 
 		EfficiencyGapStateData efficiencyResult = new EfficiencyGapStateData();
-		
 		Map<String, ElectionDistrictData<WastedVoteData>> districtDataMap = new HashMap<String, ElectionDistrictData<WastedVoteData>>();
-		
 		
 		Integer totalStateVotes = 0;
 		Integer totalSeats = 0;
@@ -29,11 +27,11 @@ public class EfficiencyGapDataBuilder implements AlgorithmTest<EfficiencyGapStat
 		Integer totalRepublicanSeats = 0;
 		Float efficiencyGap = 0.0f;
 		
-		
+		//get election data for each district
 		for(Elections election: electionList) {
+			
 			ElectionDistrictData<WastedVoteData> districtData = new ElectionDistrictData<WastedVoteData>();
 			Map<String, WastedVoteData> wastedVoteMap = new HashMap<String, WastedVoteData>();
-			
 			Integer democratVotes = 0;
 			Float democratPercent = 0.0f;
 			Integer democratWastedVotes = 0;
@@ -45,6 +43,7 @@ public class EfficiencyGapDataBuilder implements AlgorithmTest<EfficiencyGapStat
 			totalStateVotes += election.getTotalVotes();
 			++totalSeats;
 			
+			// get total seats won by main 2 parties.
 			if(election.getParty().getName().equals("Democrat")) {
 				++totalDemocratSeats;
 				districtData.setWinningParty("Democrat");
@@ -60,11 +59,12 @@ public class EfficiencyGapDataBuilder implements AlgorithmTest<EfficiencyGapStat
 			for(Entry<Long, Votes> entry: election.getVotes().entrySet()) {
 	
 				Votes electionVote = entry.getValue();
-				
 				WastedVoteData voteData = new WastedVoteData();
-				String party = electionVote.getParty().getName();
+				String partyName = electionVote.getParty().getName();
 				
-				if(party.equals("Democrat")) {
+			// get the votes for the district
+				// and add that to the total votes for that party.
+				if(partyName.equals("Democrat")) {
 					democratVotes = electionVote.getVotes();
 					democratWastedVotes = getWastedVotes(democratVotes, election.getTotalVotes());
 					totalDemocratVotes += democratVotes;
@@ -75,12 +75,11 @@ public class EfficiencyGapDataBuilder implements AlgorithmTest<EfficiencyGapStat
 					
 					wastedVoteMap.put("Democrat", voteData);
 				}
-				else if(party.equals("Republican")) {
+				else if(partyName.equals("Republican")) {
 					republicanVotes = electionVote.getVotes();
 					republicanWastedVotes += getWastedVotes(republicanVotes, election.getTotalVotes()); 
 					totalRepublicanVotes += republicanVotes;
 
-					
 					voteData.setVotes(republicanVotes);
 					voteData.setPercentage((float)democratVotes/election.getTotalVotes());
 					voteData.setWastedVotes(republicanWastedVotes);
@@ -88,11 +87,10 @@ public class EfficiencyGapDataBuilder implements AlgorithmTest<EfficiencyGapStat
 					wastedVoteMap.put("Republican", voteData);
 				}
 			}
+
 			districtData.setVoteData(wastedVoteMap);
 			districtDataMap.put(election.getDistrict().getId().toString(), districtData);
 			
-			//System.out.println((float)republicanWastedVotes/republicanVotes);
-			//System.out.println((float)democratWastedVotes/democratVotes);
 		}
 		
 		efficiencyResult.setDistrictData(districtDataMap);
@@ -101,15 +99,14 @@ public class EfficiencyGapDataBuilder implements AlgorithmTest<EfficiencyGapStat
 		efficiencyResult.setTotalDemocratSeats(totalDemocratSeats);
 		efficiencyResult.setTotalRepublicanSeats(totalRepublicanSeats);
 		
-		
 		efficiencyGap = (float)(((double)totalRepublicanVotes/totalStateVotes) - 0.5) - 2 * (float)(((double)totalRepublicanSeats/totalSeats) - 0.5);
+		efficiencyGap = Math.abs(efficiencyGap);
 		
 		efficiencyResult.setEfficiencyGap(efficiencyGap);
-		
 		efficiencyResult.setTestName(MetricOption.EFFICIENCY_GAP.toString());
 		
-		ObjectMapper x = new ObjectMapper();
-		System.out.println(x.valueToTree(efficiencyResult));
+//	ObjectMapper x = new ObjectMapper();
+//	System.out.println(x.valueToTree(efficiencyResult));
 		return efficiencyResult;
 	}
 
@@ -125,4 +122,12 @@ public class EfficiencyGapDataBuilder implements AlgorithmTest<EfficiencyGapStat
 			return votes - (int)((votes/percentage)/2);
 		}
 	}
+	
+	
+	public Float getEfficiencyGap(Integer partyVotes, Integer totalVotes, Integer partySeats, Integer totalSeats) {
+		Float efficiencyGap = (float)(((double)partyVotes/totalVotes) - 0.5) - 2 * (float)(((double)partySeats/totalSeats) - 0.5);
+		
+		return efficiencyGap;
+	}
+	
 }
