@@ -8,7 +8,7 @@ define([
 			return{
 				fillOpacity: 0.6,
 				weight: 0.5,
-				color: "yellow",
+				color: "black",
 				fillColor: fillColor(mapData, feature.properties.id, ColorMode.DEFAULT_COLOR)
 
 			};
@@ -22,7 +22,6 @@ define([
 				mouseover: function(e){
 					layer = e.target;
 					layer.setStyle({
-						weight: 0.5,
 						fillColor: fillColor( mapData,layer.feature.properties.id, ColorMode.HIGHLIGHT_COLOR),
 						dataArray:' '
 					});

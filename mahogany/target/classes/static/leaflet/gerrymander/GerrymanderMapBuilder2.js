@@ -285,8 +285,44 @@ define([
 		});
 	}
 	
+	function setMemberDisplay(layer){
+		var displayString = "";
+		var districtId = layer.feature.properties.id
+		
+		if(!memberData || !memberData.districtData[districtId]){
+			return "Data Not Available";
+		}
+		
+		var districtData = memberData.districtData[districtId];
+		
+		
+		
+		
+		var memberList = districtData.memberData;
+		
+		var electionDistrictData = null;
+		
+		if(mapData && mapData.districtData[districtId]){
+			electionDistrictData = mapData.districtData[districtId];
+		}
+		
+		for(m in memberList){
+			var member = memberList[m];
+			if(electionDistrictData && electionDistrictData.winningParty == member.party){
+		//		displayString += "<b>" + member.party + ": " + member.name + "</b><br/>";
+				displayString += "<b>" + member.name + ": " + member.party + "</b><br/>";
+			}
+			/*else{
+				displayString += member.party + ": " + member.name + "<br/>";
+				
+			}*/
+		}
+		return displayString;
+	}
+	
 	
 	function electionDataRequest(){
+		mapData = null;
 		request("/electionDataRequest",{
 			method: "GET",
 			query:{
@@ -301,7 +337,7 @@ define([
 		});
 	}
 	function efficiencyGapRequest(){
-
+		mapData = null;
 		request("/efficiencyGapRequest",{
 			method: "GET",
 			query: {
@@ -327,6 +363,9 @@ define([
 		L.Util.setOptions(districtLayer, { style: EfficiencyGap.setStyle(mapData)	});
 		districtLayer.setStyle(EfficiencyGap.setStyle(mapData));
 		districtLayer.eachLayer(EfficiencyGap.setEvents(mapData, districtLayer, mapControls.dataDisplay));
+		
+		
+		
 	}
 	
 	function setElectionDataLayer(){
@@ -336,9 +375,15 @@ define([
 		L.Util.setOptions(districtLayer, {style: ElectionData.setStyle()});
 		districtLayer.setStyle(ElectionData.setStyle());
 		districtLayer.eachLayer(ElectionData.setEvents(mapData, districtLayer, mapControls.dataDisplay));
-		
+		districtLayer.eachLayer(function(layer){
+			layer.on('mouseover', function(e){
+				memberDisplay.update(setMemberDisplay(layer));
+			});
+			layer.on('mouseout', function(e){
+				memberDisplay.update(" ");
+			});
+		});
 	}
-	
 	
 	
 	return {
