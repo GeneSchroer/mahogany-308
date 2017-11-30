@@ -58,7 +58,11 @@ define([
 	function initializeDataPanel(panel){
 		if (panel){
 			topic.subscribe(TopicEvents.DATA_SIDE_PANEL, function(metricData, dataType){
-				if(dataType == DataType.ELECTION_DATA){
+				
+				if(!metricData){
+					panel.innerHTML = " ";
+				}
+				else if(dataType == DataType.ELECTION_DATA){
 					var displayString="";
 					displayString += "<h4>State Election Data</h4>";
 					displayString += "<b>Seats:</b> <br/>";
@@ -89,37 +93,35 @@ define([
 	return {
 		builder: {},
 		addMap: function(map){
-			this.builder.map = map;
+			this.builder.map = dom.byId(map);
 			return this;
 		},
 		addYearSelector:function(select){
-			this.builder.yearSelector = select;
+			this.builder.yearSelector = registry.byId(select);
 			return this;
 		},
 		addRepTable: function(table){
-			this.builder.repTable = table;
+			this.builder.repTable = dom.byId(table);
 			return this;
 		},
 		addPartyCheckbox: function(checkbox){
-			this.buidler.partyCheckbox = checkbox;
+			this.buidler.partyCheckbox = dom.byId(checkbox);
 			return this;
 		},
 		addMetricSelectForm: function(form){
-			this.builder.metricSelectForm = form;
+			this.builder.metricSelectForm = dom.byId(form);
 			return this;
 		},
 		addDataPanel: function(panel){
-			this.builder.dataPanel=panel;
+			this.builder.dataPanel = dom.byId(panel);
 			return this;
 		},
 		addDefaultModeRadioButton: function(button){
-			this.builder.defaultModeRadioBtn = button;
-			this.builder.electionDataBtn = button;
+			this.builder.electionDataBtn = dom.byId(button);
 			return this;
 		},
 		addEfficiencyGapRadioButton: function(button){
-			this.builder.efficiencyGapRadioBtn = button;
-			this.builder.efficiencyGapBtn = button;
+			this.builder.efficiencyGapBtn = dom.byId(button);
 			return this;
 		},
 		build: function(){

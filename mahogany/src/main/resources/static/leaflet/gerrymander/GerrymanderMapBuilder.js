@@ -70,12 +70,13 @@ define([
 		mapMode = MAP_MODE_STATE;
 		dataMode = DataType.ELECTION_DATA;
 		
-		initializeDistrictLayer();
+		//initializeDistrictLayer();
 		initializeStateLayer();
 		
 		loadStateBoundariesRequest(stateLayer);
 		return map;
 	}
+	
 	function createMap(map){
 		// the map needs to take up the whole block it's contained in,
 		// so it's styled here just in case it wasn't already.
@@ -111,37 +112,6 @@ define([
 	
 	}
 	
-	function clearDistrictLayer(){
-		districtLayer.clearLayers();
-		L.Util.setOptions(districtLayer, {style:null});
-		metricData = {};
-	}
-	
-	function zoomInMode(layer){
-		// clear the current layers from the map.
-		clearDistrictLayer();
-		
-		mapMode = MAP_MODE_DISTRICT;
-		currentState = layer.feature.properties.name;
-		map.fitBounds(layer.getBounds());
-		
-		for(control in mapControls){
-			mapControls[control].enable();
-		}
-		
-		loadDistrictBoundariesRequest();
-	}
-
-	function zoomOutMode(){
-		clearDistrictLayer();
-		mapMode = MAP_MODE_STATE;
-		map.setView([38, -88], 4, true);
-	
-		for(control in mapControls){
-			mapControls[control].disable();
-		}
-	}
-	
 	function createDataDisplay(){
 		var dataDisplay = L.control({position:'topright'});
 		
@@ -164,8 +134,6 @@ define([
 		
 		return dataDisplay;
 	}
-	
-	
 	
 	function createLegendControl(){
 		var legendControl = L.control({position:'bottomright'});
@@ -190,29 +158,7 @@ define([
 		
 		return legendControl;
 	}
-	function electionDataLegend(){
-		var legendDisplay = "";
-		legendDisplay += "<b>Parties:</b><br/>";
-		legendDisplay += "Democrat " + '<i style="background:' + MapColors.BLUE_60 + ';"></i><br/>';
-		legendDisplay += "Republican " + '<i style="background:' + MapColors.RED_60 + ';"></i><br/>';
-		
-		return legendDisplay;
-	}
 	
-	function efficiencyGapLegend(){
-		var legendDisplay = "";
-		legendDisplay += "<b>Wasted Vote Percentage:</b><br/>";
-		legendDisplay += "0-10 " + '<i style="background:' + MapColors.BLUE_20 + ';"></i><i style="background:' + MapColors.RED_20 + '"></i><br/>';
-		legendDisplay += "10-20 " + '<i style="background:' + MapColors.BLUE_30 + ';"></i><i style="background:' + MapColors.RED_30 + '"></i><br/>';
-		legendDisplay += "20-30 " + '<i style="background:' + MapColors.BLUE_40 + ';"></i><i style="background:' + MapColors.RED_40 + '"></i><br/>';
-		legendDisplay += "30-40 " + '<i style="background:' + MapColors.BLUE_50 + ';"></i><i style="background:' + MapColors.RED_50 + '"></i><br/>';
-		legendDisplay += "40-50 " + '<i style="background:' + MapColors.BLUE_60 + ';"></i><i style="background:' + MapColors.RED_60 + '"></i><br/>';
-		return legendDisplay;
-	}
-	
-	function initializeDistrictLayer(){
-	
-	}
 	function initializeStateLayer(){
 		L.Util.setOptions(stateLayer, {style: stateLayerStyle()});
 		L.Util.setOptions(stateLayer, {onEachFeature:
@@ -236,12 +182,6 @@ define([
 			}
 		});
 	}
-	function updateMap(){
-		if(mapMode == MAP_MODE_DISTRICT){
-			clearDistrictLayer();
-			loadDistrictBoundariesRequest();
-		}
-	}
 	
 	function loadStateBoundariesRequest(stateLayer){
 		request("stateBoundaries.json",{
@@ -254,14 +194,6 @@ define([
 		});
 	}
 	
-	function stateLayerStyle(mapData){
-		return {
-			weight: 1,
-			color: "green",
-			fillColor: "lime",
-			fillOpacity: 0.1
-		};
-	}
 	function loadDistrictBoundariesRequest(){
 		request("/districtBoundariesRequest", {
 			method: "POST",
@@ -278,17 +210,6 @@ define([
 		});
 		
 	}
-	function loadDistrictData(){
-		
-		memberDataRequest();
-		
-		if(dataMode == DataType.ELECTION_DATA){
-			electionDataRequest();
-		}
-		else if(dataMode == DataType.EFFICIENCY_GAP){
-			efficiencyGapRequest();
-		}
-	}
 	
 	function memberDataRequest(){
 		request("/getMemberData",{
@@ -303,6 +224,89 @@ define([
 			memberData = success.data;
 			
 		});
+	}
+	
+	function electionDataRequest(){
+		mapData = null;
+		request("/electionDataRequest",{
+			method: "GET",
+			query:{
+				state: currentState,
+				year: year
+			}, 
+			handleAs: "json"
+		}).response.then(function(success){
+			topic.publish(TopicEvents.DATA_SIDE_PANEL, success.data, DataType.ELECTION_DATA);
+			console.log(success.data);
+			mapData = success.data;
+			setElectionDataLayer();
+		});
+	}
+	
+	function efficiencyGapRequest(){
+		mapData = null;
+		request("/efficiencyGapRequest",{
+			method: "GET",
+			query: {
+				state: currentState,
+				year: year
+			},
+			handleAs: "json"
+		}).response.then(function(success){
+			topic.publish(TopicEvents.DATA_SIDE_PANEL, success.data, DataType.EFFICIENCY_GAP);
+			console.log(success.data);
+			mapData = success.data;
+			setEfficiencyGapLayer();
+		});
+
+	}
+	
+	function setEfficiencyGapLayer(){
+		legendControl.update(efficiencyGapLegend());
+		districtLayer.setStyle(null);
+		L.Util.setOptions(districtLayer, {style:null});
+		L.Util.setOptions(districtLayer, { style: EfficiencyGap.setStyle(mapData)	});
+		districtLayer.setStyle(EfficiencyGap.setStyle(mapData));
+		districtLayer.eachLayer(EfficiencyGap.setEvents(mapData, districtLayer, mapControls.dataDisplay));
+		
+	}
+	
+	function setElectionDataLayer(){
+		legendControl.update(electionDataLegend());
+		districtLayer.setStyle(null);
+		L.Util.setOptions(districtLayer, {style:null});
+		L.Util.setOptions(districtLayer, {style: ElectionData.setStyle()});
+		districtLayer.setStyle(ElectionData.setStyle());
+		districtLayer.eachLayer(ElectionData.setEvents(mapData, districtLayer, mapControls.dataDisplay));
+		districtLayer.eachLayer(function(layer){
+			layer.on('mouseover', function(e){
+				memberDisplay.update(setMemberDisplay(layer));
+			});
+			layer.on('mouseout', function(e){
+				memberDisplay.update(" ");
+			});
+		});
+	}
+	
+	function stateLayerStyle(mapData){
+		return {
+			weight: 1,
+			color: "green",
+			fillColor: "lime",
+			fillOpacity: 0.1
+		};
+	}
+
+	function loadDistrictData(){
+		
+		memberDataRequest();
+		
+		if(dataMode == DataType.ELECTION_DATA){
+			electionDataRequest();
+		}
+		else if(dataMode == DataType.EFFICIENCY_GAP){
+			efficiencyGapRequest();
+		}
 	}
 	
 	function setMemberDisplay(layer){
@@ -333,70 +337,64 @@ define([
 		return displayString;
 	}
 	
-	
-	function electionDataRequest(){
-		mapData = null;
-		request("/electionDataRequest",{
-			method: "GET",
-			query:{
-				state: currentState,
-				year: year
-			}, 
-			handleAs: "json"
-		}).response.then(function(success){
-			topic.publish(TopicEvents.DATA_SIDE_PANEL, success.data, DataType.ELECTION_DATA);
-			console.log(success.data);
-			mapData = success.data;
-			setElectionDataLayer();
-		});
-	}
-	function efficiencyGapRequest(){
-		mapData = null;
-		request("/efficiencyGapRequest",{
-			method: "GET",
-			query: {
-				state: currentState,
-				year: year
-			},
-			handleAs: "json"
-		}).response.then(function(success){
-			topic.publish(TopicEvents.DATA_SIDE_PANEL, success.data, DataType.EFFICIENCY_GAP);
-			console.log(success.data);
-			mapData = success.data;
-			setEfficiencyGapLayer();
-		});
-
+	function updateMap(){
+		if(mapMode == MAP_MODE_DISTRICT){
+			clearDistrictLayer();
+			loadDistrictBoundariesRequest();
+		}
 	}
 	
-	
-	function setEfficiencyGapLayer(){
-		legendControl.update(efficiencyGapLegend());
-		districtLayer.setStyle(null);
-		L.Util.setOptions(districtLayer, {style:null});
-		L.Util.setOptions(districtLayer, { style: EfficiencyGap.setStyle(mapData)	});
-		districtLayer.setStyle(EfficiencyGap.setStyle(mapData));
-		districtLayer.eachLayer(EfficiencyGap.setEvents(mapData, districtLayer, mapControls.dataDisplay));
+	function zoomInMode(layer){
+		// clear the current layers from the map.
+		clearDistrictLayer();
 		
+		mapMode = MAP_MODE_DISTRICT;
+		currentState = layer.feature.properties.name;
+		map.fitBounds(layer.getBounds());
+		
+		for(control in mapControls){
+			mapControls[control].enable();
+		}
+		
+		loadDistrictBoundariesRequest();
+	}
+
+	function zoomOutMode(){
+		clearDistrictLayer();
+		mapMode = MAP_MODE_STATE;
+		topic.publish(TopicEvents.DATA_SIDE_PANEL);
+		map.setView([38, -88], 4, true);
+	
+		for(control in mapControls){
+			mapControls[control].disable();
+		}
 	}
 	
-	function setElectionDataLayer(){
-		legendControl.update(electionDataLegend());
-		districtLayer.setStyle(null);
+	function clearDistrictLayer(){
+		districtLayer.clearLayers();
 		L.Util.setOptions(districtLayer, {style:null});
-		L.Util.setOptions(districtLayer, {style: ElectionData.setStyle()});
-		districtLayer.setStyle(ElectionData.setStyle());
-		districtLayer.eachLayer(ElectionData.setEvents(mapData, districtLayer, mapControls.dataDisplay));
-		districtLayer.eachLayer(function(layer){
-			layer.on('mouseover', function(e){
-				memberDisplay.update(setMemberDisplay(layer));
-			});
-			layer.on('mouseout', function(e){
-				memberDisplay.update(" ");
-			});
-		});
+		metricData = {};
 	}
 	
+	function electionDataLegend(){
+		var legendDisplay = "";
+		legendDisplay += "<b>Parties:</b><br/>";
+		legendDisplay += "Democrat " + '<i style="background:' + MapColors.BLUE_60 + ';"></i><br/>';
+		legendDisplay += "Republican " + '<i style="background:' + MapColors.RED_60 + ';"></i><br/>';
+		
+		return legendDisplay;
+	}
 	
+	function efficiencyGapLegend(){
+		var legendDisplay = "";
+		legendDisplay += "<b>Wasted Vote Percentage:</b><br/>";
+		legendDisplay += "0-10 " + '<i style="background:' + MapColors.BLUE_20 + ';"></i><i style="background:' + MapColors.RED_20 + '"></i><br/>';
+		legendDisplay += "10-20 " + '<i style="background:' + MapColors.BLUE_30 + ';"></i><i style="background:' + MapColors.RED_30 + '"></i><br/>';
+		legendDisplay += "20-30 " + '<i style="background:' + MapColors.BLUE_40 + ';"></i><i style="background:' + MapColors.RED_40 + '"></i><br/>';
+		legendDisplay += "30-40 " + '<i style="background:' + MapColors.BLUE_50 + ';"></i><i style="background:' + MapColors.RED_50 + '"></i><br/>';
+		legendDisplay += "40-50 " + '<i style="background:' + MapColors.BLUE_60 + ';"></i><i style="background:' + MapColors.RED_60 + '"></i><br/>';
+		return legendDisplay;
+	}
 	return {
 		create: function(map){
 			map = buildGerrymanderMap(map);
