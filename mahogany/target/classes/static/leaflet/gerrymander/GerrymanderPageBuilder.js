@@ -1,4 +1,5 @@
 define([
+	"dojo/dom",
 	"dojo/_base/declare", 
 	"dojo/on", 
 	"dojo/dom-construct", 
@@ -7,8 +8,9 @@ define([
 	"dojo/topic", 
 	"leaflet/gerrymander/GerrymanderMapBuilder",
 	"leaflet/gerrymander/constants/DataType",
+	"leaflet/gerrymander/constants/TopicEvents",
 	"dijit/registry"
-	], function(declare, on, domConstruct, domStyle, request, topic, GerrymanderMapBuilder, DataType, registry){
+	], function(dom,declare, on, domConstruct, domStyle, request, topic, GerrymanderMapBuilder, DataType, TopicEvents, registry){
 	
 	var map;
 	
@@ -17,7 +19,7 @@ define([
 		initializeYearSelector(builder.yearSelector);
 		initializeElectionDataButton(builder.electionDataBtn);
 		initializeEfficiencyGapButton(builder.efficiencyGapBtn);
-		
+		initializeDataPanel(builder.dataPanel);
 	}
 	function initializeYearSelector(yearSelector){
 		//GerrymanderMapBuilder.setYear(yearSelector.value);
@@ -53,6 +55,36 @@ define([
 			GerrymanderMapBuilder.setDataMode(DataType.ELECTION_DATA);
 		});
 	}
+	function initializeDataPanel(panel){
+		if (panel){
+			topic.subscribe(TopicEvents.DATA_SIDE_PANEL, function(metricData, dataType){
+				if(dataType == DataType.ELECTION_DATA){
+					var displayString="";
+					displayString += "<h4>State Election Data</h4>";
+					displayString += "<b>Seats:</b> <br/>";
+					displayString += "Republican: " + metricData.totalRepublicanSeats + "<br/>";
+					displayString += "Democrat: " + metricData.totalDemocratSeats + "<br/>";
+					displayString += "<br/>";
+					displayString += "<b>Votes:</b> <br/>";
+					displayString += "Republican: " + metricData.totalRepublicanVotes.toLocaleString() + "<br/>";
+					displayString += "Democrat: " + metricData.totalDemocratVotes.toLocaleString() + "<br/>";
+					
+					
+					panel.innerHTML = displayString;
+				}
+				else if(dataType == DataType.EFFICIENCY_GAP){
+					var displayString="";
+					displayString += "Efficiency Gap: " + metricData.efficiencyGap.toFixed(2);
+				
+					panel.innerHTML = displayString;
+				}
+			});
+			
+		}
+		
+		
+	}
+	
 	
 	return {
 		builder: {},
@@ -74,6 +106,10 @@ define([
 		},
 		addMetricSelectForm: function(form){
 			this.builder.metricSelectForm = form;
+			return this;
+		},
+		addDataPanel: function(panel){
+			this.builder.dataPanel=panel;
 			return this;
 		},
 		addDefaultModeRadioButton: function(button){

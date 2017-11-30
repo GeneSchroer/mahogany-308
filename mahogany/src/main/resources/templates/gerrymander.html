@@ -50,7 +50,7 @@
 				var map_g = GerrymanderPageBuilder
 							.addMap(dom.byId("gerrymanderMap"))
 							.addYearSelector(registry.byId("gerrymanderYearSelect"))
-							//.addRepTable(dom.byId("gerrymanderRepTable"))
+							.addDataPanel(dom.byId("dataSidePanel"))
 							.addDefaultModeRadioButton(dom.byId("gerrymanderDefaultMode"))
 							.addEfficiencyGapRadioButton(dom.byId("gerrymanderEfficiencyGap"))
 							.build();
@@ -80,7 +80,7 @@
 				
 				<div data-dojo-type="dijit/layout/AccordionContainer" data-dojo-props="region:'center'">
 					<div data-dojo-type="dijit/layout/ContentPane" title="Data">
-						
+						<div id="dataSidePanel"></div>
 						<table class="repTable" id="gerrymanderRepTable"></table>
 					</div>
 					<div data-dojo-type="dijit/layout/ContentPane" title="Information">

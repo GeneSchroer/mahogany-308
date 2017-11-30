@@ -7,9 +7,10 @@ define([
 	"leaflet/gerrymander/metrics/ElectionData",
 	"leaflet/gerrymander/metrics/EfficiencyGap",
 	"leaflet/gerrymander/constants/DataType",
-	"leaflet/gerrymander/constants/MapColors"
+	"leaflet/gerrymander/constants/MapColors",
+	"leaflet/gerrymander/constants/TopicEvents"
 	
-	],function(declare, on, topic, domStyle, request, ElectionData, EfficiencyGap, DataType, MapColors){
+	],function(declare, on, topic, domStyle, request, ElectionData, EfficiencyGap, DataType, MapColors, TopicEvents){
 	
 	var MAP_MODE_STATE = "state";
 	var MAP_MODE_DISTRICT = "district";
@@ -271,9 +272,7 @@ define([
 			handleAs: 'json'
 		}).response.then(function(success){
 			console.log(success.data);
-			//topic.publish("gerrymander/getDistricts/success", success);
 			var districtData = success.data;
-			//districtLayer.clearLayers();
 			districtLayer.addData(districtData);
 			loadDistrictData();
 		});
@@ -345,6 +344,7 @@ define([
 			}, 
 			handleAs: "json"
 		}).response.then(function(success){
+			topic.publish(TopicEvents.DATA_SIDE_PANEL, success.data, DataType.ELECTION_DATA);
 			console.log(success.data);
 			mapData = success.data;
 			setElectionDataLayer();
@@ -360,6 +360,7 @@ define([
 			},
 			handleAs: "json"
 		}).response.then(function(success){
+			topic.publish(TopicEvents.DATA_SIDE_PANEL, success.data, DataType.EFFICIENCY_GAP);
 			console.log(success.data);
 			mapData = success.data;
 			setEfficiencyGapLayer();
