@@ -20,6 +20,7 @@ public class Boundaries {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
+	@Column(columnDefinition="MultiPolygon")
 	private MultiPolygon coordinates; // spatial coordinates in jts format
 	
 	public Long getId() {

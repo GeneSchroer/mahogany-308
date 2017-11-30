@@ -3,12 +3,25 @@ define([
 	"leaflet/gerrymander/constants/MapColors"
 	], function(ColorMode, MapColors){
 	
+	var mapData;
+	var districtLayer;
+	var displayControl;
 	
-	function setDataBlock(properties, efficiencyGap){
-		
+	function setStyle(mapData){
+		return function(feature){
+			//console.log(mapData);
+			return{
+				weight: 0.5,
+				color: "yellow",
+				fillColor: setColor(feature, ColorMode.DEFAULT_COLOR),
+				
+				dataArray: ' ',
+				fillOpacity: 0.6
+			};
+		};
 	}
 	
-	function setEvents(mapData){
+	function setEvents(mapData, districtLayer, displayControl){
 		return function (layer){
 			layer.off();
 			layer.on({
@@ -16,15 +29,14 @@ define([
 					layer = e.target;
 					layer.setStyle({
 						weight: 0.5,
-						fillColor: setColor(layer.feature, mapData, ColorMode.HIGHLIGHT_COLOR),
-						dataArray:' ',
-						fillOpacity: 1
+						fillColor: setColor(layer.feature, ColorMode.HIGHLIGHT_COLOR),
+						dataArray:' '
 					});
-					mapData.districtMapControls.dataDisplay.update(setDisplay(layer, mapData));
+					displayControl.update(setDisplay(layer, mapData));
 				},
 				mouseout:function(e){
-					mapData.districtLayer.resetStyle(e.target);
-					mapData.districtMapControls.dataDisplay.update(" ");
+					districtLayer.resetStyle(e.target);
+					displayControl.update(" ");
 				},
 				click: function(e){
 					electionLayerPopup(mapData, e);
@@ -42,16 +54,19 @@ define([
 		}
 		displayString += "District: " + districtNumber + "<br/>";
 		
-		displayString += "<h4>Votes:</h4>";
+		displayString += "<b>Votes:</b><br/>";
 		
 		var districtId = layer.feature.properties.id;
-		var districtData = mapData.metricData.defaultMode.districtData[districtId];
+		var districtData = mapData.districtData[districtId];
+		if(!districtData){
+			return "Data Not Available";
+		}
 		var voteData=districtData.voteData;
 		
 		
 		for(party in voteData){
 			var data = voteData[party];
-			displayString += party + ": " + data.votes + "<br/>";
+			displayString += party + ": " + data.votes.toLocaleString() + "<br/>";
 		}
 		
 		return displayString;
@@ -72,21 +87,9 @@ define([
 		.openOn(mapData.map);
 	}
 	
-	function setStyle(mapData){
-		return function(feature){
-			//console.log(mapData);
-			return{
-				weight: 0.5,
-				color: "yellow",
-				fillColor: setColor(feature, mapData, ColorMode.DEFAULT_COLOR),
-				
-				dataArray: ' ',
-				fillOpacity: 0.8
-			};
-		};
-	}
 	
-	function setColor(feature, mapData, colorMode){
+	
+	function setColor(feature, colorMode){
 		
 		var winningParty = feature.properties.winningParty;
 		
@@ -108,16 +111,33 @@ define([
 	
 	
 	return{
-		setEvents: function(mapData){
-			return setEvents(mapData);
+		mapData: null,
+		districtLayer: null,
+		displayControl: null,
+		setEvents: function(mapData,districtLayer, dataControl){
+			return setEvents(mapData, districtLayer, dataControl);
 		},
-		
-		setStyle: function(mapData){
-			return setStyle(mapData);
+		setStyle: function(){
+			return setStyle();
 		},
-		setEvents2: function(mapData,layer){
-			return setEvents2(mapData,layer);
+		setMapData: function(data){
+			this.mapData = data;
+			return this;
+		},
+		setDistrictLayer: function(layer){
+			this.districtLayer = layer;
+			return this;
+		},
+		setDisplayControl: function(control){
+			this.displayControl = control;
+			return this;
+		},
+		getEvents(){
+			var events = setEvents(this.mapData, this.districtLayer, this.displayControl);
+			return events;
 		}
+		
+		
 	};
 	
 });

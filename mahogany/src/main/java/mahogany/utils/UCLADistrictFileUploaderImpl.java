@@ -77,10 +77,11 @@ public class UCLADistrictFileUploaderImpl {
 			ObjectNode districtGeometryObject = (ObjectNode) featuresArray.get(index).get("geometry");
 			
 			/* find or creating an entity for the boundaries of the district */
-			MultiPolygon multiPolygon = (MultiPolygon) geoJsonReader.read(districtGeometryObject.toString());
+			com.vividsolutions.jts.geom.MultiPolygon multiPolygon = (MultiPolygon) geoJsonReader.read(districtGeometryObject.toString());
 			Boundaries boundariesEntity = boundariesRepo.findByCoordinates(multiPolygon);
 			if(boundariesEntity == null) {
 				System.out.println("Creating new Boundaries entity");
+				System.out.println(multiPolygon.toString());
 				boundariesEntity = new Boundaries();
 				boundariesEntity.setCoordinates(multiPolygon);
 				boundariesRepo.save(boundariesEntity);
