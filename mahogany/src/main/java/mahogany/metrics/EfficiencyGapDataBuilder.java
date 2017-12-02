@@ -10,10 +10,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import mahogany.entities.Elections;
 import mahogany.entities.Votes;
 
-public class EfficiencyGapDataBuilder implements AlgorithmTest<EfficiencyGapStateData>{
+public class EfficiencyGapDataBuilder implements DataBuilder<EfficiencyGapStateData>{
 
 	@Override
-	public EfficiencyGapStateData generateMetricData(List<Elections> electionList) {
+	public EfficiencyGapStateData generateDataObject(List<Elections> electionList) {
 
 		EfficiencyGapStateData efficiencyResult = new EfficiencyGapStateData();
 		Map<String, ElectionDistrictData<WastedVoteData>> districtDataMap = new HashMap<String, ElectionDistrictData<WastedVoteData>>();

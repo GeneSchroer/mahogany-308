@@ -64,7 +64,7 @@ public class GerrymanderHelper {
 		if(metric == MetricOption.EFFICIENCY_GAP) {
 			ArrayList<Elections> electionList = (ArrayList<Elections>)electionsRepo.findAllByStateAndYear(stateName, year);
 			EfficiencyGapDataBuilder x = new EfficiencyGapDataBuilder();
-			EfficiencyGapStateData metricData = x.generateMetricData(electionList);
+			EfficiencyGapStateData metricData = x.generateDataObject(electionList);
 		
 			
 			
@@ -82,7 +82,7 @@ public class GerrymanderHelper {
 		else if(metric == MetricOption.ELECTION_DATA) {
 			ArrayList<Elections> electionList = (ArrayList<Elections>)electionsRepo.findAllByStateAndYear(stateName, year);
 			ElectionDataBuilder x = new ElectionDataBuilder();
-			ElectionStateData electionData= x.generateMetricData(electionList);
+			ElectionStateData electionData= x.generateDataObject(electionList);
 		
 			
 			
