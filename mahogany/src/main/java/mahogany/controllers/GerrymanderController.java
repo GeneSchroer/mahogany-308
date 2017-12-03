@@ -17,10 +17,7 @@ import mahogany.utils.GerrymanderHelper;
 public class GerrymanderController {
 	@Autowired 	GerrymanderHelper helper; 	
 
-	@RequestMapping("/")
-	public String loader(){
-		return "index";
-	}
+	
 	
 	@RequestMapping("/gerrymander")
 	public String accessGerrymanderPageRequest() {
