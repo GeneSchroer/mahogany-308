@@ -48,4 +48,33 @@ public class LoginHelper {
 		
 		return LoginStatus.OK;
 	}
+	
+	public LoginStatus loginUser(String userName, String password) {
+		
+		UserDetails user = userDetailsRepo.findByUserNameAndPassword(userName, password);
+		if(user == null) {
+			return LoginStatus.NO_SUCH_USER;
+		}
+		else if(user.getActive() == 1) {
+			return LoginStatus.ALREADY_LOGGED_IN;
+		}
+		else {
+			user.setActive(1);
+			userDetailsRepo.save(user);
+			return LoginStatus.OK;
+		}
+	}
+	
+	public LoginStatus logoutUser(String userName) {
+		UserDetails user = userDetailsRepo.findByUserName(userName);
+		if(user == null) {
+			return LoginStatus.NO_SUCH_USER;
+		}
+		else {
+			user.setActive(0);
+			userDetailsRepo.save(user);
+			return LoginStatus.OK;
+		}
+	}
+	
 }

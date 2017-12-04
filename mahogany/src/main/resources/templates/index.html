@@ -58,11 +58,16 @@
 			<form action="/register" method="POST">
 				<label>User Name: </label><input id="userName" name="userName" type="text" /><br/>
 				<label>Password: </label><input id="password" name="password" type="password" /><br/>
-				<input id="loginSubmit" type="submit"/>
+				<input id="registerSubmit" type="submit"/>
 			</form>
 		</div>
-		<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'"></div>
-			
+		<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'">
+			<form action="/login" method="POST">
+				<label>User Name: </label><input name="userName" type="text"/><br/>
+				<label>Password: </label><input name="password" type="password"/><br/>
+				<input type="submit"/>
+			</form>
+		</div>
 	</div>
 	<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'bottom'">
 	</div>

@@ -2,34 +2,40 @@ package mahogany.controllers;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 import mahogany.metrics.MetricOption;
 import mahogany.utils.GerrymanderHelper;
 
 @Controller
+//@SessionAttributes({"userName", "roles"})
 public class GerrymanderController {
 	@Autowired 	GerrymanderHelper helper; 	
 
 	
 	
 	@RequestMapping("/gerrymander")
-	public String accessGerrymanderPageRequest() {
+	public String accessGerrymanderPageRequest(HttpSession session) {
 		
+		if(session.getAttribute("userName") != null) {
+			System.out.println(session.getAttribute("userName").toString());
+			System.out.println(session.getId());
+		}
 		return "gerrymander";
 	}
-	
-	@RequestMapping("/gerrymander2")
-	public String accessGerrymanderPage2Request() {
-		
-		return "gerrymander2";
-	}
+
 	
 	@RequestMapping("/districtBoundariesRequest")
 	public @ResponseBody JsonNode getDistrictBoundariesRequest(@RequestParam(name="state")String state, 
