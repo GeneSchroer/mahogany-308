@@ -1,25 +1,18 @@
 package mahogany.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import mahogany.entities.UserDetails;
-import mahogany.entities.UserRoles;
-import mahogany.entities.Users;
 import mahogany.loginUtils.LoginStatus;
 import mahogany.repositories.UserDetailsRepository;
 import mahogany.repositories.UserRolesRepository;
-import mahogany.repositories.UsersRepository;
 
 @Component
 public class LoginHelper {
 
 	@Autowired UserDetailsRepository userDetailsRepo;
 	@Autowired UserRolesRepository userRolesRepo;
-	@Autowired UsersRepository usersRepo;
 	
 	public LoginStatus registerNewUser(String userName, String password) {
 		
@@ -34,19 +27,11 @@ public class LoginHelper {
 			userDetailsEntity.setUserName(userName);
 			userDetailsEntity.setPassword(password);
 			userDetailsEntity.setActive(1);
+			userDetailsEntity.setRole(userRolesRepo.findByRoleName("USER"));
+			userDetailsRepo.save(userDetailsEntity);
+			return LoginStatus.OK;
 		}
-		userDetailsRepo.save(userDetailsEntity);
 		
-		UserRoles userRole = userRolesRepo.findByRoleName("USER");
-		Users usersEntity = new Users();
-		
-		usersEntity.setDetails(userDetailsEntity);
-		List<UserRoles> roleList = new ArrayList<UserRoles>();
-		roleList.add(userRole);
-		usersEntity.setRoles(roleList);
-		usersRepo.save(usersEntity);
-		
-		return LoginStatus.OK;
 	}
 	
 	public LoginStatus loginUser(String userName, String password) {

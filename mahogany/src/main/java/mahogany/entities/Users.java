@@ -12,10 +12,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-@Entity
-@Table(name="Users")
+//@Entity
+//@Table(name="Users")
 public class Users {
-	
+/*	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
@@ -44,5 +44,5 @@ public class Users {
 	}
 
 	
-	
+*/	
 }

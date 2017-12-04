@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -17,8 +19,17 @@ public class UserDetails {
 	private String password;
 	private Integer active;
 	
+	@ManyToOne
+	@JoinColumn(name="roleId")
+	private UserRoles role;
 	
 	
+	public UserRoles getRole() {
+		return role;
+	}
+	public void setRole(UserRoles role) {
+		this.role = role;
+	}
 	public Long getId() {
 		return id;
 	}
