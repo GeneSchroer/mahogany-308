@@ -15,37 +15,28 @@
 	<link rel="stylesheet" type="text/css" href="./css/style.css"/>
 	
 	<script>
-		require(["javascript/LoadingScreen","dojo/parser", "dijit/layout/ContentPane", "dijit/layout/BorderContainer", "dijit/layout/TabContainer", 
-    		"dijit/layout/AccordionContainer", "dijit/form/Button", "dijit/form/Select"], function(LoadingScreen, parser){
+		require([
+			"javascript/LoadingScreen",
+			"dojo/parser", 
+			"dijit/layout/ContentPane", 
+			"dijit/layout/BorderContainer", 
+			"dijit/layout/TabContainer",
+			"dijit/layout/AccordionContainer", 
+			"dijit/form/Button", 
+			"dijit/form/Select"
+			], function(LoadingScreen, parser){
     			var loadingScreen = new LoadingScreen("loginLoadingScreen");	
     			parser.parse();
     			loadingScreen.endLoading();
     		});
-		
-		/* require([
-			"dojo/dom-form",
-			"dojo/on",
-			"dojo/dom",
-		
-			"dojo/request",
-			"dojo/domReady!"
-			], function(domForm, on, dom, request){
-				on(dom.byId("loginSubmit"), "click", function(evt){
-					//var form = domForm.toObject(dom.byId("loginForm"));
-					//console.log(form);
-					request("/register", {
-						method:"POST",
-						data:{
-							userName: dom.byId("userName").value,
-							password: dom.byId("password").value
-						}
-					});
-					
-					
-				}); 
 			
-		});*/
-	</script>
+			require([
+				"dojo/request"
+			], function(request){
+				
+			});
+		
+		</script>
 	</head>
 <body class="nihilo">
 	
@@ -54,22 +45,32 @@
 		<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'">
 			<div th:replace="headerLinks :: links"></div>
 		</div>
-		<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'left', splitter:true" style="width:50%;">
-			<form action="/register" method="POST">
-				<label>User Name: </label><input id="userName" name="userName" type="text" /><br/>
-				<label>Password: </label><input id="password" name="password" type="password" /><br/>
-				<input id="registerSubmit" type="submit"/>
-			</form>
+		<div data-dojo-type="dijit/layout/AccordionContainer" data-dojo-props="region:'left', splitter:true" style="width:40%;">
+			<!-- Login form -->
+			<div data-dojo-type="dijit/layout/ContentPane" title="Login">
+				<form action="/login" method="POST">
+					<label>User Name: </label><input name="userName" type="text"/><br/>
+					<label>Password: </label><input name="password" type="password"/><br/>
+					<input type="submit"/>
+				</form>
+			</div>
+			<!-- Registration form -->
+			<div data-dojo-type="dijit/layout/ContentPane" title="Registration">
+				<form action="/register" method="POST">
+					<label>User Name: </label><input id="userName" name="userName" type="text" /><br/>
+					<label>Password: </label><input id="password" name="password" type="password" /><br/>
+					<label>Confirm Password: </label><input name="confirmPassword" type="password"/><br/>
+					<input id="registerSubmit" type="submit"/>
+				</form>
+			</div>
 		</div>
+		<!-- map pane -->		
 		<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'">
-			<form action="/login" method="POST">
-				<label>User Name: </label><input name="userName" type="text"/><br/>
-				<label>Password: </label><input name="password" type="password"/><br/>
-				<input type="submit"/>
-			</form>
+			<div id="loginPageMap"></div>
 		</div>
-	</div>
-	<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'bottom'">
+		<!-- information about gerrymandering -->
+		<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'bottom'" style="height:20%;">
+		</div>
 	</div>
 </body>
 </html>
