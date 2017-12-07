@@ -2,6 +2,10 @@ package mahogany.loginUtils;
 
 public class AuthenticationFailureException extends RuntimeException{
 
+	public AuthenticationFailureException(String string) {
+		super(string);
+	}
+
 	/**
 	 * 
 	 */

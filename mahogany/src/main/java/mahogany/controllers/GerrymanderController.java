@@ -29,13 +29,13 @@ public class GerrymanderController {
 	@RequestMapping("/gerrymander")
 	public String accessGerrymanderPageRequest(HttpSession session) {
 		
-		if(session.getAttribute("userName") != null) {
-			System.out.println(session.getAttribute("userName").toString());
-			System.out.println(session.getId());
+		if(session.getAttribute("role") != null) {
+			return "gerrymander";
 		}
-		return "gerrymander";
+		else {
+			return "index";
+		}
 	}
-
 	
 	@RequestMapping("/districtBoundariesRequest")
 	public @ResponseBody JsonNode getDistrictBoundariesRequest(@RequestParam(name="state")String state, 

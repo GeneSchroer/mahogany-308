@@ -4,7 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import mahogany.entities.UserDetails;
-import mahogany.loginUtils.LoginStatus;
+import mahogany.loginUtils.AuthenticationFailureException;
+import mahogany.loginUtils.DuplicateUserNameException;
 import mahogany.repositories.UserDetailsRepository;
 import mahogany.repositories.UserRolesRepository;
 
@@ -14,13 +15,13 @@ public class LoginHelper {
 	@Autowired UserDetailsRepository userDetailsRepo;
 	@Autowired UserRolesRepository userRolesRepo;
 	
-	public LoginStatus registerNewUser(String userName, String password) {
+	public UserDetails registerNewUser(String userName, String password)  {
 		
 		// check if name is already taken
 		UserDetails userDetailsEntity = userDetailsRepo.findByUserName(userName);
 		
 		if(userDetailsEntity != null) {
-			return LoginStatus.USER_ALREADY_EXISTS;
+			throw new DuplicateUserNameException("User already exists");
 		}
 		else {
 			userDetailsEntity = new UserDetails();
@@ -29,36 +30,32 @@ public class LoginHelper {
 			userDetailsEntity.setActive(1);
 			userDetailsEntity.setRole(userRolesRepo.findByRoleName("USER"));
 			userDetailsRepo.save(userDetailsEntity);
-			return LoginStatus.OK;
+			return userDetailsEntity;
 		}
 		
 	}
 	
-	public LoginStatus loginUser(String userName, String password) {
+	public UserDetails loginUser(String userName, String password) {
 		
 		UserDetails user = userDetailsRepo.findByUserNameAndPassword(userName, password);
 		if(user == null) {
-			return LoginStatus.NO_SUCH_USER;
+			throw new AuthenticationFailureException("UserName/Password not recognized");
 		}
 		else if(user.getActive() == 1) {
-			return LoginStatus.ALREADY_LOGGED_IN;
+			throw new AuthenticationFailureException("User is already logged in");
 		}
 		else {
 			user.setActive(1);
 			userDetailsRepo.save(user);
-			return LoginStatus.OK;
+			return user;
 		}
 	}
 	
-	public LoginStatus logoutUser(String userName) {
+	public void logoutUser(String userName) {
 		UserDetails user = userDetailsRepo.findByUserName(userName);
-		if(user == null) {
-			return LoginStatus.NO_SUCH_USER;
-		}
-		else {
+		if(user != null) {
 			user.setActive(0);
 			userDetailsRepo.save(user);
-			return LoginStatus.OK;
 		}
 	}
 	

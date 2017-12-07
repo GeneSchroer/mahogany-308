@@ -2,6 +2,10 @@ package mahogany.loginUtils;
 
 public class DuplicateUserNameException extends RuntimeException{
 
+	public DuplicateUserNameException(String string) {
+		super(string);
+	}
+
 	/**
 	 * 
 	 */

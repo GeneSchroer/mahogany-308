@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import mahogany.loginUtils.LoginStatus;
+import mahogany.entities.UserDetails;
+import mahogany.loginUtils.AuthenticationFailureException;
+import mahogany.loginUtils.DuplicateUserNameException;
 import mahogany.utils.LoginHelper;
 
 @Controller
@@ -30,22 +32,16 @@ public class LoginController {
 																				@RequestParam(name="password")String password, 
 																					HttpSession session,
 																						Model model) {
-		ModelAndView mav;
-		
-		LoginStatus userStatus = helper.loginUser(userName, password);
-		if(userStatus == LoginStatus.ALREADY_LOGGED_IN) {
-			mav = new ModelAndView("gerrymander");
-			session.setAttribute("userName", userName);
+		try {
+			UserDetails user = helper.loginUser(userName, password);
+			session.setAttribute("userName", user.getUserName());
+			session.setAttribute("role", user.getRole().getRoleName());
+			return new ModelAndView("gerrymander");
 		}
-		else if(userStatus == LoginStatus.NO_SUCH_USER) {
-			mav = new ModelAndView("index");
+		catch(AuthenticationFailureException e) {
+			model.addAttribute("loginError", e.getMessage());
+			return new ModelAndView("index");
 		}
-		else {
-			mav = new ModelAndView("gerrymander");
-			session.setAttribute("userName", userName);
-
-		}
-		return mav;
 	}
 	
 	@RequestMapping("/logout")
@@ -54,6 +50,7 @@ public class LoginController {
 		if(userName != null) {
 			helper.logoutUser(userName);
 			session.removeAttribute("userName");
+			session.removeAttribute("role");
 		}
 		return new ModelAndView("index");
 	}
@@ -64,16 +61,15 @@ public class LoginController {
 																							HttpServletRequest request,
 																								Model model) {
 		HttpSession session = request.getSession();
-		LoginStatus registrationStatus = helper.registerNewUser(userName, password);
-		
-		if(registrationStatus == LoginStatus.USER_ALREADY_EXISTS) {
+		try {
+			UserDetails user = helper.registerNewUser(userName, password);
+			session.setAttribute("userName", user.getUserName());
+			session.setAttribute("role", user.getRole().getRoleName());
+			return "gerrymandering";
+		}
+		catch(DuplicateUserNameException e) {
 			model.addAttribute("loginError", "User Name already exists");
 			return "index";
-			
-		}
-		else {
-			session.setAttribute("userName", userName);
-			return "gerrymandering";
 		}
 	}
 	
