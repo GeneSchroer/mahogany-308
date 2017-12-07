@@ -6,9 +6,15 @@
     <!-- Web GUI by Sung Jae Min and Gene Schroer -->
 	<title>Gerrymandering Analysis Home Page</title>
 
+  <link rel="stylesheet" href="/leaflet/leaflet.css" />
+		<script src="/leaflet/leaflet.js"></script>
+		<script src="http://cdn-geoweb.s3.amazonaws.com/esri-leaflet/1.0.0-rc.3/esri-leaflet.js"></script>
+
 	<!-- Dojo style sheets and scripts-->
 	<link rel="stylesheet" href="./dijit/themes/nihilo/nihilo.css"/>
 	<script src="dojo/dojo.js" data-dojo-config="async:true" ></script>
+
+
 
 		<!-- Local style sheets for page -->
 	<link rel="stylesheet" href="./css/nihilo_override.css"/>
@@ -31,9 +37,28 @@
     		});
 			
 			require([
-				"dojo/request"
-			], function(request){
+				"dojo/dom",
+				"dojo/dom-style",
+				"dojo/request",
+				"dojo/domReady!"
+			], function(dom, domStyle, request){
+				var mapBlock = dom.byId("loginPageMap");
+				domStyle.set(mapBlock, "width", "100%");
+				domStyle.set(mapBlock, "height", "100%");
+				domStyle.set(mapBlock, "position", "absolute");
 				
+				var map = L.map(mapBlock).setView([32, -80], 4);
+				L.esri.basemapLayer('Topographic').addTo(map);
+
+				var mapLayer = L.geoJson();
+				mapLayer.addTo(map);
+				request("Massachusetts14.geojson",{
+					method:"GET",
+					handleAs:"json"
+				}).response.then(function(success){
+					console.log(success.data);
+					mapLayer.addData(success.data);
+				});
 			});
 		
 		</script>
@@ -42,26 +67,35 @@
 	
 	<div id="loginLoadingScreen" class="loadingMessage pageOverlay loadingOverlay">Loading</div>
 	<div data-dojo-type="dijit/layout/BorderContainer" style="height:100%; width:100%">
-		<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'">
-			<div th:replace="headerLinks :: links"></div>
-		</div>
-		<div data-dojo-type="dijit/layout/AccordionContainer" data-dojo-props="region:'left', splitter:true" style="width:40%;">
-			<!-- Login form -->
-			<div data-dojo-type="dijit/layout/ContentPane" title="Login">
-				<form action="/login" method="POST">
-					<label>User Name: </label><input name="userName" type="text"/><br/>
-					<label>Password: </label><input name="password" type="password"/><br/>
-					<input type="submit"/>
-				</form>
+		<div th:if="${session.userName} != null">
+			<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'">
+				<div th:replace="headerLinks :: links"></div>
 			</div>
-			<!-- Registration form -->
-			<div data-dojo-type="dijit/layout/ContentPane" title="Registration">
-				<form action="/register" method="POST">
-					<label>User Name: </label><input id="userName" name="userName" type="text" /><br/>
-					<label>Password: </label><input id="password" name="password" type="password" /><br/>
-					<label>Confirm Password: </label><input name="confirmPassword" type="password"/><br/>
-					<input id="registerSubmit" type="submit"/>
-				</form>
+		</div>
+		<div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="region:'left'" style="width:20%;">
+			<div th:if="${loginError} != null">
+				<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'" style="height:6%;">
+					<div style="color:red;" th:text="${loginError}"></div>
+				</div>
+			</div>
+			<div data-dojo-type="dijit/layout/TabContainer" data-dojo-props="region:'center'">
+				<!-- Login form -->
+				<div data-dojo-type="dijit/layout/ContentPane" title="Login">
+					<form action="/login" method="POST">
+						<label>User Name: </label><input name="userName" type="text"/><br/>
+						<label>Password: </label><input name="password" type="password"/><br/>
+						<input type="submit"/>
+					</form>
+				</div>
+				<!-- Registration form -->
+				<div data-dojo-type="dijit/layout/ContentPane" title="Registration">
+					<form action="/register" method="POST">
+						<label>User Name: </label><input id="userName" name="userName" type="text" /><br/>
+						<label>Password: </label><input id="password" name="password" type="password" /><br/>
+						<label>Confirm Password: </label><input name="confirmPassword" type="password"/><br/>
+						<input id="registerSubmit" type="submit"/>
+					</form>
+				</div>
 			</div>
 		</div>
 		<!-- map pane -->		
