@@ -93,7 +93,7 @@
 			</div>
 			
 			<!-- Administrator Block -->
-			<div th:if="${session.userName} == 'admin'">
+			<div th:if="${session.role} == 'ADMIN'">
 				<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'bottom'" style="height:20%;">
 				Admin Options
 				
