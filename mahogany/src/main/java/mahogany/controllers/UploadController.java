@@ -17,7 +17,8 @@ public class UploadController {
 
 	@RequestMapping("/uclaJsonUpload")
 	public String uclaBoundaryDataUploadRequest(@RequestParam("file")MultipartFile[] files) {
-		uploadHelper.uploadDistrictFiles(files, FileSource.UCLA);
+			uploadHelper.uploadDistrictFiles(files, FileSource.UCLA);
+		
 		return "gerrymander";
 	}
 	
@@ -25,6 +26,14 @@ public class UploadController {
 	public String princetonElectionDataUploadRequest(@RequestParam("file")MultipartFile file) {
 		uploadHelper.uploadElectionFile(file, FileSource.PRINCETON);
 		return "gerrymander";
+	}
+	
+	public void uploadCongressionalMemberDataRequest() {
+		
+	}
+	
+	public void uploadElectionDataRequest() {
+		
 	}
 	
 }

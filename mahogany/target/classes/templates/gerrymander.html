@@ -52,13 +52,14 @@
     			parser.parse();
     			loadingScreen.endLoading();
 
-    			on(dom.byId("uclaUploadForm"), "submit", function(evt){
-    				adminLoadingScreen.startLoading();
-					});
-					on(dom.byId("princetonUploadForm"), "submit", function(evt){
-    				adminLoadingScreen.startLoading();
-					});
-    			
+    			if(dom.byId("adminLoadingScreen")){
+	    			on(dom.byId("uclaUploadForm"), "submit", function(evt){
+	    				adminLoadingScreen.startLoading();
+						});
+						on(dom.byId("princetonUploadForm"), "submit", function(evt){
+	    				adminLoadingScreen.startLoading();
+						});
+    			}
 				var map_g = GerrymanderPageBuilder
 							.addMap("gerrymanderMap")
 							.addYearSelector(registry.byId("gerrymanderYearSelect"))
