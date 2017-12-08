@@ -33,6 +33,9 @@
     			"javascript/LoadingScreen",
     			"dojo/parser", 
     			"dojo/dom", 
+    			"dojo/on",
+    			"dojo/dom-form",
+    			"dojo/request",
     			"leaflet/gerrymander/GerrymanderPageBuilder",
     			"dijit/registry", "dijit/layout/ContentPane",
     			"dijit/layout/BorderContainer",
@@ -40,13 +43,23 @@
     			"dijit/layout/AccordionContainer", 
     			"dijit/form/Button",
     			"dijit/form/Select", 
-    			"dijit/form/RadioButton"], 
-    		function(LoadingScreen, parser, dom, GerrymanderPageBuilder, registry){
+    			"dijit/form/RadioButton",
+    			"dojo/domReady!"], 
+    		function(LoadingScreen, parser, dom, on, domForm, request, GerrymanderPageBuilder, registry){
     		
     			var loadingScreen = new LoadingScreen("gerrymanderLoadingScreen");	
+    			var adminLoadingScreen = new LoadingScreen("adminLoadingScreen");
     			parser.parse();
     			loadingScreen.endLoading();
-    	
+
+    			if(dom.byId("adminLoadingScreen")){
+	    			on(dom.byId("uclaUploadForm"), "submit", function(evt){
+	    				adminLoadingScreen.startLoading();
+						});
+						on(dom.byId("princetonUploadForm"), "submit", function(evt){
+	    				adminLoadingScreen.startLoading();
+						});
+    			}
 				var map_g = GerrymanderPageBuilder
 							.addMap("gerrymanderMap")
 							.addYearSelector(registry.byId("gerrymanderYearSelect"))
@@ -92,21 +105,27 @@
 				<div id="gerrymanderMap"></div>
 			</div>
 			
+			<script>
+				
+			
+			</script>
+			
 			<!-- Administrator Block -->
 			<div th:if="${session.role} == 'ADMIN'">
 				<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'bottom'" style="height:20%;">
+				<div id="adminLoadingScreen" style="display:none;" class="loadingMessage pageOverlay loadingOverlay">Uploading files. Please do not refresh the page. </div>
 				Admin Options
 				
 				<div data-dojo-type="dijit/layout/TabContainer">
 					<div data-dojo-type="dijit/layout/ContentPane" title="UCLA">
-						<form action="/upload" enctype="multipart/form-data" method="POST">
+						<form id="uclaUploadForm" action="/uclaJsonUpload" enctype="multipart/form-data" method="POST">
 							<input name="file" type="file" multiple="true"/>
-							<input type="submit"/>
+							<input type="submit" value="Submit GeoJSON Data"/>
 							<br/>
 						</form>
 					</div>
 					<div data-dojo-type="dijit/layout/ContentPane" title="Princeton">
-						<form action="/test" enctype="multipart/form-data" method="POST">
+						<form id="princetonUploadForm" action="/princetonElectionUpload" enctype="multipart/form-data" method="POST">
 							<input name="file" type="file"/>
 							<input type="submit" value="Submit Election Data"/>
 						</form>	

@@ -29,7 +29,7 @@ import mahogany.repositories.StateNamesRepository;
 import mahogany.repositories.VotesRepository;
 
 @Component
-public class PrincetonElectionDataUploaderImpl {
+public class PrincetonElectionDataUploaderImpl implements ElectionDataUploader{
 
 	@Autowired DistrictsRepository districtsRepo;
 	@Autowired StateNamesRepository stateNamesRepo;

@@ -40,8 +40,12 @@ define([
 					var option = domConstruct.create("option", {label:yearList[year], value: yearList[year]});
 					yearSelector.addOption(option);
 				}
-				if(year[0]){
+				if(yearList[0]){
 					GerrymanderMapBuilder.setYear(yearList[0]);
+				}
+				else{
+					yearSelector.addOption(domConstruct.create("option", {label:"No Years Available", value:0}));
+					yearSelector.disabled =true;
 				}
 			});
 	}
