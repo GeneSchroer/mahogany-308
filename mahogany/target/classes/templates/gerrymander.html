@@ -51,18 +51,12 @@
     			var adminLoadingScreen = new LoadingScreen("adminLoadingScreen");
     			parser.parse();
     			loadingScreen.endLoading();
-    			//if(adminLoadingScreen){
-    				//adminLoadingScreen.startLoading();
-    			//}
+
     			on(dom.byId("uclaUploadForm"), "submit", function(evt){
-						
     				adminLoadingScreen.startLoading();
-    				   				
 					});
 					on(dom.byId("princetonUploadForm"), "submit", function(evt){
-						
     				adminLoadingScreen.startLoading();
-    				   				
 					});
     			
 				var map_g = GerrymanderPageBuilder
@@ -123,14 +117,14 @@
 				
 				<div data-dojo-type="dijit/layout/TabContainer">
 					<div data-dojo-type="dijit/layout/ContentPane" title="UCLA">
-						<form id="uclaUploadForm" action="/upload" enctype="multipart/form-data" method="POST">
+						<form id="uclaUploadForm" action="/uclaJsonUpload" enctype="multipart/form-data" method="POST">
 							<input name="file" type="file" multiple="true"/>
-							<input type="submit"/>
+							<input type="submit" value="Submit GeoJSON Data"/>
 							<br/>
 						</form>
 					</div>
 					<div data-dojo-type="dijit/layout/ContentPane" title="Princeton">
-						<form id="princetonUploadForm" action="/test" enctype="multipart/form-data" method="POST">
+						<form id="princetonUploadForm" action="/princetonElectionUpload" enctype="multipart/form-data" method="POST">
 							<input name="file" type="file"/>
 							<input type="submit" value="Submit Election Data"/>
 						</form>	
