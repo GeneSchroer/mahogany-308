@@ -1,163 +1,110 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-	<head>
-		<title>Gerrymandering Analysis Main Page </title>
-    	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-		 <!-- Leaflet style sheets and scripts -->	
-    	<link rel="stylesheet" href="/leaflet/leaflet.css" />
-		<script src="/leaflet/leaflet.js"></script>
-		<!-- Load Esri map from source-->
-		<script src="http://cdn-geoweb.s3.amazonaws.com/esri-leaflet/1.0.0-rc.3/esri-leaflet.js"></script>
-		
-		
-		<!-- Dojo style sheets and scripts-->
-		<link rel="stylesheet" href="/dijit/themes/nihilo/nihilo.css"/>
-		<script>
-			var dojoConfig = {
-				async: true,
-				packages: [{
-					name: "leaflet",
-					location: "../leaflet"
-				}]
-			};
-		
-		</script>
-		<script src="/dojo/dojo.js"></script>
-	
-	<!-- Local style sheets for page -->
-	<link rel="stylesheet" href="/css/nihilo_override.css"/>
-	<link rel="stylesheet" type="text/css" href="/css/style.css"/>
-	
-    
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<!-- Project by Lifeng Lin, Sung Jae Min, Xianwen Peng, and Gene Schroer -->
+    <!-- Web GUI by Sung Jae Min and Gene Schroer -->
+	<title>Gerrymandering Analysis Home Page</title>
 
-    	<style>
-    	
-    		.info{
-    			padding: 6px 8px;
-    			font: 15px Arial, Helvetica, sans-serif;
-    			background: white;
-    			box-shadow: 0 0 15px black;
-    			margin: 0 0 5px;
-    			color: #777;
-    			border-radius: 5px;
-        }
-      
-        #map_g{
-   			position: absolute;
-        		height: 100%;
-        		width: 100%;
-        }
-        
-        #map_r{
-   			position: absolute;
-        		height: 100%;
-        		width: 100%;
-        }
-        
-        
-        
-        
-        
-    </style>
-	 <script>
-		
-    		require(["javascript/LoadingScreen","dojo/parser", "dijit/layout/ContentPane", "dijit/layout/BorderContainer", "dijit/layout/TabContainer", 
-    		"dijit/layout/AccordionContainer", "dijit/form/Button", "dijit/form/Select"], function(LoadingScreen, parser){
-    			var loadingScreen = new LoadingScreen("loadingOverlay");	
+  <link rel="stylesheet" href="/leaflet/leaflet.css" />
+		<script src="/leaflet/leaflet.js"></script>
+		<script src="http://cdn-geoweb.s3.amazonaws.com/esri-leaflet/1.0.0-rc.3/esri-leaflet.js"></script>
+
+	<!-- Dojo style sheets and scripts-->
+	<link rel="stylesheet" href="./dijit/themes/nihilo/nihilo.css"/>
+	<script src="dojo/dojo.js" data-dojo-config="async:true" ></script>
+
+
+
+		<!-- Local style sheets for page -->
+	<link rel="stylesheet" href="./css/nihilo_override.css"/>
+	<link rel="stylesheet" type="text/css" href="./css/style.css"/>
+	
+	<script>
+		require([
+			"javascript/LoadingScreen",
+			"dojo/parser", 
+			"dijit/layout/ContentPane", 
+			"dijit/layout/BorderContainer", 
+			"dijit/layout/TabContainer",
+			"dijit/layout/AccordionContainer", 
+			"dijit/form/Button", 
+			"dijit/form/Select"
+			], function(LoadingScreen, parser){
+    			var loadingScreen = new LoadingScreen("loginLoadingScreen");	
     			parser.parse();
     			loadingScreen.endLoading();
     		});
-    	
-	</script>
+			
+			require([
+				"dojo/dom",
+				"dojo/dom-style",
+				"dojo/request",
+				"dojo/domReady!"
+			], function(dom, domStyle, request){
+				var mapBlock = dom.byId("loginPageMap");
+				domStyle.set(mapBlock, "width", "100%");
+				domStyle.set(mapBlock, "height", "100%");
+				domStyle.set(mapBlock, "position", "absolute");
+				
+				var map = L.map(mapBlock).setView([32, -80], 4);
+				L.esri.basemapLayer('Topographic').addTo(map);
+
+				var mapLayer = L.geoJson();
+				mapLayer.addTo(map);
+				request("Massachusetts14.geojson",{
+					method:"GET",
+					handleAs:"json"
+				}).response.then(function(success){
+					console.log(success.data);
+					mapLayer.addData(success.data);
+				});
+			});
+		
+		</script>
 	</head>
-
-	<body class="nihilo">
-	<div id="loadingOverlay" class="loadingMessage pageOverlay loadingOverlay">Loading</div>
-	<div data-dojo-type="dijit/layout/BorderContainer" style="height:100%; width:100%;">
-		<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'" style="height:5%;">
-			<div th:replace="headerLinks :: links"></div>
-		</div>
+<body class="nihilo">
 	
-		<div data-dojo-type="dijit/layout/TabContainer" data-dojo-props="region: 'center'" > 
-			<div data-dojo-type="dijit/layout/BorderContainer" title="Gerrymandering">
-				<div data-dojo-type="dijit/layout/AccordionContainer" data-dojo-props="region:'left', splitter:true" style="width:40%">
-					<div data-dojo-type="dijit/layout/ContentPane" title="Superdistrict Creator">
-
-					</div>
-			        <div data-dojo-type="dijit/layout/ContentPane" title="Data #2">More data here</div>
-			       	<div data-dojo-type="dijit/layout/ContentPane" title="Data #3">
-				       	
-			       	</div>
-				</div>
-				<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'" id="gerrymanderingMapPane">
-					<div data-dojo-type="dijit/form/Select">
-						
-					</div>
-					<div id="map_g"></div>
+	<div id="loginLoadingScreen" class="loadingMessage pageOverlay loadingOverlay">Loading</div>
+	<div data-dojo-type="dijit/layout/BorderContainer" style="height:100%; width:100%">
+		<div th:if="${session.userName} != null">
+			<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'">
+				<div th:replace="headerLinks :: links"></div>
+			</div>
+		</div>
+		<div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="region:'left'" style="width:20%;">
+			<div th:if="${loginError} != null">
+				<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'" style="height:6%;">
+					<div style="color:red;" th:text="${loginError}"></div>
 				</div>
 			</div>
-			<div data-dojo-type="dijit/layout/BorderContainer" title="Redistricting">
-				<div data-dojo-type="dijit/layout/AccordionContainer" data-dojo-props="region:'left', splitter:true" style="width:40%">
-					<div data-dojo-type="dijit/layout/ContentPane" title="Data #1">
-					<div>Choose a method of redistricting</div>
-						<select name="redistrctingSelect" data-dojo-type="dijit/form/Select">
-							<option value="Existing">Create from existing districts</option>
-						</select>
-						<button data-dojo-type="dijit/form/Button">Create</button>
-						<button data-dojo-type="dijit/form/Button">Edit</button>
-						<button data-dojo-type="dijit/form/Button">Delete</button>
-					
-					</div>
-			        <div data-dojo-type="dijit/layout/ContentPane" title="Data #2">More data here</div>
-			        <div data-dojo-type="dijit/layout/ContentPane" title="Data #3"></div>
-			    </div>
-				<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'" id="redistrictingMapPane">
-					<div id="map_r"></div>
+			<div data-dojo-type="dijit/layout/TabContainer" data-dojo-props="region:'center'">
+				<!-- Login form -->
+				<div data-dojo-type="dijit/layout/ContentPane" title="Login">
+					<form action="/login" method="POST">
+						<label>User Name: </label><input name="userName" type="text"/><br/>
+						<label>Password: </label><input name="password" type="password"/><br/>
+						<input type="submit"/>
+					</form>
+				</div>
+				<!-- Registration form -->
+				<div data-dojo-type="dijit/layout/ContentPane" title="Registration">
+					<form action="/register" method="POST">
+						<label>User Name: </label><input id="userName" name="userName" type="text" /><br/>
+						<label>Password: </label><input id="password" name="password" type="password" /><br/>
+						<label>Confirm Password: </label><input name="confirmPassword" type="password"/><br/>
+						<input id="registerSubmit" type="submit"/>
+					</form>
 				</div>
 			</div>
+		</div>
+		<!-- map pane -->		
+		<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'">
+			<div id="loginPageMap"></div>
+		</div>
+		<!-- information about gerrymandering -->
+		<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'bottom'" style="height:20%;">
 		</div>
 	</div>
-	</body>
-	<script>
-	
-	require([ "dojo/_base/declare","dojo/request", "dojo/dom", "leaflet/Test","leaflet/Gerrymander"], function(declare, request, dom, Test, Gerrymander){
-		var map_g;
-		var map_r;
-		var statesData;
-		request("stateData.json", {
-			method: "GET",
-			handleAs: "json"
-		}).response.then(function(data){
-			statesData = data.data;
-		
-		
-		map_g = Gerrymander
-		.GerrymanderMapController()
-		.GerrymanderBuilder
-		.addMap(dom.byId('map_g'))
-		.addStateBorders(statesData)
-		.build();
-		console.log(map_g);
-		map_r = Gerrymander 
-		.GerrymanderMapController()
-		.GerrymanderBuilder
-		.addMap(dom.byId('map_r'))
-		.addStateBorders(statesData)
-		.build();
-		console.log(map_r);
-		
-		//map_g = Test.makeTest(dom.byId('map_g'), 1);
-		//map_r = Test.makeTest(dom.byId('map_r'), 2);
-		//map_g.testConsole();
-		//map_r.testConsole();
-		L.esri.basemapLayer('Topographic').addTo(map_g._mapData._stateMap);
-		//var map_r = L.map('map_r').setView([38, -88], 4);
-		L.esri.basemapLayer('Topographic').addTo(map_r._mapData._stateMap);
-//
-		});
-		var x = new Test(1);
-		var y = new Test(2);
-	});
-	</script>
-
+</body>
 </html>

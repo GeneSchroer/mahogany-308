@@ -51,6 +51,8 @@ define([
 		zoomOutBtn = createZoomOutBtn();
 		zoomOutBtn.addTo(map);
 		L.DomEvent.on(zoomOutBtn._div, 'click', function(evt){
+			map.setView([38, -88], 4, true);
+
 			zoomOutMode();
 		});
 		mapControls.zoomOutBtn = zoomOutBtn;
@@ -83,11 +85,21 @@ define([
 		domStyle.set(map, "width", "100%");
 		domStyle.set(map, "height", "100%");
 		domStyle.set(map, "position", "absolute");
-		return L.map(map, {
+		var mapDisplay = L.map(map, {
 			//zoomControl: false,
 			/*dragging: false,*/
 			//scrollWheelZoom: false,
 		}).setView([32, -80], 4);
+		
+		mapDisplay.on('zoomend', function(evt){
+			console.log(mapDisplay.getZoom());
+			if(mapDisplay.getZoom() <= 5){
+				zoomOutMode();
+			}
+		});
+		
+		return mapDisplay;
+		
 	}
 
 	function createZoomOutBtn(){
@@ -363,7 +375,6 @@ define([
 		clearDistrictLayer();
 		mapMode = MAP_MODE_STATE;
 		topic.publish(TopicEvents.DATA_SIDE_PANEL);
-		map.setView([38, -88], 4, true);
 	
 		for(control in mapControls){
 			mapControls[control].disable();

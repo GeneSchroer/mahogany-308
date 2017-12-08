@@ -30,12 +30,17 @@
 		<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'">
 			<div th:replace="headerLinks :: links"></div>
 		</div>
-		<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'left', splitter:true" style="width:50%;"></div>
-		<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'"></div>
+		<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'left', splitter:true" style="width:50%;">
+			<form>
+				<input name="userName" type="text" value="login"/>
+				<input name="password" type="password" value="password"/>
+			</form>	
 		
+		</div>
+		<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'"></div>
+			
 	</div>
 	<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'bottom'">
-		<input type="file"/>
 	</div>
 </body>
 </html>

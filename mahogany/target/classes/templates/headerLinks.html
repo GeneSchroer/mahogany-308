@@ -3,9 +3,13 @@
 	<body>
 		<div th:fragment="links">
 			<button data-dojo-type="dijit/form/Button">Home</button>
-			<button data-dojo-type="dijit/form/Button">Gerrymandering</button>
+			<form action="/gerrymander" method="POST">
+				<button type="submit" data-dojo-type="dijit/form/Button">Gerrymandering</button>
+			</form>
 			<!--  data-dojo-type="dijit/form/Button">Redistricting</button>-->
-			<button data-dojo-type="dijit/form/Button">Logout</button>
+			<form action="/logout" >
+				<button type="submit" data-dojo-type="dijit/form/Button">Logout</button>
+			</form>
 		</div>
 	
 	</body>

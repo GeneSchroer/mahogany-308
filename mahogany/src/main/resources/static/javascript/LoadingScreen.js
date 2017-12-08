@@ -11,6 +11,15 @@
     					this.loadingScreenNode = dom.byId(node);
     				},
     				
+    				startLoading: function(){
+    					fx.fadeIn({
+    						node: this.loadingScreenNode,
+    						onEnd: function(node){
+    							domStyle.set(node, 'display', 'block');
+    						}
+    					}).play();
+    				},
+    				
     				endLoading: function(){
     				// fade the overlay gracefully
     					fx.fadeOut({

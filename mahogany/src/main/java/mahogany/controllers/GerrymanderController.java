@@ -2,38 +2,41 @@ package mahogany.controllers;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 import mahogany.metrics.MetricOption;
 import mahogany.utils.GerrymanderHelper;
 
 @Controller
+//@SessionAttributes({"userName", "roles"})
 public class GerrymanderController {
-	@Autowired 	GerrymanderHelper helper; 	
-
-	@RequestMapping("/")
-	public String loader(){
-		return "index";
-	}
+	@Autowired GerrymanderHelper helper; 	
+ 
+	
 	
 	@RequestMapping("/gerrymander")
-	public String accessGerrymanderPageRequest() {
+	public String accessGerrymanderPageRequest(HttpSession session) {
 		
-		return "gerrymander";
+		if(session.getAttribute("role") != null) {
+			return "gerrymander";
+		}
+		else {
+			return "index";
+		}
 	}
-	
-	@RequestMapping("/gerrymander2")
-	public String accessGerrymanderPage2Request() {
-		
-		return "gerrymander2";
-	}
-	
+	 
 	@RequestMapping("/districtBoundariesRequest")
 	public @ResponseBody JsonNode getDistrictBoundariesRequest(@RequestParam(name="state")String state, 
 																	@RequestParam(name="year") int year) {
@@ -54,7 +57,7 @@ public class GerrymanderController {
 	public @ResponseBody JsonNode getEfficiencyGapRequest(@RequestParam(name="state") String stateName,
 																													@RequestParam(name="year")Integer year) {
 		
-		JsonNode metricsJsonNode = helper.getDistrictDataJsonNode(MetricOption.EFFICIENCY_GAP, stateName, year);
+		JsonNode metricsJsonNode = helper.getDistrictDataJsonNode(MetricOption .EFFICIENCY_GAP, stateName, year);
 		
 		return metricsJsonNode;
 		
@@ -69,7 +72,8 @@ public class GerrymanderController {
 		return memberDataJsonNode;
 		
 	}
-																																									
+					
+	
 	
 	
 	@RequestMapping("/home")

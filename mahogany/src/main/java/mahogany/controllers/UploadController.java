@@ -15,16 +15,25 @@ public class UploadController {
 	@Autowired FileUploadHelper uploadHelper;
 	@Autowired BoundariesRepository boundariesRepo ;
 
-	@RequestMapping("/upload")
+	@RequestMapping("/uclaJsonUpload")
 	public String uclaBoundaryDataUploadRequest(@RequestParam("file")MultipartFile[] files) {
-		uploadHelper.uploadDistrictFiles(files, FileSource.UCLA);
+			uploadHelper.uploadDistrictFiles(files, FileSource.UCLA);
+		
 		return "gerrymander";
 	}
 	
-	@RequestMapping("/test")
+	@RequestMapping("/princetonElectionUpload")
 	public String princetonElectionDataUploadRequest(@RequestParam("file")MultipartFile file) {
 		uploadHelper.uploadElectionFile(file, FileSource.PRINCETON);
 		return "gerrymander";
+	}
+	
+	public void uploadCongressionalMemberDataRequest() {
+		
+	}
+	
+	public void uploadElectionDataRequest() {
+		
 	}
 	
 }

@@ -27,8 +27,8 @@ public void uploadDistrictFiles(MultipartFile[] files, FileSource source){
 					ObjectNode fileJsonObject = (ObjectNode)uclaDistrictConverter.convertFileToJsonNode(file);
 					uclaDistrictConverter.uploadJsonToDatabase(fileJsonObject);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+					throw new RuntimeException(e.getMessage());
 				}
 			}
 		}
@@ -45,4 +45,9 @@ public void uploadDistrictFiles(MultipartFile[] files, FileSource source){
 			}
 		}
 	}
+	
+	
+	
+	
+	
 }
