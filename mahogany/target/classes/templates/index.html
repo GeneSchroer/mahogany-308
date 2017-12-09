@@ -82,18 +82,41 @@
 				<!-- Login form -->
 				<div data-dojo-type="dijit/layout/ContentPane" title="Login">
 					<form action="/login" method="POST">
-						<label>User Name: </label><input name="userName" type="text"/><br/>
-						<label>Password: </label><input name="password" type="password"/><br/>
-						<input type="submit"/>
+						<table>
+							<tr>
+								<td><label>User Name: </label></td>
+								<td><input name="userName" type="text"/></td>
+							</tr>
+							<tr>
+								<td><label>Password: </label></td>
+								<td><input name="password" type="password"/></td>
+							</tr>
+							<tr>
+								<td><input type="submit"/></td>
+							</tr>
+						</table>
 					</form>
 				</div>
 				<!-- Registration form -->
 				<div data-dojo-type="dijit/layout/ContentPane" title="Registration">
 					<form action="/register" method="POST">
-						<label>User Name: </label><input id="userName" name="userName" type="text" /><br/>
-						<label>Password: </label><input id="password" name="password" type="password" /><br/>
-						<label>Confirm Password: </label><input name="confirmPassword" type="password"/><br/>
-						<input id="registerSubmit" type="submit"/>
+						<table>
+							<tr>	
+								<td><label>User Name: </label></td>
+								<td><input id="userName" name="userName" type="text" /></td>
+							</tr>
+							<tr>
+								<td><label>Password: </label></td>
+								<td><input id="password" name="password" type="password" /></td>
+							</tr>
+							<tr>
+								<td><label>Confirm Password: </label></td>
+								<td><input name="confirmPassword" type="password"/></td>
+							</tr>
+							<tr>
+								<td><input id="registerSubmit" type="submit"/></td>
+							</tr>
+						</table>
 					</form>
 				</div>
 			</div>

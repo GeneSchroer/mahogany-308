@@ -32,12 +32,13 @@ public class LoginController {
 																				@RequestParam(name="password")String password, 
 																					HttpSession session,
 																						Model model) {
+		
 		try {
 			UserDetails user = helper.loginUser(userName, password);
 			session.setMaxInactiveInterval(60*60);
 			session.setAttribute("userName", user.getUserName());
 			session.setAttribute("role", user.getRole().getRoleName());
-			return new ModelAndView("gerrymander");
+			return new ModelAndView("redirect:/gerrymander");
 		}
 		catch(AuthenticationFailureException e) {
 			model.addAttribute("loginError", e.getMessage());
