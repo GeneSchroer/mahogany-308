@@ -221,7 +221,7 @@ define([
 			loadDistrictData();
 		}, function(error){
 			console.log(error.response.status);
-			
+			topic.publish(TopicEvents.DATA_SIDE_PANEL, DataType.NONE);
 		});
 		
 	}
@@ -251,7 +251,7 @@ define([
 			}, 
 			handleAs: "json"
 		}).response.then(function(success){
-			topic.publish(TopicEvents.DATA_SIDE_PANEL, success.data, DataType.ELECTION_DATA);
+			topic.publish(TopicEvents.DATA_SIDE_PANEL, DataType.ELECTION_DATA, success.data);
 			console.log(success.data);
 			mapData = success.data;
 			setElectionDataLayer();
@@ -268,7 +268,7 @@ define([
 			},
 			handleAs: "json"
 		}).response.then(function(success){
-			topic.publish(TopicEvents.DATA_SIDE_PANEL, success.data, DataType.EFFICIENCY_GAP);
+			topic.publish(TopicEvents.DATA_SIDE_PANEL, DataType.EFFICIENCY_GAP, success.data);
 			console.log(success.data);
 			mapData = success.data;
 			setEfficiencyGapLayer();
@@ -377,10 +377,13 @@ define([
 	function zoomOutMode(){
 		clearDistrictLayer();
 		mapMode = MAP_MODE_STATE;
-		topic.publish(TopicEvents.DATA_SIDE_PANEL);
+		topic.publish(TopicEvents.DATA_SIDE_PANEL, DataType.NONE, " ");
 	
 		for(control in mapControls){
 			mapControls[control].disable();
+			if(mapControls[control].update){
+				mapControls[control].update(" ");
+			}
 		}
 	}
 	

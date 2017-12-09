@@ -61,10 +61,15 @@ define([
 	}
 	function initializeDataPanel(panel){
 		if (panel){
-			topic.subscribe(TopicEvents.DATA_SIDE_PANEL, function(metricData, dataType){
+			topic.subscribe(TopicEvents.DATA_SIDE_PANEL, function(dataType, metricData){
 				
-				if(!metricData){
-					panel.innerHTML = " ";
+				if(dataType==DataType.NONE){
+					if(!metricData){
+						panel.innerHTML = "Data Not Available";
+					}
+					else{
+						panel.innerHTML = " ";
+					}
 				}
 				else if(dataType == DataType.ELECTION_DATA){
 					var displayString="";

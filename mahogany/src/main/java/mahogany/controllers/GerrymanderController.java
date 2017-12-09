@@ -1,5 +1,6 @@
 package mahogany.controllers;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +19,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import mahogany.exceptions.NoDistrictsFoundException;
 import mahogany.metrics.MetricOption;
@@ -52,11 +56,23 @@ public class GerrymanderController {
 			return new ResponseEntity<JsonNode>(districtJsonNode, HttpStatus.OK);
 		}
 		catch(NoDistrictsFoundException e) {
+			ObjectMapper mapper = new ObjectMapper();
+			ObjectNode errorMessage = mapper.createObjectNode();
+			errorMessage.put("error", e.getMessage());
+			return new ResponseEntity<JsonNode>(null, headers, HttpStatus.NOT_FOUND);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			ObjectMapper mapper = new ObjectMapper();
+			ObjectNode errorMessage = mapper.createObjectNode();
+			errorMessage.put("error", e.getMessage());
+			return new ResponseEntity<JsonNode>(null, headers, HttpStatus.NOT_FOUND);
+		} catch (IOException e) {
+			e.printStackTrace();
+			ObjectMapper mapper = new ObjectMapper();
+			ObjectNode errorMessage = mapper.createObjectNode();
+			errorMessage.put("error", e.getMessage());
 			return new ResponseEntity<JsonNode>(null, headers, HttpStatus.NOT_FOUND);
 		}
-		
-		
-	
 	}
 	
 	@RequestMapping("/electionDataRequest")

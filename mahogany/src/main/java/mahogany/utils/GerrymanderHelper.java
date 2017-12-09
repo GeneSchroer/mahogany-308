@@ -38,28 +38,18 @@ public class GerrymanderHelper {
 	
 	
 	
-	public JsonNode createDistrictBoundariesJsonNode(String state, int year) {
+	public JsonNode createDistrictBoundariesJsonNode(String state, int year) throws JsonProcessingException, IOException {
 		ArrayList<Districts> districtList = (ArrayList<Districts>)districtsRepo.findAllByStateAndYear(state, year);
 		
 		if (districtList.isEmpty()) {
 			throw new NoDistrictsFoundException();
 		}
-		
-		JsonNode districtJsonNode;
-		try {
+		else {
+			JsonNode districtJsonNode;
 			districtJsonNode = geoJsonUtils.createDistrictBoundariesJsonNode(districtList);
 			return districtJsonNode;
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		return null;
-		//return districtJsonNode;
 	}
-	
 	
 	public JsonNode getDistrictDataJsonNode(MetricOption metric, String stateName, Integer year) {
 		
