@@ -39,9 +39,11 @@
 			require([
 				"dojo/dom",
 				"dojo/dom-style",
+				"dojo/dom-form",
 				"dojo/request",
+				"dojo/on",
 				"dojo/domReady!"
-			], function(dom, domStyle, request){
+			], function(dom, domStyle, domForm, request, on){
 				var mapBlock = dom.byId("loginPageMap");
 				domStyle.set(mapBlock, "width", "100%");
 				domStyle.set(mapBlock, "height", "100%");
@@ -59,8 +61,27 @@
 					console.log(success.data);
 					mapLayer.addData(success.data);
 				});
+			
+				on(dom.byId("registerForm"), "submit", function(evt){
+					return false;
+				});
+				
 			});
-		
+			
+			
+			function validateRegistrationForm(){
+				var password = document.getElementById("registerForm").password;
+				var confirmPassword = document.getElementById("registerForm").confirmPassword;
+				
+				if(password.value != confirmPassword.value){
+					var passwordError = document.getElementById("passwordError");
+					passwordError.innerHTML = "Passwords are not the same"
+					return false;
+				}
+				else{
+					return false;
+				}
+			}
 		</script>
 	</head>
 <body class="nihilo">
@@ -72,7 +93,7 @@
 				<div th:replace="headerLinks :: links"></div>
 			</div>
 		</div>
-		<div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="region:'left'" style="width:20%;">
+		<div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="region:'left', splitter:true" style="width:20%;">
 			<div th:if="${loginError} != null">
 				<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'" style="height:6%;">
 					<div style="color:red;" th:text="${loginError}"></div>
@@ -90,6 +111,7 @@
 							<tr>
 								<td><label>Password: </label></td>
 								<td><input name="password" type="password"/></td>
+						
 							</tr>
 							<tr>
 								<td><input type="submit"/></td>
@@ -99,15 +121,19 @@
 				</div>
 				<!-- Registration form -->
 				<div data-dojo-type="dijit/layout/ContentPane" title="Registration">
-					<form action="/register" method="POST">
+					<form id="registerForm"  onsubmit="return validateRegistrationForm()">
 						<table>
 							<tr>	
 								<td><label>User Name: </label></td>
-								<td><input id="userName" name="userName" type="text" /></td>
+								<td><input id="userName" name="userName" type="text" required="true"/></td>
+							</tr>
+							<tr>
+							<td colspan="2"><div id="passwordError" style="color:red"></div></td>
 							</tr>
 							<tr>
 								<td><label>Password: </label></td>
-								<td><input id="password" name="password" type="password" /></td>
+								<td><input id="password" name="password" type="password" required="true" /></td>
+								
 							</tr>
 							<tr>
 								<td><label>Confirm Password: </label></td>

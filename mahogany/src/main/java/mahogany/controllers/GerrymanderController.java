@@ -104,14 +104,6 @@ public class GerrymanderController {
 	}
 					
 	
-	
-	
-	@RequestMapping("/home")
-	public String login() {
-		return "home";
-	}
-	
-	
 	@RequestMapping("/getYears")
 	public @ResponseBody List<Integer> getYearListRequest(){
 		List<Integer> yearList = helper.getYearList();

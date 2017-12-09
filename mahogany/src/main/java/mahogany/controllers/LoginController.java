@@ -68,7 +68,7 @@ public class LoginController {
 			session.setMaxInactiveInterval(60*60);
 			session.setAttribute("userName", user.getUserName());
 			session.setAttribute("role", user.getRole().getRoleName());
-			return "gerrymandering";
+			return "redirect:/gerrymander";
 		}
 		catch(DuplicateUserNameException e) {
 			model.addAttribute("loginError", "User Name already exists");
