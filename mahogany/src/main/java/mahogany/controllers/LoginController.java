@@ -34,7 +34,7 @@ public class LoginController {
 																						Model model) {
 		try {
 			UserDetails user = helper.loginUser(userName, password);
-			session.setMaxInactiveInterval(10*60);
+			session.setMaxInactiveInterval(60*60);
 			session.setAttribute("userName", user.getUserName());
 			session.setAttribute("role", user.getRole().getRoleName());
 			return new ModelAndView("gerrymander");
@@ -64,7 +64,7 @@ public class LoginController {
 		HttpSession session = request.getSession();
 		try {
 			UserDetails user = helper.registerNewUser(userName, password);
-			session.setMaxInactiveInterval(10*60);
+			session.setMaxInactiveInterval(60*60);
 			session.setAttribute("userName", user.getUserName());
 			session.setAttribute("role", user.getRole().getRoleName());
 			return "gerrymandering";

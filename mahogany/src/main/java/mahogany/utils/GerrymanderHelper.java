@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import mahogany.entities.Districts;
 import mahogany.entities.Elections;
+import mahogany.exceptions.NoDistrictsFoundException;
 import mahogany.metrics.EfficiencyGapStateData;
 import mahogany.metrics.EfficiencyGapDataBuilder;
 import mahogany.metrics.ElectionDataBuilder;
@@ -40,7 +41,9 @@ public class GerrymanderHelper {
 	public JsonNode createDistrictBoundariesJsonNode(String state, int year) {
 		ArrayList<Districts> districtList = (ArrayList<Districts>)districtsRepo.findAllByStateAndYear(state, year);
 		
-		
+		if (districtList.isEmpty()) {
+			throw new NoDistrictsFoundException();
+		}
 		
 		JsonNode districtJsonNode;
 		try {

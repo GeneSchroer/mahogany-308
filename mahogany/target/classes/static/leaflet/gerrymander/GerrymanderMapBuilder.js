@@ -196,7 +196,7 @@ define([
 	}
 	
 	function loadStateBoundariesRequest(stateLayer){
-		request("stateBoundaries.json",{
+		request("stateData.json",{
 			method: "GET",
 			handleAs: "json"
 		}).response.then(function(success){
@@ -219,6 +219,9 @@ define([
 			var districtData = success.data;
 			districtLayer.addData(districtData);
 			loadDistrictData();
+		}, function(error){
+			console.log(error.response.status);
+			
 		});
 		
 	}

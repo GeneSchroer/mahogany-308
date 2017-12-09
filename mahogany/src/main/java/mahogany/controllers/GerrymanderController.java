@@ -6,6 +6,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.support.SessionStatus;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import mahogany.exceptions.NoDistrictsFoundException;
 import mahogany.metrics.MetricOption;
 import mahogany.utils.GerrymanderHelper;
 
@@ -33,16 +38,25 @@ public class GerrymanderController {
 			return "gerrymander";
 		}
 		else {
-			return "index";
+			return "redirect:/";
 		}
 	}
 	 
 	@RequestMapping("/districtBoundariesRequest")
-	public @ResponseBody JsonNode getDistrictBoundariesRequest(@RequestParam(name="state")String state, 
+	public ResponseEntity<JsonNode> getDistrictBoundariesRequest(@RequestParam(name="state")String state, 
 																	@RequestParam(name="year") int year) {
-		JsonNode districtJsonNode = helper.createDistrictBoundariesJsonNode(state, year);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		try {
+			JsonNode districtJsonNode = helper.createDistrictBoundariesJsonNode(state, year);
+			return new ResponseEntity<JsonNode>(districtJsonNode, HttpStatus.OK);
+		}
+		catch(NoDistrictsFoundException e) {
+			return new ResponseEntity<JsonNode>(null, headers, HttpStatus.NOT_FOUND);
+		}
 		
-		return districtJsonNode;
+		
+	
 	}
 	
 	@RequestMapping("/electionDataRequest")
