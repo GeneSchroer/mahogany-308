@@ -28,6 +28,8 @@
 			"dijit/layout/BorderContainer", 
 			"dijit/layout/TabContainer",
 			"dijit/layout/AccordionContainer", 
+			"dijit/form/ValidationTextBox",
+			"dijit/form/Form",
 			"dijit/form/Button", 
 			"dijit/form/Select"
 			], function(LoadingScreen, parser){
@@ -66,6 +68,10 @@
 					return false;
 				});
 				
+				function test(val){
+					return val == dijit.byId("registrationPassword").value;
+				}
+				
 			});
 			
 			
@@ -93,7 +99,7 @@
 				<div th:replace="headerLinks :: links"></div>
 			</div>
 		</div>
-		<div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="region:'left', splitter:true" style="width:20%;">
+		<div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="region:'left', splitter:true" style="width:39%;">
 			<div th:if="${loginError} != null">
 				<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'" style="height:6%;">
 					<div style="color:red;" th:text="${loginError}"></div>
@@ -102,15 +108,24 @@
 			<div data-dojo-type="dijit/layout/TabContainer" data-dojo-props="region:'center'">
 				<!-- Login form -->
 				<div data-dojo-type="dijit/layout/ContentPane" title="Login">
-					<form action="/login" method="POST">
+					<form action="/login" method="POST" data-dojo-type="dijit/form/Form">
 						<table>
 							<tr>
 								<td><label>User Name: </label></td>
-								<td><input name="userName" type="text"/></td>
+								<td>
+									<input name="userName" type="text" required="true"
+										data-dojo-type="dijit/form/ValidationTextBox"
+										data-dojo-props="regExp:'[\\w]+', invalidMessage:'User Name cannot contain whitespace'"/>
+								
+								</td>
 							</tr>
 							<tr>
 								<td><label>Password: </label></td>
-								<td><input name="password" type="password"/></td>
+								<td>
+									<input id="loginPassword" name="password" type="password" required="true"
+								 		data-dojo-type="dijit/form/ValidationTextBox"
+								 		data-dojo-props="regExp:'[\\w|\\s]+', invalidMessage: 'Password cannot be empty'"/>
+								</td>								
 						
 							</tr>
 							<tr>
@@ -121,23 +136,34 @@
 				</div>
 				<!-- Registration form -->
 				<div data-dojo-type="dijit/layout/ContentPane" title="Registration">
-					<form id="registerForm"  onsubmit="return validateRegistrationForm()">
+					<form id="registerForm"  
+						data-dojo-type="dijit/form/Form">
 						<table>
 							<tr>	
 								<td><label>User Name: </label></td>
-								<td><input id="userName" name="userName" type="text" required="true"/></td>
-							</tr>
-							<tr>
-							<td colspan="2"><div id="passwordError" style="color:red"></div></td>
+								<td>
+									<input id="userName" name="userName" type="text" required="true"
+										data-dojo-type="dijit/form/ValidationTextBox"
+										data-dojo-props="regExp:'[\\w]+', invalidMessage:'User Name cannot contain whitespace.'"/>
+								</td>
 							</tr>
 							<tr>
 								<td><label>Password: </label></td>
-								<td><input id="password" name="password" type="password" required="true" /></td>
+								<td>
+									<input id="registrationPassword" name="password" type="password" required="true"
+								 		data-dojo-type="dijit/form/ValidationTextBox"
+								 		data-dojo-props="regExp:'[\\w|\\s]+', invalidMessage: 'Password cannot be empty'"/>
+								 </td>
 								
 							</tr>
 							<tr>
 								<td><label>Confirm Password: </label></td>
-								<td><input name="confirmPassword" type="password"/></td>
+								<td>
+									<input name="confirmPassword" type="password" required="true"
+										data-dojo-type="dijit/form/ValidationTextBox"
+										data-dojo-props="validator: function(val){return val==dijit.byId('registrationPassword').value;}, invalidMessage: 'Passwords do not match.'"/>
+										
+								</td>
 							</tr>
 							<tr>
 								<td><input id="registerSubmit" type="submit"/></td>
