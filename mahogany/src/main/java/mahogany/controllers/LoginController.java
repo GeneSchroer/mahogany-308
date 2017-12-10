@@ -57,7 +57,7 @@ public class LoginController {
 			session.removeAttribute("userName");
 			session.removeAttribute("role");
 		}
-		return new ModelAndView("index");
+		return new ModelAndView("redirect:/");
 	}
 	
 	@RequestMapping("/register")

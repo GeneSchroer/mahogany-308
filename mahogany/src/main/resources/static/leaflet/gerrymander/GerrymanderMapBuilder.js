@@ -21,6 +21,10 @@ define([
 	var mapMode;			// used to determine whether we are in state or district mode
 	var dataMode;			// used to determine which type of data we are viewing.
 
+	
+	var stateMapControls = {};
+	var stateNameDisplay;
+	
 	var mapControls = {}; // object that holds out map controls/displays/legends.
 	var zoomOutBtn;				// used to zoom out to the state view.
 	var memberDisplay;		// used to see the members of congress for a district
@@ -68,6 +72,11 @@ define([
 		legendControl = createLegendControl();
 		legendControl.addTo(map);
 		mapControls.legendControl = legendControl;
+		
+		stateNameDisplay = createStateNameDisplay();
+		stateNameDisplay.addTo(map);
+		stateMapControls.stateNameDisplay = stateNameDisplay;
+		
 		
 		mapMode = MAP_MODE_STATE;
 		dataMode = DataType.ELECTION_DATA;
@@ -171,6 +180,30 @@ define([
 		return legendControl;
 	}
 	
+	function createStateNameDisplay(){
+		var stateNameDisplay = L.control({position:'topright'});
+
+		// onAdd() triggers when the control is first added to the map
+		stateNameDisplay.onAdd = function(map){
+			this._div = L.DomUtil.create('div', 'dataDisplay legendControl');
+			this._div.innerHTML = " ";
+			return this._div;
+		};
+		stateNameDisplay.update = function (string) {
+		    this._div.innerHTML = string ? string : "Data Not Available";
+		};
+		stateNameDisplay.disable = function(){
+			domStyle.set(this._div, "display", "none");
+		};
+		stateNameDisplay.enable = function(){
+			domStyle.set(this._div, "display", "block");
+		};
+		
+		
+		return stateNameDisplay;
+	
+	}
+	
 	function initializeStateLayer(){
 		L.Util.setOptions(stateLayer, {style: stateLayerStyle()});
 		L.Util.setOptions(stateLayer, {onEachFeature:
@@ -184,9 +217,11 @@ define([
 						dataArray: ' ',
 						fillOpacity: 0.3
 					});
+					stateNameDisplay.update(setStateNameDisplay(layer, stateNameDisplay));
 				}, this);
 				layer.on("mouseout", function(e){
 					stateLayer.resetStyle(layer);
+					stateNameDisplay.update(" ");
 				}, this);
 				layer.on("click", function(e){
 					zoomInMode(layer);
@@ -312,6 +347,17 @@ define([
 		};
 	}
 
+	function setStateNameDisplay(layer, display){
+		var displayString = "";
+		var stateName = layer.feature.properties.name;
+		var stateCode = layer.feature.id;
+		displayString += "<b>" + stateName + "</b><br/>";
+		displayString += "<b>State Code: " + stateCode + "</b>"; 
+		return displayString;
+		
+	}
+	
+	
 	function loadDistrictData(){
 		
 		memberDataRequest();
@@ -370,6 +416,13 @@ define([
 		for(control in mapControls){
 			mapControls[control].enable();
 		}
+		for(control in stateMapControls){
+			stateMapControls[control].disable();
+			if(stateMapControls[control].update){
+				stateMapControls[control].update(" ");
+			}
+		}
+		
 		
 		loadDistrictBoundariesRequest();
 	}
@@ -385,6 +438,10 @@ define([
 				mapControls[control].update(" ");
 			}
 		}
+		for(control in stateMapControls){
+			stateMapControls[control].enable();
+		}
+		
 	}
 	
 	function clearDistrictLayer(){
