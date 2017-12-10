@@ -2,14 +2,24 @@
 <html xmlns:th="http://www.thymeleaf.org">
 	<body>
 		<div th:fragment="links">
-			<button data-dojo-type="dijit/form/Button">Home</button>
-			<form action="/gerrymander" method="POST">
-				<button type="submit" data-dojo-type="dijit/form/Button">Gerrymandering</button>
-			</form>
+		<ul style="list-style-type:none; alignment:left;">
+			<li style="float:left;">
+				<form action="/" method="POST">
+					<button type="submit" data-dojo-type="dijit/form/Button">Home</button>
+				</form>
+			</li>
+			<li style="float:left;">
+				<form action="/gerrymander" method="POST">
+					<button type="submit" data-dojo-type="dijit/form/Button">Gerrymandering</button>
+				</form>
+			</li>
 			<!--  data-dojo-type="dijit/form/Button">Redistricting</button>-->
-			<form action="/logout" >
-				<button type="submit" data-dojo-type="dijit/form/Button">Logout</button>
-			</form>
+			<li style="float:left;">
+				<form action="/logout" method="POST" >
+					<button type="submit" data-dojo-type="dijit/form/Button">Logout</button>
+				</form>
+			</li>
+			</ul>
 		</div>
 	
 	</body>
