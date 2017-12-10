@@ -213,9 +213,9 @@ define([
 					var layer = e.target;
 					layer.setStyle({
 						weight: 2,
-						color: 'brown',
 						dataArray: ' ',
-						fillOpacity: 0.3
+						fillColor: stateFillColor(layer.feature.properties.color),
+						fillOpacity: 0.7
 					});
 					stateNameDisplay.update(setStateNameDisplay(layer, stateNameDisplay));
 				}, this);
@@ -338,15 +338,38 @@ define([
 		});
 	}
 	
-	function stateLayerStyle(mapData){
-		return {
-			weight: 1,
-			color: "green",
-			fillColor: "lime",
-			fillOpacity: 0.1
+	function stateLayerStyle(){
+		return function(feature, layer){
+			return{
+				weight: 1,
+				color: "black",
+				fillColor: stateFillColor(feature.properties.color),
+				fillOpacity: 0.2
+			}
 		};
 	}
-
+	
+	function stateLayerStyle2(){
+		return{
+			weight: 1,
+			color: "black",
+			fillColor: "gray",
+			fillOpacity: 0.2
+		}
+	}
+	
+	function stateFillColor(color){
+		if(!color){
+			return "gray";
+		}
+		else{
+			return color == 1 ? "blue" :
+							color == 2 ? "red" :
+								color == 3 ? "green" :
+									"yellow";
+		}
+	}
+	
 	function setStateNameDisplay(layer, display){
 		var displayString = "";
 		var stateName = layer.feature.properties.name;
@@ -423,7 +446,8 @@ define([
 			}
 		}
 		
-		
+		L.Util.setOptions(stateLayer, {style:stateLayerStyle2()});
+		stateLayer.setStyle(stateLayerStyle2());
 		loadDistrictBoundariesRequest();
 	}
 
@@ -442,6 +466,8 @@ define([
 			stateMapControls[control].enable();
 		}
 		
+		L.Util.setOptions(stateLayer, {style:stateLayerStyle()});
+		stateLayer.setStyle(stateLayerStyle());
 	}
 	
 	function clearDistrictLayer(){
