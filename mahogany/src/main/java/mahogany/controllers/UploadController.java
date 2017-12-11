@@ -19,13 +19,13 @@ public class UploadController {
 	public String uclaBoundaryDataUploadRequest(@RequestParam("file")MultipartFile[] files) {
 			uploadHelper.uploadDistrictFiles(files, FileSource.UCLA);
 		
-		return "gerrymander";
+		return "redirect:/gerrymander";
 	}
 	
 	@RequestMapping("/princetonElectionUpload")
 	public String princetonElectionDataUploadRequest(@RequestParam("file")MultipartFile file) {
 		uploadHelper.uploadElectionFile(file, FileSource.PRINCETON);
-		return "gerrymander";
+		return "redirect:/gerrymander";
 	}
 	
 	public void uploadCongressionalMemberDataRequest() {

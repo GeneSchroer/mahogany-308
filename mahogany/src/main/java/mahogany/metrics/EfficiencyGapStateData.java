@@ -1,20 +1,30 @@
 package mahogany.metrics;
 
 public class EfficiencyGapStateData extends AbstractStateData<ElectionDistrictData<WastedVoteData>>{
-	private Float efficiencyGap;
 	private Integer totalRepublicanVotes;
 	private Integer totalDemocratVotes;
 	private Integer totalRepublicanSeats;
 	private Integer totalDemocratSeats;
+	Float republicanGap = 0.0f;
+	Float democratGap = 0.0f;
 	
-	public Float getEfficiencyGap() {
-		return efficiencyGap;
+	
+	public Float getRepublicanGap() {
+		return republicanGap;
 	}
 
-	public void setEfficiencyGap(Float efficiencyGap) {
-		this.efficiencyGap = efficiencyGap;
+	public void setRepublicanGap(Float republicanEfficiencyGap) {
+		this.republicanGap = republicanEfficiencyGap;
 	}
-	
+
+	public Float getDemocratGap() {
+		return democratGap;
+	}
+
+	public void setDemocratGap(Float democratEfficiencyGap) {
+		this.democratGap = democratEfficiencyGap;
+	}
+
 	public Integer getTotalRepublicanVotes() {
 		return totalRepublicanVotes;
 	}

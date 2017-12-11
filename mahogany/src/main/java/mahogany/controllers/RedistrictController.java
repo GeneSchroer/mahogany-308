@@ -1,4 +1,4 @@
-package mahogany.repositories;
+package mahogany.controllers;
 
 import org.springframework.stereotype.Controller;
 

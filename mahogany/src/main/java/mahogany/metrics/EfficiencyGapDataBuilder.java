@@ -21,11 +21,14 @@ public class EfficiencyGapDataBuilder implements DataBuilder<EfficiencyGapStateD
 		Integer totalStateVotes = 0;
 		Integer totalSeats = 0;
 		
+		
+		
 		Integer totalDemocratVotes = 0;
 		Integer totalDemocratSeats = 0;
 		Integer totalRepublicanVotes = 0;
 		Integer totalRepublicanSeats = 0;
-		Float efficiencyGap = 0.0f;
+		
+		
 		
 		//get election data for each district
 		for(Elections election: electionList) {
@@ -33,10 +36,8 @@ public class EfficiencyGapDataBuilder implements DataBuilder<EfficiencyGapStateD
 			ElectionDistrictData<WastedVoteData> districtData = new ElectionDistrictData<WastedVoteData>();
 			Map<String, WastedVoteData> wastedVoteMap = new HashMap<String, WastedVoteData>();
 			Integer democratVotes = 0;
-			Float democratPercent = 0.0f;
 			Integer democratWastedVotes = 0;
 			Integer republicanVotes = 0;
-			Float republicanPercent = 0.0f;
 			Integer republicanWastedVotes = 0;
 			
 			
@@ -99,10 +100,13 @@ public class EfficiencyGapDataBuilder implements DataBuilder<EfficiencyGapStateD
 		efficiencyResult.setTotalDemocratSeats(totalDemocratSeats);
 		efficiencyResult.setTotalRepublicanSeats(totalRepublicanSeats);
 		
-		efficiencyGap = (float)(((double)totalRepublicanVotes/totalStateVotes) - 0.5) - 2 * (float)(((double)totalRepublicanSeats/totalSeats) - 0.5);
-		efficiencyGap = Math.abs(efficiencyGap);
+		Float democratGap = getEfficiencyGap(totalDemocratVotes, totalStateVotes, totalDemocratSeats, totalSeats);
+		Float republicanGap = getEfficiencyGap(totalRepublicanVotes, totalStateVotes, totalRepublicanSeats, totalSeats);
 		
-		efficiencyResult.setEfficiencyGap(efficiencyGap);
+		efficiencyResult.setDemocratGap(democratGap);
+		efficiencyResult.setRepublicanGap(republicanGap);
+		
+		
 		efficiencyResult.setTestName(MetricOption.EFFICIENCY_GAP.toString());
 		
 //	ObjectMapper x = new ObjectMapper();

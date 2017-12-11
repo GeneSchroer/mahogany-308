@@ -87,8 +87,14 @@ define([
 				}
 				else if(dataType == DataType.EFFICIENCY_GAP){
 					var displayString="";
-					displayString += "Efficiency Gap: " + metricData.efficiencyGap.toFixed(2);
-				
+					displayString += "<h4>Efficiency Gap:</h4>";
+					displayString += "Democrat: " + metricData.democratGap.toFixed(2);
+					displayString += "<br/>";
+					displayString += "Republican: " + metricData.republicanGap.toFixed(2);
+					
+					displayString += "<h4>Seats:</h4>";
+					displayString += "Democrat: " + metricData.totalDemocratSeats + "<br/>";
+					displayString += "Republican: " + metricData.totalRepublicanSeats + "<br/>";
 					panel.innerHTML = displayString;
 				}
 			});

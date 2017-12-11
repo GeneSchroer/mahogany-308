@@ -18,7 +18,6 @@ import mahogany.loginUtils.DuplicateUserNameException;
 import mahogany.utils.LoginHelper;
 
 @Controller
-//@SessionAttributes({"userName", "roles"})
 public class LoginController {
 	@Autowired LoginHelper helper;
 	
