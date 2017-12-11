@@ -124,12 +124,22 @@
 							<br/>
 						</form>
 					</div>
+					<!-- Princeton Elections -->
 					<div data-dojo-type="dijit/layout/ContentPane" title="Princeton">
 						<form id="princetonUploadForm" action="/princetonElectionUpload" enctype="multipart/form-data" method="POST">
 							<input name="file" type="file"/>
 							<input type="submit" value="Submit Election Data"/>
 						</form>	
 					</div>
+					<!-- US Census -->
+					<div data-dojo-type="dijit/layout/ContentPane" title="US Census">
+						<form id="usCensusUploadForm" action="/censusJsonUpload" enctype="multipart/form-data" method="POST">
+							<input name="file" type="file"/>
+							<input type="submit" value="Submit GeoJSON Data"/>							
+						</form>					
+					</div>
+					
+					<!-- Manual Entries -->
 					<div data-dojo-type="dijit/layout/ContentPane" title="Manual Entry">
 						<div data-dojo-type="dijit/layout/TabContainer">
 							<div data-dojo-type="dijit/layout/ContentPane" title="Congressional Member">

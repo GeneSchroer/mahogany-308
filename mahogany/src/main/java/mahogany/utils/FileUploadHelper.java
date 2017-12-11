@@ -18,7 +18,7 @@ public class FileUploadHelper {
 	@Autowired
 	PrincetonElectionDataUploaderImpl princetonElectionUploader;
 	
-	
+	@Autowired usCensusDataUploader usCensusUploader;
 public void uploadDistrictFiles(MultipartFile[] files, FileSource source){
 		
 		if(source == FileSource.UCLA) {
@@ -27,6 +27,18 @@ public void uploadDistrictFiles(MultipartFile[] files, FileSource source){
 					ObjectNode fileJsonObject = (ObjectNode)uclaDistrictConverter.convertFileToJsonNode(file);
 					uclaDistrictConverter.uploadJsonToDatabase(fileJsonObject);
 				} catch (IOException e) {
+					e.printStackTrace();
+					throw new RuntimeException(e.getMessage());
+				}
+			}
+		}
+		else if(source == FileSource.US_CENSUS) {
+			for(MultipartFile file: files) {
+				try {
+					ObjectNode fileJsonObject = (ObjectNode) uclaDistrictConverter.convertFileToJsonNode(file);
+					usCensusUploader.uploadJsonToDatabase(fileJsonObject);
+				}
+				catch(IOException e) {
 					e.printStackTrace();
 					throw new RuntimeException(e.getMessage());
 				}

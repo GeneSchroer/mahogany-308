@@ -28,6 +28,16 @@ public class UploadController {
 		return "redirect:/gerrymander";
 	}
 	
+	
+	@RequestMapping("censusJsonUpload")
+	public String censusJsonUploadRequest(@RequestParam("file")MultipartFile[] files) {
+		uploadHelper.uploadDistrictFiles(files, FileSource.US_CENSUS);
+		
+		
+		return "redirect:/gerrymander";
+	}
+	
+	
 	public void uploadCongressionalMemberDataRequest() {
 		
 	}

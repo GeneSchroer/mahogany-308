@@ -2,6 +2,7 @@ package mahogany.utils;
 
 public enum FileSource {
 	UCLA,
-	PRINCETON;
+	PRINCETON,
+	US_CENSUS;
 	
 }
