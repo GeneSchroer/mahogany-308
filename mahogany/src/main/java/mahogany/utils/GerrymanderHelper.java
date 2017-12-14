@@ -51,65 +51,47 @@ public class GerrymanderHelper {
 		}
 	}
 	
-	public JsonNode getDistrictDataJsonNode(MetricOption metric, String stateName, Integer year) {
+	public JsonNode getDistrictDataJsonNode(MetricOption metric, String stateName, Integer year) throws IOException {
 		
 		
 		if(metric == MetricOption.EFFICIENCY_GAP) {
 			ArrayList<Elections> electionList = (ArrayList<Elections>)electionsRepo.findAllByStateAndYear(stateName, year);
+			if(electionList.isEmpty()) {
+				throw new NoDistrictsFoundException();
+			}
 			EfficiencyGapDataBuilder x = new EfficiencyGapDataBuilder();
 			EfficiencyGapStateData metricData = x.generateDataObject(electionList);
-		
-			
-			
-			try {
-				JsonNode metricsJson = geoJsonUtils.generateMetricDataJson(metricData);
-				return metricsJson;
-			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			JsonNode metricsJson = geoJsonUtils.generateMetricDataJson(metricData);
+			return metricsJson;
 		}
 		else if(metric == MetricOption.ELECTION_DATA) {
 			ArrayList<Elections> electionList = (ArrayList<Elections>)electionsRepo.findAllByStateAndYear(stateName, year);
+			if (electionList.isEmpty()) {
+				throw new NoDistrictsFoundException();
+			}
+			
 			ElectionDataBuilder x = new ElectionDataBuilder();
 			ElectionStateData electionData= x.generateDataObject(electionList);
-		
-			
-			
-			try {
-				JsonNode metricsJson = geoJsonUtils.generateMetricDataJson(electionData);
-				return metricsJson;
-			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			JsonNode metricsJson = geoJsonUtils.generateMetricDataJson(electionData);
+			return metricsJson;
 		}
 		else if(metric == MetricOption.MEMBER_DATA) {
 			ArrayList<Districts> districtList = (ArrayList<Districts>)districtsRepo.findAllByStateAndYear(stateName, year);
+			if(districtList.isEmpty()) {
+				throw new NoDistrictsFoundException();
+			}
 			MemberDataBuilder x = new MemberDataBuilder();
 			MemberStateData electionData= x.generateMetricData(districtList);
 		
 			
 			
-			try {
 				JsonNode metricsJson = geoJsonUtils.generateMetricDataJson(electionData);
 				return metricsJson;
-			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
+		else {
 		
-		return null;
+			return null;
+		}
 	}
 
 

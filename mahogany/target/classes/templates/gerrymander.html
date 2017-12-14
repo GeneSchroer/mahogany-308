@@ -96,9 +96,11 @@
 						<div id="dataSidePanel"></div>
 						<table class="repTable" id="gerrymanderRepTable"></table>
 					</div>
+					<!-- 
 					<div data-dojo-type="dijit/layout/ContentPane" title="Information">
 						<div></div>
 					</div>
+					-->
 				</div>		
 			</div>
 			<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'">
@@ -113,54 +115,55 @@
 			<!-- Administrator Block -->
 			<div th:if="${session.role} == 'ADMIN'">
 				<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'bottom'" style="height:20%;">
-				<div id="adminLoadingScreen" style="display:none;" class="loadingMessage pageOverlay loadingOverlay">Uploading files. Please do not refresh the page. </div>
-				Admin Options
-				
-				<div data-dojo-type="dijit/layout/TabContainer">
-					<div data-dojo-type="dijit/layout/ContentPane" title="UCLA">
-						<form id="uclaUploadForm" action="/uclaJsonUpload" enctype="multipart/form-data" method="POST">
-							<input name="file" type="file" multiple="true"/>
-							<input type="submit" value="Submit GeoJSON Data"/>
-							<br/>
-						</form>
-					</div>
-					<!-- Princeton Elections -->
-					<div data-dojo-type="dijit/layout/ContentPane" title="Princeton">
-						<form id="princetonUploadForm" action="/princetonElectionUpload" enctype="multipart/form-data" method="POST">
-							<input name="file" type="file"/>
-							<input type="submit" value="Submit Election Data"/>
-						</form>	
-					</div>
-					<!-- US Census -->
-					<div data-dojo-type="dijit/layout/ContentPane" title="US Census">
-						<form id="usCensusUploadForm" action="/censusJsonUpload" enctype="multipart/form-data" method="POST">
-							<input name="file" type="file"/>
-							<input type="submit" value="Submit GeoJSON Data"/>							
-						</form>					
-					</div>
+					<div id="adminLoadingScreen" style="display:none;" class="loadingMessage pageOverlay loadingOverlay">Uploading files. Please do not refresh the page. </div>
+					Admin Options
 					
-					<!-- Manual Entries -->
-					<div data-dojo-type="dijit/layout/ContentPane" title="Manual Entry">
-						<div data-dojo-type="dijit/layout/TabContainer">
-							<div data-dojo-type="dijit/layout/ContentPane" title="Congressional Member">
-								<label>Year: </label><input type="text"/>
-								<label>State: </label><select></select>
-								<label>District No.: </label> <input type="text"/>
-								<label>Party: </label> <select></select>
-								<label>Name: </label> <input type="text"/>
-								
-							</div>
-							<div data-dojo-type="dijit/layout/ContentPane" title="Election Data">
-								<label>Year: </label><input type="text"/>
-								<label>State: </label><select></select>
-								<label>District No.: </label> <input type="text"/>
-								<label>Party: </label> <select></select>
-								<label>Votes: </label> <input type="text"/>
-							</div>
+					<div data-dojo-type="dijit/layout/TabContainer">
+						<div data-dojo-type="dijit/layout/ContentPane" title="UCLA">
+							<form id="uclaUploadForm" action="/uclaJsonUpload" enctype="multipart/form-data" method="POST">
+								<input name="file" type="file" multiple="true"/>
+								<input type="submit" value="Submit GeoJSON Data"/>
+								<br/>
+							</form>
 						</div>
-					</div>
+						<!-- Princeton Elections -->
+						<div data-dojo-type="dijit/layout/ContentPane" title="Princeton">
+							<form id="princetonUploadForm" action="/princetonElectionUpload" enctype="multipart/form-data" method="POST">
+								<input name="file" type="file"/>
+								<input type="submit" value="Submit Election Data"/>
+							</form>	
+						</div>
+						<!-- US Census -->
+						<div data-dojo-type="dijit/layout/ContentPane" title="US Census">
+							<form id="usCensusUploadForm" action="/censusJsonUpload" enctype="multipart/form-data" method="POST">
+								<input name="file" type="file"/>
+								<input type="submit" value="Submit GeoJSON Data"/>							
+							</form>					
+						</div>
+						
+						<!-- Manual Entries -->
+						<!-- <div data-dojo-type="dijit/layout/ContentPane" title="Manual Entry">
+							<div data-dojo-type="dijit/layout/TabContainer">
+								<div data-dojo-type="dijit/layout/ContentPane" title="Congressional Member">
+									<label>Year: </label><input type="text"/>
+									<label>State: </label><select></select>
+									<label>District No.: </label> <input type="text"/>
+									<label>Party: </label> <select></select>
+									<label>Name: </label> <input type="text"/>
+									
+								</div>
+								<div data-dojo-type="dijit/layout/ContentPane" title="Election Data">
+									<label>Year: </label><input type="text"/>
+									<label>State: </label><select></select>
+									<label>District No.: </label> <input type="text"/>
+									<label>Party: </label> <select></select>
+									<label>Votes: </label> <input type="text"/>
+								</div>
+							</div>
+						</div>-->
 					</div>
 				</div>
+				
 			</div>
 		</div>
 </html>

@@ -73,6 +73,7 @@ define([
 				}
 				else if(dataType == DataType.ELECTION_DATA){
 					var displayString="";
+					
 					displayString += "<h4>State Election Data</h4>";
 					displayString += "<b>Seats:</b> <br/>";
 					displayString += "Republican: " + metricData.totalRepublicanSeats + "<br/>";

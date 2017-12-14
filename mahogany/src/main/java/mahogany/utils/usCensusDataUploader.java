@@ -1,5 +1,6 @@
 package mahogany.utils;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.wololo.jts2geojson.GeoJSONReader;
 
@@ -10,10 +11,19 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 
 import mahogany.entities.Boundaries;
+import mahogany.entities.Districts;
+import mahogany.entities.StateNames;
+import mahogany.repositories.BoundariesRepository;
+import mahogany.repositories.DistrictsRepository;
+import mahogany.repositories.StateNamesRepository;
 
 @Component
 public class usCensusDataUploader {
-
+	@Autowired DistrictsRepository districtsRepo;
+	@Autowired StateNamesRepository stateNamesRepo;
+	@Autowired BoundariesRepository boundariesRepo;
+	
+	
 	public void uploadJsonToDatabase(ObjectNode fileJsonObject) {
 		
 		// used to convert district boundaries to jts spatial data
@@ -46,29 +56,61 @@ public class usCensusDataUploader {
 			}		
 			//contains information about the district
 			ObjectNode districtPropertiesObject = (ObjectNode)geoJsonFeaturesArray.get(index).get("properties");
-			String districtNumberString = districtPropertiesObject.get("NAMELSAD").asText();
-			Integer districtNumber = parseCongressionalDistrict(districtNumberString);
+			String geoIdString = districtPropertiesObject.get("GEOID").asText();
+			Integer districtNumber = parseCongressionalDistrict(geoIdString);
 			
 			Integer stateCode = districtPropertiesObject.get("STATEFP").asInt();
 			String stateName = stateCodeToStateName(stateCode);
 			
 			System.out.println("State Name: " + stateName + " District Number: " + districtNumber + " Year: " + year);
-		
+			
+			if(districtNumber != null && stateName != null) {
+				StateNames state = stateNamesRepo.findByName(stateName);
+				if(state == null) {
+					state = new StateNames();
+					state.setName(stateName);
+					stateNamesRepo.save(state);
+				}
+				
+				Boundaries boundaries = boundariesRepo.findByCoordinates(multiPolygon);
+				if(boundaries == null) {
+					boundaries = new Boundaries();
+					boundaries.setCoordinates(multiPolygon);
+					boundariesRepo.save(boundaries);
+				}
+				Districts district = districtsRepo.findByStateNameAndDistrictNumberAndYear(stateName, districtNumber, year);
+				if(district == null) {
+					district = new Districts();
+					district.setStateName(state);
+					district.setDistrictNumber(districtNumber);
+					district.setYear(year);
+				}
+				district.setBoundaries(boundaries);
+				districtsRepo.save(district);
+			}
+			
 		}
 		
 	}
 	
-	public Integer parseCongressionalDistrict(String districtString) {
-		if(districtString.contains("(at Large)")) {
-			return 1;
+	public Integer parseCongressionalDistrict(String geoIdString) {
+		String districtCode = geoIdString.substring(2);
+		if(districtCode.equals("ZZ") || districtCode.equals("98")) {
+			return null;
 		}
 		else {
-			String districtNumberString = districtString.replace("Congressional District ", "");
-			return Integer.parseInt(districtNumberString);
+			Integer districtNumber= Integer.parseInt(districtCode);
+			return districtNumber;
 		}
 	}
 
 	public String stateCodeToStateName(Integer stateCode) {
-		return StateNamesEnum.getByStateCode(stateCode).getName();
+		StateNamesEnum stateEnum = StateNamesEnum.getByStateCode(stateCode);
+		if(stateEnum == null) {
+			return null;
+		}
+		else {
+			return stateEnum.getName();
+		}
 	}
 }

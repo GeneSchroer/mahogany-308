@@ -83,8 +83,7 @@ public enum StateNamesEnum {
 	Washington,
 	West_Virginia,
 	Wisconsin,
-	Wyoming,
-	Puerto_Rico;
+	Wyoming;
 	
 	public int getStateCode() {
 		return this.getStateCode();
@@ -113,8 +112,6 @@ public enum StateNamesEnum {
 				return "South Dakota";
 			case West_Virginia:
 				return "West Virginia";
-			case Puerto_Rico:
-				return "Puerto Rico";
 			default:
 				return this.toString();
 		}
@@ -224,8 +221,6 @@ public enum StateNamesEnum {
 			return Wisconsin;
 		case 56:
 			return Wyoming;
-		case 72:
-			return Puerto_Rico;
 		default:
 			return null;
 		}
@@ -337,8 +332,6 @@ public enum StateNamesEnum {
 				return 55;
 			case Wyoming:
 				return 56;
-			case Puerto_Rico:
-				return 72;
 			default:
 				return null;
 		}

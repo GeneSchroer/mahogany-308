@@ -290,6 +290,12 @@ define([
 			console.log(success.data);
 			mapData = success.data;
 			setElectionDataLayer();
+		}, function(error){
+			console.log(error.response.status);
+			topic.publish(TopicEvents.DATA_SIDE_PANEL, DataType.NONE);
+			mapData = null;
+			setElectionDataLayer();
+			
 		});
 	}
 	
@@ -306,6 +312,11 @@ define([
 			topic.publish(TopicEvents.DATA_SIDE_PANEL, DataType.EFFICIENCY_GAP, success.data);
 			console.log(success.data);
 			mapData = success.data;
+			setEfficiencyGapLayer();
+		}, function(error){
+			console.log(error.response.status);
+			topic.publish(TopicEvents.DATA_SIDE_PANEL, DataType.NONE);
+			mapData = null;
 			setEfficiencyGapLayer();
 		});
 

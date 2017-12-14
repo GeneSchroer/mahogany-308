@@ -51,55 +51,109 @@ public class GerrymanderController {
 																	@RequestParam(name="year") int year) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectNode errorMessage = mapper.createObjectNode();
+		
 		try {
 			JsonNode districtJsonNode = helper.createDistrictBoundariesJsonNode(state, year);
 			return new ResponseEntity<JsonNode>(districtJsonNode, HttpStatus.OK);
 		}
 		catch(NoDistrictsFoundException e) {
-			ObjectMapper mapper = new ObjectMapper();
-			ObjectNode errorMessage = mapper.createObjectNode();
 			errorMessage.put("error", e.getMessage());
 			return new ResponseEntity<JsonNode>(null, headers, HttpStatus.NOT_FOUND);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
-			ObjectMapper mapper = new ObjectMapper();
-			ObjectNode errorMessage = mapper.createObjectNode();
 			errorMessage.put("error", e.getMessage());
 			return new ResponseEntity<JsonNode>(null, headers, HttpStatus.NOT_FOUND);
 		} catch (IOException e) {
 			e.printStackTrace();
-			ObjectMapper mapper = new ObjectMapper();
-			ObjectNode errorMessage = mapper.createObjectNode();
 			errorMessage.put("error", e.getMessage());
 			return new ResponseEntity<JsonNode>(null, headers, HttpStatus.NOT_FOUND);
 		}
 	}
 	
 	@RequestMapping("/electionDataRequest")
-	public @ResponseBody JsonNode getElectionDataRequest(@RequestParam("state")String stateName,
+	public ResponseEntity<JsonNode> getElectionDataRequest(@RequestParam("state")String stateName,
 															@RequestParam("year")Integer year) {
-		JsonNode electionDataJsonNode = helper.getDistrictDataJsonNode(MetricOption.ELECTION_DATA, stateName, year);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		
-		return electionDataJsonNode;
+
+		try {
+			JsonNode electionDataJsonNode = helper.getDistrictDataJsonNode(MetricOption.ELECTION_DATA, stateName, year);
+			return new ResponseEntity<JsonNode>(electionDataJsonNode, headers, HttpStatus.OK);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			ObjectMapper mapper = new ObjectMapper();
+			ObjectNode error = mapper.createObjectNode();
+			error.put("error", e.getMessage());
+			return new ResponseEntity<JsonNode>(error, headers, HttpStatus.NOT_FOUND);
+		}
+		catch (NoDistrictsFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			ObjectMapper mapper = new ObjectMapper();
+			ObjectNode error = mapper.createObjectNode();
+			error.put("error", e.getMessage());
+			return new ResponseEntity<JsonNode>(error, headers, HttpStatus.NOT_FOUND);
+		}
+		
+		
 	}
 	
 	@RequestMapping("/efficiencyGapRequest")
-	public @ResponseBody JsonNode getEfficiencyGapRequest(@RequestParam(name="state") String stateName,
+	public ResponseEntity<JsonNode> getEfficiencyGapRequest(@RequestParam(name="state") String stateName,
 																													@RequestParam(name="year")Integer year) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectNode error = mapper.createObjectNode();
 		
-		JsonNode metricsJsonNode = helper.getDistrictDataJsonNode(MetricOption .EFFICIENCY_GAP, stateName, year);
+		try {
+			JsonNode metricsJsonNode = helper.getDistrictDataJsonNode(MetricOption .EFFICIENCY_GAP, stateName, year);
+			return new ResponseEntity<JsonNode>(metricsJsonNode, headers, HttpStatus.OK);
+		} catch (IOException e) {
+			e.printStackTrace();
+			error.put("error", e.getMessage());
+			return new ResponseEntity<JsonNode>(error, headers, HttpStatus.NOT_FOUND);
+		}
+		catch (NoDistrictsFoundException e) {
+			e.printStackTrace();
+			error.put("error", e.getMessage());
+			return new ResponseEntity<JsonNode>(error, headers, HttpStatus.NOT_FOUND);
+		}
 		
-		return metricsJsonNode;
+	
 		
 	}
 	
 	@RequestMapping("/getMemberData")
-	public @ResponseBody JsonNode getMemberDataRequest(@RequestParam(name="state")String stateName,
-																												@RequestParam(name="year") Integer year) {
+	public ResponseEntity<JsonNode> getMemberDataRequest(@RequestParam(name="state")String stateName,
+			
+																							@RequestParam(name="year") Integer year) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		ObjectMapper mapper = new ObjectMapper();
+		ObjectNode error = mapper.createObjectNode();
 		
-		JsonNode memberDataJsonNode = helper.getDistrictDataJsonNode(MetricOption.MEMBER_DATA, stateName, year);
+		try {
+			JsonNode memberDataJsonNode = helper.getDistrictDataJsonNode(MetricOption.MEMBER_DATA, stateName, year);
+			return new ResponseEntity<JsonNode>(memberDataJsonNode, headers, HttpStatus.OK);
+		} catch (IOException e) {
+			e.printStackTrace();
+			
+			error.put("error", e.getMessage());
+			return new ResponseEntity<JsonNode>(error, headers, HttpStatus.NOT_FOUND);
+		}
+		catch (NoDistrictsFoundException e) {
+			e.printStackTrace();
+			error.put("error", e.getMessage());
+			return new ResponseEntity<JsonNode>(error, headers, HttpStatus.NOT_FOUND);
+
+		}
 		
-		return memberDataJsonNode;
+		
 		
 	}
 					

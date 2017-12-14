@@ -46,6 +46,62 @@
 				"dojo/on",
 				"dojo/domReady!"
 			], function(dom, domStyle, domForm, request, on){
+				function stateLayerStyle(){
+					return function(feature, layer){
+						return{
+							weight: 1,
+							color: "black",
+							fillColor: stateFillColor(feature.properties.color),
+							fillOpacity: 0.2
+						}
+					};
+				}
+				
+				function stateFillColor(color){
+					if(!color){
+						return "gray";
+					}
+					else{
+						return color == 1 ? "blue" :
+										color == 2 ? "red" :
+											color == 3 ? "green" :
+												"yellow";
+					}
+				}
+				function createStateNameDisplay(){
+					var stateNameDisplay = L.control({position:'topright'});
+
+					// onAdd() triggers when the control is first added to the map
+					stateNameDisplay.onAdd = function(map){
+						this._div = L.DomUtil.create('div', 'dataDisplay legendControl');
+						this._div.innerHTML = " ";
+						return this._div;
+					};
+					stateNameDisplay.update = function (string) {
+					    this._div.innerHTML = string ? string : "Data Not Available";
+					};
+					stateNameDisplay.disable = function(){
+						domStyle.set(this._div, "display", "none");
+					};
+					stateNameDisplay.enable = function(){
+						domStyle.set(this._div, "display", "block");
+					};
+					
+					
+					return stateNameDisplay;
+				
+				}
+				function setStateNameDisplay(layer, display){
+					var displayString = "";
+					var stateName = layer.feature.properties.name;
+					var stateCode = layer.feature.id;
+					displayString += "<b>" + stateName + "</b><br/>";
+					displayString += "<b>State Code: " + stateCode + "</b>"; 
+					return displayString;
+					
+				}
+				
+				
 				var mapBlock = dom.byId("loginPageMap");
 				domStyle.set(mapBlock, "width", "100%");
 				domStyle.set(mapBlock, "height", "100%");
@@ -53,10 +109,30 @@
 				
 				var map = L.map(mapBlock).setView([32, -80], 4);
 				L.esri.basemapLayer('Topographic').addTo(map);
-
-				var mapLayer = L.geoJson();
+				
+				var stateNameDisplay = createStateNameDisplay();
+				stateNameDisplay.addTo(map);
+				
+				var mapLayer = L.geoJson(null,{
+					style: stateLayerStyle(),
+					onEachFeature: function(feature, layer){
+						layer.on("mouseover", function(e){
+							var layer = e.target;
+							layer.setStyle({
+								weight: 2,
+								dataArray: ' ',
+								fillOpacity: 0.7
+							});
+							stateNameDisplay.update(setStateNameDisplay(layer, stateNameDisplay));
+						}, this);
+						layer.on("mouseout", function(e){
+							mapLayer.resetStyle(layer);
+							stateNameDisplay.update(" ");
+						}, this);
+					}
+				});
 				mapLayer.addTo(map);
-				request("Massachusetts14.geojson",{
+				request("stateData.json",{
 					method:"GET",
 					handleAs:"json"
 				}).response.then(function(success){
@@ -137,7 +213,7 @@
 				<!-- Registration form -->
 				<div data-dojo-type="dijit/layout/ContentPane" title="Registration">
 					<form id="registerForm"  
-						data-dojo-type="dijit/form/Form">
+						data-dojo-type="dijit/form/Form" action="/register" method="POST">
 						<table>
 							<tr>	
 								<td><label>User Name: </label></td>
@@ -176,9 +252,6 @@
 		<!-- map pane -->		
 		<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'">
 			<div id="loginPageMap"></div>
-		</div>
-		<!-- information about gerrymandering -->
-		<div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'bottom'" style="height:20%;">
 		</div>
 	</div>
 </body>

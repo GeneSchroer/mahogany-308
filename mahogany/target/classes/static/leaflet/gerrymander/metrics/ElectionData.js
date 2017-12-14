@@ -46,6 +46,10 @@ define([
 	}
 	
 	function setDisplay(layer, mapData){
+		if(!mapData){
+			return "Data Not Available";
+		}
+		
 		var displayString = "";
 		
 		var districtNumber = layer.feature.properties.districtNumber;
