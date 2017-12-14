@@ -16,7 +16,7 @@ define([
 				fillColor: setColor(feature, ColorMode.DEFAULT_COLOR),
 				
 				dataArray: ' ',
-				fillOpacity: 0.6
+				fillOpacity: 0.4
 			};
 		};
 	}

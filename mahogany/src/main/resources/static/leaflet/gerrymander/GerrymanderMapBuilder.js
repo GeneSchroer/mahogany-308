@@ -242,6 +242,7 @@ define([
 	}
 	
 	function loadDistrictBoundariesRequest(){
+		loadDistrictData();
 		request("/districtBoundariesRequest", {
 			method: "POST",
 			data: {
@@ -253,7 +254,7 @@ define([
 			console.log(success.data);
 			var districtData = success.data;
 			districtLayer.addData(districtData);
-			loadDistrictData();
+			
 		}, function(error){
 			console.log(error.response.status);
 			topic.publish(TopicEvents.DATA_SIDE_PANEL, DataType.NONE);
@@ -390,7 +391,14 @@ define([
 		return displayString;
 		
 	}
-	
+	function setDistrictLayer(){
+		if(dataMode == DataType.ELECTION_DATA){
+			setElectionDataLayer();
+		}
+		else if (dataMode == DataType.EFFICIENCY_GAP){
+			setEfficiencyGapLayer();
+		}
+	}
 	
 	function loadDistrictData(){
 		
@@ -492,7 +500,9 @@ define([
 		legendDisplay += "<b>Parties:</b><br/>";
 		legendDisplay += "Democrat " + '<i style="background:' + MapColors.BLUE_60 + ';"></i><br/>';
 		legendDisplay += "Republican " + '<i style="background:' + MapColors.RED_60 + ';"></i><br/>';
-		
+		legendDisplay += "Green " + '<i style="background:' + "Green" + ';"></i><br/>';
+		legendDisplay += "Libertarian " + '<i style="background:' + "Gold" + ';"></i><br/>';
+		legendDisplay += "Other " + '<i style="background:' + "Gray" + ';"></i><br/>';
 		return legendDisplay;
 	}
 	

@@ -37,7 +37,7 @@ public class LoginController {
 		//System.out.println(x);
 		try {
 			UserDetails user = helper.loginUser(userName, password);
-			session.setMaxInactiveInterval(60*60);
+			session.setMaxInactiveInterval(60*60*60);
 			session.setAttribute("userName", user.getUserName());
 			session.setAttribute("role", user.getRole().getRoleName());
 			return new ModelAndView("redirect:/gerrymander");
@@ -67,7 +67,7 @@ public class LoginController {
 		HttpSession session = request.getSession();
 		try {
 			UserDetails user = helper.registerNewUser(userName, password);
-			session.setMaxInactiveInterval(60*60);
+			session.setMaxInactiveInterval(60*60*60);
 			session.setAttribute("userName", user.getUserName());
 			session.setAttribute("role", user.getRole().getRoleName());
 			return "redirect:/gerrymander";
